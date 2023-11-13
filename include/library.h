@@ -1,0 +1,6 @@
+#ifndef PROOFSYSTEM_LIBRARY_H
+#define PROOFSYSTEM_LIBRARY_H
+
+void hello();
+
+#endif //PROOFSYSTEM_LIBRARY_H
