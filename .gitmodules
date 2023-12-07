@@ -1,3 +1,9 @@
 [submodule "build"]
 	path = build
 	url = ../cmaketemplate
+[submodule "zkLLVM"]
+	path = zkLLVM
+	url = https://github.com/NilFoundation/zkLLVM.git
+[submodule "cmake/modules"]
+	path = cmake/modules
+	url = https://github.com/BoostCMake/cmake_modules.git

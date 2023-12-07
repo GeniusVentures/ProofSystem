@@ -1,30 +1,37 @@
-#include <iostream>
-#include <cryptopp/eccrypto.h>
-#include <cryptopp/oids.h>
-#include <cryptopp/osrng.h>
+#ifndef BITCOIN_KEY_GENERATOR_HPP
+#define BITCOIN_KEY_GENERATOR_HPP
 
-using namespace CryptoPP;
-using namespace std;
+#include "nil/crypto3/codec/base.hpp"
+#include "BitcoinKeyPairParams.hpp"
+#include "util.hpp"
+
+using namespace nil::crypto3;
+using namespace nil::crypto3::algebra;
+using namespace nil::crypto3::hashes;
+using namespace nil::crypto3::codec;
 
 class BitcoinKeyGenerator {
 public:
     BitcoinKeyGenerator() {
-        AutoSeededRandomPool prng;
-        privateKey.Initialize(prng, ASN1::secp256k1());
-        privateKey.MakePublicKey(publicKey);
+        // Generate private key
+        privkey.generate();
+
+        // Generate public key from private key
+        pubkey = privkey.generate_public_key();
+
+        // Extract address from public key
+        auto hash_bytes = hashes::sha2<256>(pubkey.pubkey_data().X.data());
+        address = base58::encode(hash_bytes).data();
     }
 
-    ECDSA<ECP, SHA256>::PrivateKey getPrivateKey() const {
-        return privateKey;
-    }
-
-    ECDSA<ECP, SHA256>::PublicKey getPublicKey() const {
-        return publicKey;
-    }
-
-    // Add other methods for Bitcoin address conversion if needed
+    const pubkey::private_key<bitcoin::policy_type>& get_private_key() const { return privkey; }
+    const pubkey::public_key<bitcoin::policy_type>& get_public_key() const { return pubkey; }
+    const std::string& get_address() const { return address; }
 
 private:
-    ECDSA<ECP, SHA256>::PrivateKey privateKey;
-    ECDSA<ECP, SHA256>::PublicKey publicKey;
+    pubkey::private_key<bitcoin::policy_type> privkey;
+    pubkey::public_key<bitcoin::policy_type> pubkey;
+    std::string address;
 };
+
+#endif // BITCOIN_KEY_GENERATOR_HPP
