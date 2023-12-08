@@ -8,6 +8,9 @@ set(BOOST_VERSION "${BOOST_MAJOR_VERSION}.${BOOST_MINOR_VERSION}.${BOOST_PATCH_V
 set(BOOST_VERSION_3U "${BOOST_MAJOR_VERSION}_${BOOST_MINOR_VERSION}_${BOOST_PATCH_VERSION}")
 set(BOOST_VERSION_2U "${BOOST_MAJOR_VERSION}_${BOOST_MINOR_VERSION}")
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 # --------------------------------------------------------
 # Set config of GTest
 set(GTest_DIR "${_THIRDPARTY_BUILD_DIR}/GTest/lib/cmake/GTest")
@@ -44,49 +47,50 @@ find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex system 
 include_directories(${Boost_INCLUDE_DIRS})
 # --------------------------------------------------------
 # set config for crypto3
-option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_TESTS "Build tests" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(BUILD_APPS "Enable application targets." FALSE)
 option(BUILD_EXAMPLES "Enable demonstration targets." FALSE)
 option(BUILD_DOCS "Enable documentation targets." FALSE)
 set(DOXYGEN_OUTPUT_DIR "${CMAKE_CURRENT_LIST_DIR}/docs" CACHE STRING "Specify doxygen output directory")
 
-add_library(${PROJECT_NAME}
-        STATIC
-        "../../src/BitCoinKeyGenerator.cpp"
-        "../../src/EthereumKeyGenerator.cpp"
-)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        CXX_STANDARD 17
-        CXX_EXTENSIONS OFF
-        CXX_STANDARD_REQUIRED ON
-)
-
-target_include_directories(${PROJECT_NAME}
-        PUBLIC
-        "../../include"
-        "../../zkLLVM/libs/crypto3/libs/algebra/include"
-        "../../zkLLVM/libs/crypto3/libs/block/include"
-        "../../zkLLVM/libs/crypto3/libs/codec/include"
-        "../../zkLLVM/libs/crypto3/libs/containers/include"
-        "../../zkLLVM/libs/crypto3/libs/hash/include"
-        "../../zkLLVM/libs/crypto3/libs/kdf/include"
-        "../../zkLLVM/libs/crypto3/libs/mac/include"
-        "../../zkLLVM/libs/crypto3/libs/math/include"
-        "../../zkLLVM/libs/crypto3/libs/marshalling/algebra/include"
-        "../../zkLLVM/libs/crypto3/libs/marshalling/core/include"
-        "../../zkLLVM/libs/crypto3/libs/marshalling/multiprecision/include"
-        "../../zkLLVM/libs/crypto3/libs/marshalling/zk/include"
-        "../../zkLLVM/libs/crypto3/libs/modes/include"
-        "../../zkLLVM/libs/crypto3/libs/multiprecision/include"
-        "../../zkLLVM/libs/crypto3/libs/passhash/include"
-        "../../zkLLVM/libs/crypto3/libs/pbkdf/include"
-        "../../zkLLVM/libs/crypto3/libs/pkpad/include"
-        "../../zkLLVM/libs/crypto3/libs/pubkey/include"
-        "../../zkLLVM/libs/crypto3/libs/random/include"
-        "../../zkLLVM/libs/crypto3/libs/stream/include"
-        "../../zkLLVM/libs/crypto3/libs/threshold/include"
-        "../../zkLLVM/libs/crypto3/libs/vdf/include"
+include_directories(
+        "${CMAKE_CURRENT_LIST_DIR}/../include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/algebra/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/block/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/codec/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/containers/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/hash/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/kdf/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/mac/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/math/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/marshalling/algebra/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/marshalling/core/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/marshalling/multiprecision/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/marshalling/zk/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/modes/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/multiprecision/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/passhash/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/pbkdf/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/pkpad/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/pubkey/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/random/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/stream/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/threshold/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/vdf/include"
         )
 
+#add_library(${PROJECT_NAME}
+#        STATIC
+#        "${CMAKE_CURRENT_LIST_DIR}../src/BitCoinKeyGenerator.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}../src/EthereumKeyGenerator.cpp"
+#)
+
+if(BUILD_TESTS)
+        add_executable(${PROJECT_NAME}_test
+                "${CMAKE_CURRENT_LIST_DIR}/../test/main_test.cpp"
+                "${CMAKE_CURRENT_LIST_DIR}/../test/BitcoinKeyGenerator_test.cpp"
+                "${CMAKE_CURRENT_LIST_DIR}/../test/EthereumKeyGenerator_test.cpp"
+        )
+        target_link_libraries(${PROJECT_NAME}_test PUBLIC GTest::gtest Boost::random)
+endif()

@@ -22,9 +22,8 @@ namespace ethereum {
 
     using hash_type = hashes::keccak_1600<256>;
 
-    using padding_policy = pubkey::padding::emsa1<scalar_field_value_type, hash_type>;;
+    using padding_policy = pubkey::padding::emsa1<scalar_field_value_type, hash_type>;
 
-    //using generator_type = random::rfc6979<scalar_field_value_type, hash_type>;
     using generator_type = random::algebraic_random_device<scalar_field_type>;
 
     using policy_type = pubkey::ecdsa<CurveType, padding_policy, generator_type>;
