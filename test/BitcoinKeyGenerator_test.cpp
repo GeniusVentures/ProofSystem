@@ -9,11 +9,11 @@ using namespace bitcoin;
 
 TEST(BitcoinKeyGeneratorTest, PrivateKeyGenerated) {
     // Arrange
-    BitcoinKeyGenerator *key_generator = new BitcoinKeyGenerator();
+    BitcoinKeyGenerator key_generator;
 
     // Act
     const pubkey::private_key<bitcoin::policy_type>& privkey =
-            key_generator->get_private_key();
+            key_generator.get_private_key();
 
     // Assert
     //EXPECT_TRUE(!privkey.empty());
@@ -21,11 +21,11 @@ TEST(BitcoinKeyGeneratorTest, PrivateKeyGenerated) {
 
 TEST(BitcoinKeyGeneratorTest, PublicKeyGenerated) {
     // Arrange
-    BitcoinKeyGenerator *key_generator = new BitcoinKeyGenerator();
+    BitcoinKeyGenerator key_generator;
 
     // Act
     const pubkey::public_key<bitcoin::policy_type>& pubkey =
-            key_generator->get_public_key();
+            key_generator.get_public_key();
 
     // Assert
     //EXPECT_TRUE(!pubkey.empty());

@@ -9,7 +9,7 @@ namespace ethereum {
 
     EthereumKeyGenerator::EthereumKeyGenerator() {
         privkey = EthereumKeyGenerator::CreateKeys();
-        pubkey = std::make_unique<pubkey::public_key<ethereum::policy_type>>(*privkey);
+        pubkey = std::make_shared<pubkey::public_key<ethereum::policy_type>>(*privkey);
 
         /*
             ethereum::hash_type::digest_type d = hash<ethereum::hash_type>(pubkey.pubkey_data().X.data());
@@ -23,7 +23,7 @@ namespace ethereum {
 
     }
 
-    std::unique_ptr<pubkey::private_key<ethereum::policy_type>> EthereumKeyGenerator::CreateKeys() {
-        return std::make_unique<pubkey::private_key<ethereum::policy_type>>(EthereumKeyGenerator::key_gen());
+    std::shared_ptr<pubkey::private_key<ethereum::policy_type>> EthereumKeyGenerator::CreateKeys() {
+        return std::make_shared<pubkey::private_key<ethereum::policy_type>>(EthereumKeyGenerator::key_gen());
     }
 }

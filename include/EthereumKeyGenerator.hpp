@@ -26,12 +26,12 @@ namespace ethereum {
         const std::string& get_address() const { return address; }
 
         // create the keys using static template functions
-        static std::unique_ptr<pubkey::private_key<ethereum::policy_type>> CreateKeys();
+        static std::shared_ptr<pubkey::private_key<ethereum::policy_type>> CreateKeys();
 
     private:
         static ethereum::generator_type key_gen;
-        std::unique_ptr<pubkey::private_key<ethereum::policy_type>> privkey;
-        std::unique_ptr<pubkey::public_key<ethereum::policy_type>> pubkey;
+        std::shared_ptr<pubkey::private_key<ethereum::policy_type>> privkey;
+        std::shared_ptr<pubkey::public_key<ethereum::policy_type>> pubkey;
         std::string address;
     };
 

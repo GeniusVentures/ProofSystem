@@ -10,7 +10,7 @@ namespace bitcoin {
     BitcoinKeyGenerator::BitcoinKeyGenerator() {
 
         privkey = BitcoinKeyGenerator::CreateKeys();
-        pubkey = std::make_unique<pubkey::public_key<bitcoin::policy_type>>(*privkey);
+        pubkey = std::make_shared<pubkey::public_key<bitcoin::policy_type>>(*privkey);
 
         /*
         // Extract address from public key
@@ -20,7 +20,7 @@ namespace bitcoin {
 
     }
 
-    std::unique_ptr<pubkey::private_key<bitcoin::policy_type>> BitcoinKeyGenerator::CreateKeys() {
-        return std::make_unique<pubkey::private_key<bitcoin::policy_type>>(BitcoinKeyGenerator::key_gen());
+    std::shared_ptr<pubkey::private_key<bitcoin::policy_type>> BitcoinKeyGenerator::CreateKeys() {
+        return std::make_shared<pubkey::private_key<bitcoin::policy_type>>(BitcoinKeyGenerator::key_gen());
     }
 }

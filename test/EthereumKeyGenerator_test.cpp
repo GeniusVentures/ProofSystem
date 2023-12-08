@@ -8,11 +8,11 @@ using namespace ethereum;
 
 TEST(EthereumKeyGeneratorTest, PrivateKeyGenerated) {
     // Arrange
-    EthereumKeyGenerator *key_generator = new EthereumKeyGenerator();
+    EthereumKeyGenerator key_generator;
 
     // Act
     const pubkey::private_key<ethereum::policy_type>& privkey =
-            key_generator->get_private_key();
+            key_generator.get_private_key();
 
     // Assert
     //EXPECT_TRUE(!privkey.empty());
