@@ -80,11 +80,11 @@ include_directories(
         "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/vdf/include"
         )
 
-#add_library(${PROJECT_NAME}
-#        STATIC
-#        "${CMAKE_CURRENT_LIST_DIR}../src/BitCoinKeyGenerator.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}../src/EthereumKeyGenerator.cpp"
-#)
+add_library(${PROJECT_NAME}
+        STATIC
+        "${CMAKE_CURRENT_LIST_DIR}/../src/BitCoinKeyGenerator.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../src/EthereumKeyGenerator.cpp"
+)
 
 if(BUILD_TESTS)
         add_executable(${PROJECT_NAME}_test
@@ -92,5 +92,6 @@ if(BUILD_TESTS)
                 "${CMAKE_CURRENT_LIST_DIR}/../test/BitcoinKeyGenerator_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/EthereumKeyGenerator_test.cpp"
         )
-        target_link_libraries(${PROJECT_NAME}_test PUBLIC GTest::gtest Boost::random)
+        target_link_libraries(${PROJECT_NAME}_test PUBLIC ${PROJECT_NAME} GTest::gtest Boost::random)
 endif()
+

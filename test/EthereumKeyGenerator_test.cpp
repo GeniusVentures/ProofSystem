@@ -4,13 +4,15 @@
 #include <gtest/gtest.h>
 #include "EthereumKeyGenerator.hpp"
 
+using namespace ethereum;
+
 TEST(EthereumKeyGeneratorTest, PrivateKeyGenerated) {
     // Arrange
-    EthereumKeyGenerator key_generator;
+    EthereumKeyGenerator *key_generator = new EthereumKeyGenerator();
 
     // Act
     const pubkey::private_key<ethereum::policy_type>& privkey =
-            key_generator.get_private_key();
+            key_generator->get_private_key();
 
     // Assert
     //EXPECT_TRUE(!privkey.empty());
@@ -18,11 +20,11 @@ TEST(EthereumKeyGeneratorTest, PrivateKeyGenerated) {
 
 TEST(EthereumKeyGeneratorTest, PublicKeyGenerated) {
     // Arrange
-    EthereumKeyGenerator key_generator;
+    EthereumKeyGenerator *key_generator = new EthereumKeyGenerator();
 
     // Act
     const pubkey::public_key<ethereum::policy_type>& pubkey =
-            key_generator.get_public_key();
+            key_generator->get_public_key();
 
     // Assert
     //EXPECT_TRUE(!pubkey.empty());

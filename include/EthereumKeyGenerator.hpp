@@ -9,36 +9,32 @@ using namespace nil::crypto3;
 using namespace nil::crypto3::algebra;
 using namespace nil::crypto3::hashes;
 
-class EthereumKeyGenerator {
-public:
-    // Constructor to generate keys on creation
-    EthereumKeyGenerator() :
-        privkey(key_gen()),
-        pubkey(static_cast<pubkey::public_key<ethereum::policy_type>>(privkey)) {
-/*
-        ethereum::hash_type::digest_type d = hash<ethereum::hash_type>(pubkey.pubkey_data().X.data());
+namespace ethereum {
 
-        // Extract address from public key
-        auto address_bytes = hashes::keccak_1600<256>(pubkey.pubkey_data().X.data());
-        address = util::to_string(address_bytes);
-        address = "0x" + address.substr(address.size() - 40);
-        */
-    }
+    class EthereumKeyGenerator {
+    public:
+        // Constructor to generate keys on creation
+        EthereumKeyGenerator();
 
-    // Getter for private key (be careful with security implications)
-    [[nodiscard]] const pubkey::private_key<ethereum::policy_type>& get_private_key() const { return privkey; }
+        // Getter for private key (be careful with security implications)
+        const pubkey::private_key<ethereum::policy_type> get_private_key() const { return *privkey; }
 
-    // Getter for public key
-    [[nodiscard]] const pubkey::public_key<ethereum::policy_type>& get_public_key() const { return pubkey; }
+        // Getter for public key
+        const pubkey::public_key<ethereum::policy_type> get_public_key() const { return *pubkey; }
 
-    // Getter for address
-    [[nodiscard]] const std::string& get_address() const { return address; }
+        // Getter for address
+        const std::string& get_address() const { return address; }
 
-private:
-    ethereum::generator_type key_gen;
-    pubkey::private_key<ethereum::policy_type> privkey;
-    pubkey::public_key<ethereum::policy_type> pubkey;
-    std::string address;
-};
+        // create the keys using static template functions
+        static std::unique_ptr<pubkey::private_key<ethereum::policy_type>> CreateKeys();
+
+    private:
+        static ethereum::generator_type key_gen;
+        std::unique_ptr<pubkey::private_key<ethereum::policy_type>> privkey;
+        std::unique_ptr<pubkey::public_key<ethereum::policy_type>> pubkey;
+        std::string address;
+    };
+
+} // namespace ethereum
 
 #endif // ETHEREUM_KEY_GENERATOR_HPP
