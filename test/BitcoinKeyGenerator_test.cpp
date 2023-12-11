@@ -16,7 +16,7 @@ TEST(BitcoinKeyGeneratorTest, PrivateKeyGenerated) {
             key_generator.get_private_key();
 
     // Assert
-    //EXPECT_TRUE(!privkey.empty());
+    EXPECT_TRUE(!privkey.pubkey_data().is_zero());
 }
 
 TEST(BitcoinKeyGeneratorTest, PublicKeyGenerated) {

@@ -17,6 +17,7 @@ namespace bitcoin {
 
     using CurveType = algebra::curves::secp256k1;
 
+    using base_field_type = typename CurveType::base_field_type;
     using scalar_field_type = typename CurveType::scalar_field_type;
     using scalar_field_value_type = typename scalar_field_type::value_type;
 
