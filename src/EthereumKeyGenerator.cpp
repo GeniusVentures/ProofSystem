@@ -3,13 +3,15 @@
 //
 #include "EthereumKeyGenerator.hpp"
 
-namespace ethereum {
+namespace ethereum
+{
 
     ethereum::generator_type EthereumKeyGenerator::key_gen;
 
-    EthereumKeyGenerator::EthereumKeyGenerator() {
+    EthereumKeyGenerator::EthereumKeyGenerator()
+    {
         privkey = EthereumKeyGenerator::CreateKeys();
-        pubkey = std::make_shared<pubkey::public_key<ethereum::policy_type>>(*privkey);
+        pubkey  = std::make_shared<pubkey::public_key<ethereum::policy_type>>( *privkey );
 
         /*
             ethereum::hash_type::digest_type d = hash<ethereum::hash_type>(pubkey.pubkey_data().X.data());
@@ -19,11 +21,10 @@ namespace ethereum {
             address = util::to_string(address_bytes);
             address = "0x" + address.substr(address.size() - 40);
             */
-
-
     }
 
-    std::shared_ptr<pubkey::private_key<ethereum::policy_type>> EthereumKeyGenerator::CreateKeys() {
-        return std::make_shared<pubkey::private_key<ethereum::policy_type>>(EthereumKeyGenerator::key_gen());
+    std::shared_ptr<pubkey::private_key<ethereum::policy_type>> EthereumKeyGenerator::CreateKeys()
+    {
+        return std::make_shared<pubkey::private_key<ethereum::policy_type>>( EthereumKeyGenerator::key_gen() );
     }
 }
