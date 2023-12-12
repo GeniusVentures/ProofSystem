@@ -50,28 +50,18 @@ namespace bitcoin
 
         std::string x_compressed = ( ( pub_key_vect.front() % 2 ) ? "03" : "02" ) + pub_key_ss.str();
 
-        //std::cout << "string " << x_compressed << std::endl;
-
         std::array<std::uint8_t, 32> sha256_hash           = hash<hashes::sha2<256>>( x_compressed.begin(), x_compressed.end() );
-        std::array<std::uint8_t, 20> ripemd160_sha256_hash = hash<hashes::ripemd160>( sha256_hash.begin(), sha256_hash.end() );
+        std::string                  ripemd160_sha256_hash = hash<hashes::ripemd160>( sha256_hash.begin(), sha256_hash.end() );
 
-        /**std::cout << "SHA 256 hashed X " << full_hash.size() << std::endl;
-        for (std::size_t i = 0; i < full_hash.size(); ++i)
-        {
-            std::cout << std::hex << std::setfill('0') << std::setw(2) <<  static_cast<int>(full_hash[i]);
-        }
-        std::cout << std::endl;
-        **/
-        std::stringstream addr_ss;
+        std::string key_with_network_byte = "00" + ripemd160_sha256_hash.substr( 0, 40 );
 
-        for ( auto it = ripemd160_sha256_hash.begin(); it != ripemd160_sha256_hash.end(); ++it )
-        {
-            addr_ss << std::hex << std::setw( 2 ) << std::setfill( '0' ) << static_cast<int>( *it );
-        }
+        std::array<std::uint8_t, 32> checksum = hash<hashes::sha2<256>>( key_with_network_byte.begin(), key_with_network_byte.end() );
 
-        std::string key_with_network_byte = "00" + addr_ss.str();
+        std::string checksum_str = hash<hashes::sha2<256>>( checksum.begin(), checksum.end() );
 
-        //TODO - Checksum (two SHA256, get the first 4 bytes and append to key_with_network_byte)
+        std::cout << "In string " << checksum_str << std::endl;
+
+        //TODO - Checksum (get the first 4 bytes and append to key_with_network_byte)
         //TODO - Base58
         return key_with_network_byte;
     }
