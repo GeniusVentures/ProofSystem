@@ -6,6 +6,9 @@
 #include <nil/crypto3/hash/adaptor/hashed.hpp>
 #include <nil/crypto3/hash/ripemd.hpp>
 #include <nil/crypto3/algebra/marshalling.hpp>
+#include <nil/crypto3/codec/algorithm/encode.hpp>
+#include <nil/crypto3/codec/adaptor/coded.hpp>
+#include <nil/crypto3/codec/base.hpp>
 #include <vector>
 #include <sstream>
 
@@ -20,10 +23,10 @@ namespace bitcoin
         privkey = BitcoinKeyGenerator::CreateKeys();
         pubkey  = std::make_shared<pubkey::public_key<bitcoin::policy_type>>( *privkey );
 
-        /**
+        
         // Extract address from public key
-        //address = DeriveAddress();
-        */
+        address = DeriveAddress();
+        
     }
 
     std::shared_ptr<pubkey::private_key<bitcoin::policy_type>> BitcoinKeyGenerator::CreateKeys()
@@ -59,11 +62,15 @@ namespace bitcoin
 
         std::string checksum_str = hash<hashes::sha2<256>>( checksum.begin(), checksum.end() );
 
-        std::cout << "In string " << checksum_str << std::endl;
+        key_with_network_byte.append( checksum_str.substr( 0, 8 ) );
 
-        //TODO - Checksum (get the first 4 bytes and append to key_with_network_byte)
-        //TODO - Base58
-        return key_with_network_byte;
+        std::vector<std::uint8_t> base58_input;
+        for ( std::size_t i = 0; i < key_with_network_byte.length(); i += 2 )
+        {
+            base58_input.push_back( std::stoi( key_with_network_byte.substr( i, 2 ), nullptr, 16 ) );
+        }
+
+        return encode<nil::crypto3::codec::base58>( base58_input );;
     }
     std::string BitcoinKeyGenerator::DeriveAddress( void )
     {

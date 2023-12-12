@@ -39,7 +39,7 @@ TEST(BitcoinKeyGeneratorTest, BitCoinAddressTest)
     };
     std::reverse(x_ser.begin(),x_ser.end());
     std::string address = BitcoinKeyGenerator::DeriveAddress(x_ser);
-    EXPECT_EQ(address,"007b5bf17a0d27acf5cc34ae260e482c7d3c04e249");
+    EXPECT_EQ(address,"1CFGFvgBKaG6DtZBryYZxg5oz3mJcgSWfC");
 }
 
 // Address generation functionality is commented out in the provided code
