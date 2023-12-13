@@ -13,11 +13,13 @@
 
 using namespace nil::crypto3;
 
-namespace ethereum {
+namespace ethereum
+{
 
     using CurveType = algebra::curves::secp256k1;
 
-    using scalar_field_type = typename CurveType::scalar_field_type;
+    using base_field_type         = typename CurveType::base_field_type;
+    using scalar_field_type       = typename CurveType::scalar_field_type;
     using scalar_field_value_type = typename scalar_field_type::value_type;
 
     using hash_type = hashes::keccak_1600<256>;
@@ -32,8 +34,6 @@ namespace ethereum {
 
 } // namespace ethereum
 
-
 #endif
 
 // ETHEREUM_KEY_PAIR_PARAMS_HPP
-
