@@ -66,11 +66,11 @@ namespace bitcoin
         std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>  pubkey;
         std::string                                                address;
 
-        static constexpr std::string  MAIN_NETWORK_ID         = "00";
-        static constexpr std::string  PARITY_EVEN_ID          = "02";
-        static constexpr std::string  PARITY_ODD_ID           = "03";
+        static constexpr std::uint8_t MAIN_NETWORK_ID         = 0;
+        static constexpr std::uint8_t PARITY_EVEN_ID          = 2;
+        static constexpr std::uint8_t PARITY_ODD_ID           = 3;
         static constexpr std::uint8_t RIPEMD_160_SIZE_NIBBLES = 40;
-        static constexpr std::uint8_t CHECKSUM_SIZE_NIBBLES   = 8;
+        static constexpr std::uint8_t CHECKSUM_SIZE_BYTES     = 4;
         static constexpr std::uint8_t BASE_16                 = 16;
 
         /**

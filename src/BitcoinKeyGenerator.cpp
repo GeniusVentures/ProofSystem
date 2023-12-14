@@ -38,48 +38,29 @@ namespace bitcoin
 
         nil::marshalling::bincode::field<bitcoin::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().X, x_ser.begin(), x_ser.end() );
-        if (!util::isLittleEndian())
+        if ( !util::isLittleEndian() )
         {
             std::reverse( x_ser.begin(), x_ser.end() );
         }
+
         return DeriveAddress( x_ser );
     }
     std::string BitcoinKeyGenerator::DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect )
     {
-        std::stringstream pub_key_ss;
-        for ( auto it = pub_key_vect.rbegin(); it != pub_key_vect.rend(); ++it )
-        {
-            pub_key_ss << std::hex << std::setw( 2 ) << std::setfill( '0' ) << static_cast<int>( *it );
-        }       
+        std::vector<std::uint8_t> new_vect( pub_key_vect );
+        new_vect.push_back( ( pub_key_vect.front() % 2 ) ? PARITY_ODD_ID : PARITY_EVEN_ID );
 
-        std::string x_compressed = ( ( pub_key_vect.front() % 2 ) ? PARITY_ODD_ID : PARITY_EVEN_ID ) + pub_key_ss.str();
-        
-        std::array<std::uint8_t, 32> sha256_hash           = hash<hashes::sha2<256>>( x_compressed.begin(), x_compressed.end() );
-        if (!util::isLittleEndian())
-        {
-            std::reverse( sha256_hash.begin(), sha256_hash.end() );
-        }
-        std::string                  ripemd160_sha256_hash = hash<hashes::ripemd160>( sha256_hash.begin(), sha256_hash.end() );
+        std::array<std::uint8_t, 32> sha256_hash           = hash<hashes::sha2<256>>( new_vect.rbegin(), new_vect.rend() );
+        std::vector<std::uint8_t>    ripemd160_sha256_hash = hash<hashes::ripemd160>( sha256_hash.begin(), sha256_hash.end() );
 
-        std::string key_with_network_byte = MAIN_NETWORK_ID + ripemd160_sha256_hash.substr( 0, RIPEMD_160_SIZE_NIBBLES );
+        ripemd160_sha256_hash.insert( ripemd160_sha256_hash.begin(), MAIN_NETWORK_ID );
 
-        std::array<std::uint8_t, 32> checksum = hash<hashes::sha2<256>>( key_with_network_byte.begin(), key_with_network_byte.end() );
-        if (!util::isLittleEndian())
-        {
-            std::reverse( checksum.begin(), checksum.end() );
-        }
+        std::array<std::uint8_t, 32> checksum     = hash<hashes::sha2<256>>( ripemd160_sha256_hash.begin(), ripemd160_sha256_hash.end() );
+        std::array<std::uint8_t, 32> checksum_str = hash<hashes::sha2<256>>( checksum.begin(), checksum.end() );
 
-        std::string checksum_str = hash<hashes::sha2<256>>( checksum.begin(), checksum.end() );
+        ripemd160_sha256_hash.insert( ripemd160_sha256_hash.end(), checksum_str.begin(), checksum_str.begin() + CHECKSUM_SIZE_BYTES );
 
-        key_with_network_byte.append( checksum_str.substr( 0, CHECKSUM_SIZE_NIBBLES ) );
-
-        std::vector<std::uint8_t> base58_input;
-        for ( std::size_t i = 0; i < key_with_network_byte.length(); i += 2 )
-        {
-            base58_input.push_back( std::stoi( key_with_network_byte.substr( i, 2 ), nullptr, BASE_16 ) );
-        }
-
-        return encode<nil::crypto3::codec::base58>( base58_input );
+        return encode<nil::crypto3::codec::base58>( ripemd160_sha256_hash );
     }
 
     std::string BitcoinKeyGenerator::DeriveAddress( void )
