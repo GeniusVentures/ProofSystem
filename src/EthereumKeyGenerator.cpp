@@ -12,6 +12,7 @@
 #include <nil/crypto3/codec/base.hpp>
 #include <vector>
 #include <sstream>
+#include <util.hpp>
 
 namespace ethereum
 {
@@ -24,15 +25,7 @@ namespace ethereum
         pubkey  = std::make_shared<pubkey::public_key<ethereum::policy_type>>( *privkey );
 
         // Extract address from public key
-        //address = DeriveAddress();
-        /*
-            ethereum::hash_type::digest_type d = hash<ethereum::hash_type>(pubkey.pubkey_data().X.data());
-
-            // Extract address from public key
-            auto address_bytes = hashes::keccak_1600<256>(pubkey.pubkey_data().X.data());
-            address = util::to_string(address_bytes);
-            address = "0x" + address.substr(address.size() - 40);
-            */
+        address = DeriveAddress();
     }
 
     std::shared_ptr<pubkey::private_key<ethereum::policy_type>> EthereumKeyGenerator::CreateKeys()
@@ -45,8 +38,16 @@ namespace ethereum
 
         nil::marshalling::bincode::field<ethereum::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().Y, x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2 );
+        if ( !util::isLittleEndian() )
+        {
+            std::reverse( x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2 );
+        }
         nil::marshalling::bincode::field<ethereum::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().X, x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );
+        if ( !util::isLittleEndian() )
+        {
+            std::reverse( x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );
+        }
 
         return DeriveAddress( x_y_ser );
     }
@@ -58,20 +59,22 @@ namespace ethereum
         std::string address_w_checksum;
         for ( std::size_t i = 0; i < 40; ++i )
         {
-            if ( std::isalpha( keccak_hash[i + 24] ) )
+            auto *p_char = &keccak_hash[i + 24];
+            if ( std::isalpha( *p_char ) )
             {
-                if ( static_cast<int>( checksum[i] ) > 7 )
+                if ( util::HexASCII2Num( &checksum[i], 1 ) > 7 )
                 {
-                    keccak_hash[i + 24] = std::toupper( keccak_hash[i + 24] );
+                    *p_char = std::toupper( *p_char );
                 }
                 else
                 {
-                    keccak_hash[i + 24] = std::tolower( keccak_hash[i + 24] );
+                    *p_char = std::tolower( *p_char );
                 }
             }
         }
 
-        return keccak_hash.substr( 24, 40 );
+        keccak_hash.replace( 22, 2, "0x" );
+        return keccak_hash.substr( 22, 42 );
     }
     std::string EthereumKeyGenerator::DeriveAddress( void )
     {
