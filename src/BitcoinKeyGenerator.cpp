@@ -38,7 +38,10 @@ namespace bitcoin
 
         nil::marshalling::bincode::field<bitcoin::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().X, x_ser.begin(), x_ser.end() );
-
+        if (!util::isLittleEndian())
+        {
+            std::reverse( x_ser.begin(), x_ser.end() );
+        }
         return DeriveAddress( x_ser );
     }
     std::string BitcoinKeyGenerator::DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect )
@@ -47,16 +50,24 @@ namespace bitcoin
         for ( auto it = pub_key_vect.rbegin(); it != pub_key_vect.rend(); ++it )
         {
             pub_key_ss << std::hex << std::setw( 2 ) << std::setfill( '0' ) << static_cast<int>( *it );
-        }
+        }       
 
         std::string x_compressed = ( ( pub_key_vect.front() % 2 ) ? PARITY_ODD_ID : PARITY_EVEN_ID ) + pub_key_ss.str();
-
+        
         std::array<std::uint8_t, 32> sha256_hash           = hash<hashes::sha2<256>>( x_compressed.begin(), x_compressed.end() );
+        if (!util::isLittleEndian())
+        {
+            std::reverse( sha256_hash.begin(), sha256_hash.end() );
+        }
         std::string                  ripemd160_sha256_hash = hash<hashes::ripemd160>( sha256_hash.begin(), sha256_hash.end() );
 
         std::string key_with_network_byte = MAIN_NETWORK_ID + ripemd160_sha256_hash.substr( 0, RIPEMD_160_SIZE_NIBBLES );
 
         std::array<std::uint8_t, 32> checksum = hash<hashes::sha2<256>>( key_with_network_byte.begin(), key_with_network_byte.end() );
+        if (!util::isLittleEndian())
+        {
+            std::reverse( checksum.begin(), checksum.end() );
+        }
 
         std::string checksum_str = hash<hashes::sha2<256>>( checksum.begin(), checksum.end() );
 
