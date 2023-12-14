@@ -37,7 +37,13 @@ TEST( EthereumKeyGeneratorTest, EthereumAddressTest )
                                         0x96, 0xcd, 0x10, 0x41, 0x75, 0x06, 0xe3, 0x14, 0x30, 0x59, 0xa3, 0x4d, 0xa0, 0x7a, 0xf4, 0x5d };
     std::reverse( x_y_ser.begin(), x_y_ser.end() );
     std::string address = EthereumKeyGenerator::DeriveAddress( x_y_ser );
-    EXPECT_EQ( address, "782e8a6b38f3c21519caa228eb01f251ba36f6b96105f9eaebfa86092756514b" );
+    EXPECT_EQ( address, "0xEb01f251BA36f6b96105f9eAEBfA86092756514B" );
+}
+TEST( EthereumKeyGeneratorTest, EthereumKeyImportTest )
+{
+    std::string private_key = "4256949314A06D963EBB6B40515E564679C931A6DCB6A3B95D90BB532C6798A5";
+    //EthereumKeyGenerator key_generator(private_key);
+    //EXPECT_EQ( key_generator.get_address(), "0xEb01f251BA36f6b96105f9eAEBfA86092756514B" );
 }
 
 // Address generation functionality is commented out in the provided code

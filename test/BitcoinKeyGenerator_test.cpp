@@ -38,6 +38,12 @@ TEST( BitcoinKeyGeneratorTest, BitCoinAddressTest )
     std::string address = BitcoinKeyGenerator::DeriveAddress( x_ser );
     EXPECT_EQ( address, "1CFGFvgBKaG6DtZBryYZxg5oz3mJcgSWfC" );
 }
+TEST( BitcoinKeyGeneratorTest, BitCoinKeyImportTest )
+{
+    std::string priv_key_data = "786cdc1a390b9f61f30bbad36141e3171c9fb091cfa783062cf767fa8c2863b2";
+    //BitcoinKeyGenerator key_generator(priv_key_data);
+    //EXPECT_EQ( address, "1CFGFvgBKaG6DtZBryYZxg5oz3mJcgSWfC" );
+}
 
 // Address generation functionality is commented out in the provided code
 // Uncomment the following test if the functionality is implemented
