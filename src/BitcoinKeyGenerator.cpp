@@ -27,6 +27,26 @@ namespace bitcoin
         address = DeriveAddress();
     }
 
+    BitcoinKeyGenerator::BitcoinKeyGenerator( const std::string &private_key )
+    {
+        std::vector<std::uint8_t> priv_key_vector;
+        char                     *p = const_cast<char *>( private_key.data() );
+        priv_key_vector             = util::HexASCII2NumStr( p, private_key.size(), 2 );
+
+        auto my_value = nil::marshalling::bincode::field<bitcoin::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
+            priv_key_vector.begin(), priv_key_vector.end() );
+
+        //std::cout <<" private key imported " << std::hex << my_value.second << std::endl;
+
+        //bitcoin::scalar_field_value_type a(0x60cf347dbc59d31c1358c8e5cf5e45b822ab85b79cb32a9f3d98184779a9efc2_cppui256);
+
+        privkey = std::make_shared<pubkey::private_key<bitcoin::policy_type>>( my_value.second );
+        pubkey  = std::make_shared<pubkey::public_key<bitcoin::policy_type>>( *privkey );
+
+        // Extract address from public key
+        address = DeriveAddress();
+    }
+
     std::shared_ptr<pubkey::private_key<bitcoin::policy_type>> BitcoinKeyGenerator::CreateKeys()
     {
         return std::make_shared<pubkey::private_key<bitcoin::policy_type>>( BitcoinKeyGenerator::key_gen() );
@@ -38,29 +58,27 @@ namespace bitcoin
 
         nil::marshalling::bincode::field<bitcoin::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().X, x_ser.begin(), x_ser.end() );
-        if ( !util::isLittleEndian() )
-        {
-            std::reverse( x_ser.begin(), x_ser.end() );
-        }
+
+        util::AdjustEndianess( x_ser );
 
         return DeriveAddress( x_ser );
     }
     std::string BitcoinKeyGenerator::DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect )
     {
-        std::vector<std::uint8_t> new_vect( pub_key_vect );
-        new_vect.push_back( ( pub_key_vect.front() % 2 ) ? PARITY_ODD_ID : PARITY_EVEN_ID );
+        std::vector<std::uint8_t> work_vect( pub_key_vect );
+        work_vect.push_back( ( pub_key_vect.front() % 2 ) ? PARITY_ODD_ID : PARITY_EVEN_ID );
 
-        std::array<std::uint8_t, 32> sha256_hash           = hash<hashes::sha2<256>>( new_vect.rbegin(), new_vect.rend() );
-        std::vector<std::uint8_t>    ripemd160_sha256_hash = hash<hashes::ripemd160>( sha256_hash.begin(), sha256_hash.end() );
+        work_vect = static_cast<std::vector<std::uint8_t>>( hash<hashes::sha2<256>>( work_vect.rbegin(), work_vect.rend() ) );
+        work_vect = static_cast<std::vector<std::uint8_t>>( hash<hashes::ripemd160>( work_vect ) );
 
-        ripemd160_sha256_hash.insert( ripemd160_sha256_hash.begin(), MAIN_NETWORK_ID );
+        work_vect.insert( work_vect.begin(), MAIN_NETWORK_ID );
 
-        std::array<std::uint8_t, 32> checksum     = hash<hashes::sha2<256>>( ripemd160_sha256_hash.begin(), ripemd160_sha256_hash.end() );
-        std::array<std::uint8_t, 32> checksum_str = hash<hashes::sha2<256>>( checksum.begin(), checksum.end() );
+        std::array<std::uint8_t, 32> checksum = hash<hashes::sha2<256>>( work_vect );
+        checksum                              = hash<hashes::sha2<256>>( checksum );
 
-        ripemd160_sha256_hash.insert( ripemd160_sha256_hash.end(), checksum_str.begin(), checksum_str.begin() + CHECKSUM_SIZE_BYTES );
+        work_vect.insert( work_vect.end(), checksum.begin(), checksum.begin() + CHECKSUM_SIZE_BYTES );
 
-        return encode<nil::crypto3::codec::base58>( ripemd160_sha256_hash );
+        return encode<nil::crypto3::codec::base58>( work_vect );
     }
 
     std::string BitcoinKeyGenerator::DeriveAddress( void )

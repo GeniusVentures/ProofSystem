@@ -23,6 +23,12 @@ namespace bitcoin
         BitcoinKeyGenerator();
 
         /**
+         * @brief       Import a private key and construct a new Bitcoin Key Generator
+         * @param[in]   private_key: Private key in HRI string form
+         */
+        BitcoinKeyGenerator(const std::string &private_key);
+
+        /**
          * @brief       Returns the private key reference
          * @return      Reference to the private key
          */

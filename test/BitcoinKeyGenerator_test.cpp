@@ -4,6 +4,11 @@
 
 #include <gtest/gtest.h>
 #include "BitcoinKeyGenerator.hpp"
+#include <nil/crypto3/algebra/marshalling.hpp>
+#include <nil/crypto3/codec/algorithm/encode.hpp>
+#include <nil/crypto3/codec/algorithm/decode.hpp>
+#include <nil/crypto3/codec/adaptor/coded.hpp>
+#include <nil/crypto3/codec/base.hpp>
 
 using namespace bitcoin;
 
@@ -22,27 +27,38 @@ TEST( BitcoinKeyGeneratorTest, PrivateKeyGenerated )
 TEST( BitcoinKeyGeneratorTest, PublicKeyGenerated )
 {
     // Arrange
-    BitcoinKeyGenerator key_generator;
+    // BitcoinKeyGenerator key_generator;
 
     // Act
-    const pubkey::public_key<bitcoin::policy_type> &pubkey = key_generator.get_public_key();
+    //const pubkey::public_key<bitcoin::policy_type> &pubkey = key_generator.get_public_key();
 
     // Assert
     //EXPECT_TRUE(!pubkey.empty());
 }
 TEST( BitcoinKeyGeneratorTest, BitCoinAddressTest )
 {
-    std::vector<std::uint8_t> x_ser = { 0xe8, 0xe2, 0x53, 0xd0, 0x3d, 0x72, 0x9d, 0x3a, 0x0d, 0xfc, 0x29, 0x35, 0xee, 0x63, 0xdf, 0x3d,
-                                        0xfe, 0xc0, 0xcd, 0x9b, 0x16, 0x0b, 0x55, 0x5a, 0x33, 0x18, 0x9d, 0xae, 0x2f, 0x56, 0xb6, 0x5d };
+    std::vector<std::uint8_t> x_ser = { 0x1e, 0x7b, 0xcc, 0x70, 0xc7, 0x27, 0x70, 0xdb, 0xb7, 0x2f, 0xea, 0x02, 0x2e, 0x8a, 0x6d, 0x07,
+                                        0xf8, 0x14, 0xd2, 0xeb, 0xe4, 0xde, 0x9a, 0xe3, 0xf7, 0xaf, 0x75, 0xbf, 0x70, 0x69, 0x02, 0xa7 };
+
     std::reverse( x_ser.begin(), x_ser.end() );
     std::string address = BitcoinKeyGenerator::DeriveAddress( x_ser );
-    EXPECT_EQ( address, "1CFGFvgBKaG6DtZBryYZxg5oz3mJcgSWfC" );
+    EXPECT_EQ( address, "17JsmEygbbEUEpvt4PFtYaTeSqfb9ki1F1" );
 }
 TEST( BitcoinKeyGeneratorTest, BitCoinKeyImportTest )
 {
-    std::string priv_key_data = "786cdc1a390b9f61f30bbad36141e3171c9fb091cfa783062cf767fa8c2863b2";
-    //BitcoinKeyGenerator key_generator(priv_key_data);
-    //EXPECT_EQ( address, "1CFGFvgBKaG6DtZBryYZxg5oz3mJcgSWfC" );
+    std::string               priv_key_data        = "60cf347dbc59d31c1358c8e5cf5e45b822ab85b79cb32a9f3d98184779a9efc2";
+
+    std::vector<std::uint8_t> x_expected_pub_key = { 0x1e, 0x7b, 0xcc, 0x70, 0xc7, 0x27, 0x70, 0xdb, 0xb7, 0x2f, 0xea, 0x02, 0x2e, 0x8a, 0x6d, 0x07,
+                                                     0xf8, 0x14, 0xd2, 0xeb, 0xe4, 0xde, 0x9a, 0xe3, 0xf7, 0xaf, 0x75, 0xbf, 0x70, 0x69, 0x02, 0xa7 };
+
+    BitcoinKeyGenerator key_generator( priv_key_data );
+
+    std::vector<std::uint8_t> pub_key_export_data( bitcoin::CurveType::g1_type<>::value_bits / 8 );
+    nil::marshalling::bincode::field<bitcoin::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
+        key_generator.get_public_key().pubkey_data().X, pub_key_export_data.begin(), pub_key_export_data.end() );
+
+    EXPECT_EQ( pub_key_export_data, x_expected_pub_key );
+    EXPECT_EQ( key_generator.get_address(), "17JsmEygbbEUEpvt4PFtYaTeSqfb9ki1F1" );
 }
 
 // Address generation functionality is commented out in the provided code
