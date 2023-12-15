@@ -63,6 +63,7 @@ namespace bitcoin
 
         return DeriveAddress( x_ser );
     }
+
     std::string BitcoinKeyGenerator::DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect )
     {
         std::vector<std::uint8_t> work_vect( pub_key_vect );

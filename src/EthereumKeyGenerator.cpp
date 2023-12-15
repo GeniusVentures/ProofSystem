@@ -32,6 +32,7 @@ namespace ethereum
     {
         return std::make_shared<pubkey::private_key<ethereum::policy_type>>( EthereumKeyGenerator::key_gen() );
     }
+
     std::string EthereumKeyGenerator::DeriveAddress( const pubkey::public_key<ethereum::policy_type> &pub_key )
     {
         std::vector<std::uint8_t> x_y_ser( ( ethereum::CurveType::g1_type<>::value_bits / 8 ) * 2 );
@@ -51,6 +52,7 @@ namespace ethereum
 
         return DeriveAddress( x_y_ser );
     }
+
     std::string EthereumKeyGenerator::DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect )
     {
         std::string keccak_hash = hash<hashes::keccak_1600<256>>( pub_key_vect.rbegin(), pub_key_vect.rend() );
@@ -76,6 +78,7 @@ namespace ethereum
         keccak_hash.replace( 22, 2, "0x" );
         return keccak_hash.substr( 22, 42 );
     }
+
     std::string EthereumKeyGenerator::DeriveAddress( void )
     {
         return DeriveAddress( *this->pubkey );
