@@ -17,7 +17,7 @@ set(GTest_DIR "${_THIRDPARTY_BUILD_DIR}/GTest/lib/cmake/GTest")
 set(GTest_INCLUDE_DIR "${_THIRDPARTY_BUILD_DIR}/GTest/include")
 find_package(GTest CONFIG REQUIRED)
 include_directories(${GTest_INCLUDE_DIR})
-
+add_compile_definitions(CRYPTO3_CODEC_BASE58)
 # Boost should be loaded before libp2p v0.1.2
 # --------------------------------------------------------
 # Set config of Boost project
@@ -41,6 +41,7 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_NO_SYSTEM_PATHS ON)
 option(Boost_USE_STATIC_RUNTIME "Use static runtimes" ON)
+
 
 # header only libraries must not be added here
 find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex system thread log log_setup program_options)
@@ -82,7 +83,7 @@ include_directories(
 
 add_library(${PROJECT_NAME}
         STATIC
-        "${CMAKE_CURRENT_LIST_DIR}/../src/BitCoinKeyGenerator.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../src/BitcoinKeyGenerator.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/../src/EthereumKeyGenerator.cpp"
 )
 
