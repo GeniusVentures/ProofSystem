@@ -28,6 +28,21 @@ namespace ethereum
         address = DeriveAddress();
     }
 
+    EthereumKeyGenerator::EthereumKeyGenerator( const std::string &private_key )
+    {
+        std::vector<std::uint8_t> priv_key_vector;
+
+        priv_key_vector = util::HexASCII2NumStr( const_cast<char *>( private_key.data() ), private_key.size(), 2 );
+
+        auto my_value = nil::marshalling::bincode::field<ethereum::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
+            priv_key_vector.begin(), priv_key_vector.end() );
+
+        privkey = std::make_shared<pubkey::private_key<ethereum::policy_type>>( my_value.second );
+        pubkey  = std::make_shared<pubkey::public_key<ethereum::policy_type>>( *privkey );
+
+        address = DeriveAddress();
+    }
+
     std::shared_ptr<pubkey::private_key<ethereum::policy_type>> EthereumKeyGenerator::CreateKeys()
     {
         return std::make_shared<pubkey::private_key<ethereum::policy_type>>( EthereumKeyGenerator::key_gen() );
@@ -38,13 +53,13 @@ namespace ethereum
         std::vector<std::uint8_t> x_y_ser( ( ethereum::CurveType::g1_type<>::value_bits / 8 ) * 2 );
 
         nil::marshalling::bincode::field<ethereum::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
-            pub_key.pubkey_data().Y, x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2 );
+            pub_key.pubkey_data().to_affine().Y.data, x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2 );
         if ( !util::isLittleEndian() )
         {
             std::reverse( x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2 );
         }
         nil::marshalling::bincode::field<ethereum::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
-            pub_key.pubkey_data().X, x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );
+            pub_key.pubkey_data().to_affine().X.data, x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );
         if ( !util::isLittleEndian() )
         {
             std::reverse( x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );

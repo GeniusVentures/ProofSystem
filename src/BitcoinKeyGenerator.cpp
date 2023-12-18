@@ -10,6 +10,7 @@
 #include <nil/crypto3/codec/algorithm/decode.hpp>
 #include <nil/crypto3/codec/adaptor/coded.hpp>
 #include <nil/crypto3/codec/base.hpp>
+#include <nil/crypto3/multiprecision/cpp_int.hpp>
 #include <vector>
 #include <sstream>
 
@@ -23,27 +24,21 @@ namespace bitcoin
         privkey = BitcoinKeyGenerator::CreateKeys();
         pubkey  = std::make_shared<pubkey::public_key<bitcoin::policy_type>>( *privkey );
 
-        // Extract address from public key
         address = DeriveAddress();
     }
 
     BitcoinKeyGenerator::BitcoinKeyGenerator( const std::string &private_key )
     {
         std::vector<std::uint8_t> priv_key_vector;
-        char                     *p = const_cast<char *>( private_key.data() );
-        priv_key_vector             = util::HexASCII2NumStr( p, private_key.size(), 2 );
+
+        priv_key_vector = util::HexASCII2NumStr( const_cast<char *>( private_key.data() ), private_key.size(), 2 );
 
         auto my_value = nil::marshalling::bincode::field<bitcoin::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
             priv_key_vector.begin(), priv_key_vector.end() );
 
-        //std::cout <<" private key imported " << std::hex << my_value.second << std::endl;
-
-        //bitcoin::scalar_field_value_type a(0x60cf347dbc59d31c1358c8e5cf5e45b822ab85b79cb32a9f3d98184779a9efc2_cppui256);
-
         privkey = std::make_shared<pubkey::private_key<bitcoin::policy_type>>( my_value.second );
         pubkey  = std::make_shared<pubkey::public_key<bitcoin::policy_type>>( *privkey );
 
-        // Extract address from public key
         address = DeriveAddress();
     }
 
@@ -55,9 +50,10 @@ namespace bitcoin
     std::string BitcoinKeyGenerator::DeriveAddress( const pubkey::public_key<bitcoin::policy_type> &pub_key )
     {
         std::vector<std::uint8_t> x_ser( bitcoin::CurveType::g1_type<>::value_bits / 8 );
+        //nil::crypto3::multiprecision::cpp_int my_new_var = static_cast<nil::crypto3::multiprecision::cpp_int>(pub_key.pubkey_data().to_affine().X.data);
 
         nil::marshalling::bincode::field<bitcoin::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
-            pub_key.pubkey_data().X, x_ser.begin(), x_ser.end() );
+            pub_key.pubkey_data().to_affine().X.data, x_ser.begin(), x_ser.end() );
 
         util::AdjustEndianess( x_ser );
 

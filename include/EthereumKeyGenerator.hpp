@@ -17,6 +17,7 @@ namespace ethereum
     public:
         // Constructor to generate keys on creation
         EthereumKeyGenerator();
+        EthereumKeyGenerator(const std::string &private_key);
 
         // Getter for private key (be careful with security implications)
         const pubkey::private_key<ethereum::policy_type> get_private_key() const
