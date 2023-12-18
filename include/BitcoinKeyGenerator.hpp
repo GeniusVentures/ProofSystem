@@ -2,6 +2,7 @@
 #define BITCOIN_KEY_GENERATOR_HPP
 
 #include "BitcoinKeyPairParams.hpp"
+#include "ext_private_key.hpp"
 #include "util.hpp"
 
 using namespace nil::crypto3;
@@ -32,7 +33,7 @@ namespace bitcoin
          * @brief       Returns the private key reference
          * @return      Reference to the private key
          */
-        const pubkey::private_key<bitcoin::policy_type> &get_private_key() const
+        const pubkey::ext_private_key<bitcoin::policy_type> &get_private_key() const
         {
             return *privkey;
         }
@@ -60,7 +61,7 @@ namespace bitcoin
         static std::string DeriveAddress( const pubkey::public_key<bitcoin::policy_type> &pub_key );
         /**
          * @brief       Derive the bitcoin address from de X coordinate of the public key
-         * @param[in]   pub_key_vect: The vector representation of the X coordinate of public key 
+         * @param[in]   pub_key_vect: The vector representation of the X coordinate of public key
          * @return      Bitcoin base58 address
          * @warning     The LSB is the 0 index and the MSB is the 31th.
          */
@@ -68,7 +69,7 @@ namespace bitcoin
 
     private:
         static bitcoin::generator_type                             key_gen;
-        std::shared_ptr<pubkey::private_key<bitcoin::policy_type>> privkey;
+        std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> privkey;
         std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>  pubkey;
         std::string                                                address;
 
@@ -81,9 +82,9 @@ namespace bitcoin
 
         /**
          * @brief       Create the ECDSA key pair
-         * @return      Private key pointer 
+         * @return      Private key pointer
          */
-        static std::shared_ptr<pubkey::private_key<bitcoin::policy_type>> CreateKeys();
+        static std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> CreateKeys();
         /**
          * @brief       Derive the bitcoin address from own key
          * @return      the Bitcoin base58 address
