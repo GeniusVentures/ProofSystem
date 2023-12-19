@@ -20,14 +20,12 @@ namespace bitcoin
         /**
          * @brief       Construct a new Bitcoin Key Generator
          */
-        BitcoinKeyGenerator();
-
+        BitcoinKeyGenerator(); 
         /**
          * @brief       Import a private key and construct a new Bitcoin Key Generator
-         * @param[in]   private_key: Private key in HRI string form
+         * @param[in]   private_key: Private key in string form
          */
-        BitcoinKeyGenerator(const std::string &private_key);
-
+        BitcoinKeyGenerator( const std::string &private_key );
         /**
          * @brief       Returns the private key reference
          * @return      Reference to the private key
@@ -45,7 +43,7 @@ namespace bitcoin
             return *pubkey;
         }
         /**
-         * @brief       Returns the bitcoin base58 address in HRI string
+         * @brief       Returns the bitcoin base58 address
          * @return      Bitcoin base58 address
          */
         const std::string &get_address() const
@@ -67,17 +65,16 @@ namespace bitcoin
         static std::string DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect );
 
     private:
-        static bitcoin::generator_type                             key_gen;
-        std::shared_ptr<pubkey::private_key<bitcoin::policy_type>> privkey;
-        std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>  pubkey;
-        std::string                                                address;
 
-        static constexpr std::uint8_t MAIN_NETWORK_ID         = 0;
-        static constexpr std::uint8_t PARITY_EVEN_ID          = 2;
-        static constexpr std::uint8_t PARITY_ODD_ID           = 3;
-        static constexpr std::uint8_t RIPEMD_160_SIZE_NIBBLES = 40;
-        static constexpr std::uint8_t CHECKSUM_SIZE_BYTES     = 4;
-        static constexpr std::uint8_t BASE_16                 = 16;
+        static bitcoin::generator_type                             key_gen; ///< Bitcoin random key generator
+        std::shared_ptr<pubkey::private_key<bitcoin::policy_type>> privkey; ///< Private key pointer
+        std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>  pubkey;  ///< Public key pointer
+        std::string                                                address; ///< Bitcoin address
+
+        static constexpr std::uint8_t MAIN_NETWORK_ID         = 0;  ///< ID of the Main Bitcoin network
+        static constexpr std::uint8_t PARITY_EVEN_ID          = 2;  ///< If even, the compressed address is prepend this
+        static constexpr std::uint8_t PARITY_ODD_ID           = 3;  ///< If odd, the compressed address is prepend this
+        static constexpr std::uint8_t CHECKSUM_SIZE_BYTES     = 4;  ///< Number of used checksum bytes
 
         /**
          * @brief       Create the ECDSA key pair
