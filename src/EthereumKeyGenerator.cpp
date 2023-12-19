@@ -53,12 +53,13 @@ namespace ethereum
 
         nil::marshalling::bincode::field<ethereum::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().to_affine().Y.data, x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2 );
-        
+
         nil::marshalling::bincode::field<ethereum::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().to_affine().X.data, x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );
-        
-        util::AdjustEndianess( x_y_ser, x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2);
-        util::AdjustEndianess( x_y_ser, x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );
+
+        auto middle_pos = x_y_ser.begin() + x_y_ser.size() / 2;
+        util::AdjustEndianess( x_y_ser, x_y_ser.begin(), middle_pos );
+        util::AdjustEndianess( x_y_ser, middle_pos, x_y_ser.end() );
 
         return DeriveAddress( x_y_ser );
     }
@@ -66,12 +67,12 @@ namespace ethereum
     std::string EthereumKeyGenerator::DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect )
     {
         std::string keccak_hash = hash<hashes::keccak_1600<256>>( pub_key_vect.rbegin(), pub_key_vect.rend() );
-        std::string checksum    = hash<hashes::keccak_1600<256>>( keccak_hash.begin() + 24, keccak_hash.end() );
+        std::string checksum    = hash<hashes::keccak_1600<256>>( keccak_hash.begin() + KECCAK_RES_VALID_POS, keccak_hash.end() );
 
         std::string address_w_checksum;
-        for ( std::size_t i = 0; i < 40; ++i )
+        for ( std::size_t i = 0; i < keccak_hash.size() - KECCAK_RES_VALID_POS; ++i )
         {
-            auto *p_char = &keccak_hash[i + 24];
+            auto *p_char = &keccak_hash[i + KECCAK_RES_VALID_POS];
             if ( std::isalpha( *p_char ) )
             {
                 if ( util::HexASCII2Num<std::uint8_t>( &checksum[i], 1 ) > 7 )
@@ -85,8 +86,8 @@ namespace ethereum
             }
         }
 
-        keccak_hash.replace( 22, 2, "0x" );
-        return keccak_hash.substr( 22, 42 );
+        keccak_hash.replace( ADDRESS_VALID_POS, 2, ADDRESS_HEADER );
+        return keccak_hash.substr( ADDRESS_VALID_POS, ADDRESS_SIZE_CHARS );
     }
 
     std::string EthereumKeyGenerator::DeriveAddress( void )

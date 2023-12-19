@@ -71,6 +71,10 @@ namespace ethereum
         std::shared_ptr<pubkey::public_key<ethereum::policy_type>>  pubkey;  ///< Public key pointer
         std::string                                                 address; ///< Ethereum address
 
+        static constexpr std::string ADDRESS_HEADER       = "0x";                     ///< Ethereum address header
+        static constexpr std::size_t KECCAK_RES_VALID_POS = 24;                       ///< Start position for address derivation
+        static constexpr std::size_t ADDRESS_VALID_POS    = KECCAK_RES_VALID_POS - 2; ///< Start position of the address
+        static constexpr std::size_t ADDRESS_SIZE_CHARS   = 42;                       ///< Size of the address in characters
         /**
          * @brief       Create the ECDSA key pair
          * @return      Private key pointer
