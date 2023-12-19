@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <vector>
 #include <type_traits>
+#include <optional>
 
 namespace util
 {
@@ -31,9 +32,10 @@ namespace util
         return ( *bytePtr == 1 );
     }
 
-    static std::int32_t HexASCII2Num( char *p_char, std::size_t num_nibbles_resolution )
+    template <typename T>
+    static T HexASCII2Num( const char *p_char, std::size_t num_nibbles_resolution = sizeof( T ) * 2 )
     {
-        std::int32_t sum = 0;
+        T sum = 0;
 
         for ( std::int32_t i = 0; i < num_nibbles_resolution; ++i )
         {
@@ -50,23 +52,46 @@ namespace util
 
         return sum;
     }
-    static std::vector<std::uint8_t> HexASCII2NumStr( char *p_char, std::size_t char_ptr_size, std::size_t num_nibbles_resolution )
+    template <typename T>
+    static std::vector<T> HexASCII2NumStr( const char *p_char, std::size_t char_ptr_size )
     {
-        std::vector<std::uint8_t> out_vect;
+        static_assert( std::is_same_v<T, uint8_t> || std::is_same_v<T, uint16_t> || std::is_same_v<T, uint32_t> );
+        std::vector<T> out_vect;
+        std::size_t    num_nibbles_resolution = ( sizeof( T ) * 2 );
+        auto           point_of_insertion     = [&]()
+        {
+            if ( isLittleEndian() )
+            {
+                return out_vect.begin();
+            }
+            else
+            {
+                return out_vect.end();
+            }
+        };
 
         for ( std::size_t i = 0; i < char_ptr_size; i += num_nibbles_resolution )
         {
-            out_vect.insert( out_vect.begin(), static_cast<std::uint8_t>( HexASCII2Num( &p_char[i], num_nibbles_resolution ) ) );
+            out_vect.insert( point_of_insertion(), static_cast<T>( HexASCII2Num<T>( &p_char[i] ) ) );
         }
         return out_vect;
     }
     template <typename T, std::size_t N = std::extent_v<T>>
-    void AdjustEndianess( T &data )
+    void AdjustEndianess( T &data, std::optional<typename T::iterator> start = std::nullopt,
+                          std::optional<typename T::iterator> finish = std::nullopt )
     {
         static_assert( std::is_same_v<T, std::vector<uint8_t>> || std::is_same_v<T, std::array<uint8_t, N>> );
+        if ( !start )
+        {
+            start = data.begin();
+        }
+        if ( !finish )
+        {
+            finish = data.end();
+        }
         if ( !isLittleEndian() )
         {
-            std::reverse( data.begin(), data.end() );
+            std::reverse( start.value(), finish.value() );
         }
     }
 

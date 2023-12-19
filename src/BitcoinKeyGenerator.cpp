@@ -31,7 +31,7 @@ namespace bitcoin
     {
         std::vector<std::uint8_t> priv_key_vector;
 
-        priv_key_vector = util::HexASCII2NumStr( const_cast<char *>( private_key.data() ), private_key.size(), 2 );
+        priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key.data(), private_key.size() );
 
         auto my_value = nil::marshalling::bincode::field<bitcoin::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
             priv_key_vector.begin(), priv_key_vector.end() );
@@ -50,7 +50,6 @@ namespace bitcoin
     std::string BitcoinKeyGenerator::DeriveAddress( const pubkey::public_key<bitcoin::policy_type> &pub_key )
     {
         std::vector<std::uint8_t> x_ser( bitcoin::CurveType::g1_type<>::value_bits / 8 );
-        //nil::crypto3::multiprecision::cpp_int my_new_var = static_cast<nil::crypto3::multiprecision::cpp_int>(pub_key.pubkey_data().to_affine().X.data);
 
         nil::marshalling::bincode::field<bitcoin::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().to_affine().X.data, x_ser.begin(), x_ser.end() );

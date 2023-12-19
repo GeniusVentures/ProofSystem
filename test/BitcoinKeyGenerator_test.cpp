@@ -46,9 +46,8 @@ TEST( BitcoinKeyGeneratorTest, BitCoinAddressTest )
 }
 TEST( BitcoinKeyGeneratorTest, BitCoinKeyImportTest )
 {
-    //std::string               priv_key_data        = "79a9efc23d9818479cb32a9f22ab85b7cf5e45b81358c8e5bc59d31c60cf347d";
+    //std::string               priv_key_data        = "c2efa9794718983d9f2ab39cb785ab22b8455ecfe5c858131cd359bc7d34cf60";
     std::string               priv_key_data        = "60cf347dbc59d31c1358c8e5cf5e45b822ab85b79cb32a9f3d98184779a9efc2";
-    //std::string               priv_key_data        = "d743fc06c13d95cb5e8c85318b54e5cd7b58ba22f9a23bc9748189d32cfe9a97";
 
     std::vector<std::uint8_t> x_expected_pub_key = { 0x1e, 0x7b, 0xcc, 0x70, 0xc7, 0x27, 0x70, 0xdb, 0xb7, 0x2f, 0xea, 0x02, 0x2e, 0x8a, 0x6d, 0x07,
                                                      0xf8, 0x14, 0xd2, 0xeb, 0xe4, 0xde, 0x9a, 0xe3, 0xf7, 0xaf, 0x75, 0xbf, 0x70, 0x69, 0x02, 0xa7 };
@@ -79,7 +78,3 @@ TEST(BitcoinKeyGeneratorTest, AddressGenerated) {
   EXPECT_TRUE(address.length() > 20);
 }
 */
-//c2efa9794718983d9f2ab39cb785ab22b8455ecfe5c858131cd359bc7d34cf60
-//1E7BCC70C72770DBB72FEA022E8A6D07F814D2EBE4DE9AE3F7AF75BF706902A7
-//B73FF919898C836396A6B0C96812C3213B99372050853BD1678DA0EAD14487D7
-

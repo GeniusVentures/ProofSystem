@@ -24,7 +24,6 @@ namespace ethereum
         privkey = EthereumKeyGenerator::CreateKeys();
         pubkey  = std::make_shared<pubkey::public_key<ethereum::policy_type>>( *privkey );
 
-        // Extract address from public key
         address = DeriveAddress();
     }
 
@@ -32,7 +31,7 @@ namespace ethereum
     {
         std::vector<std::uint8_t> priv_key_vector;
 
-        priv_key_vector = util::HexASCII2NumStr( const_cast<char *>( private_key.data() ), private_key.size(), 2 );
+        priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key.data(), private_key.size() );
 
         auto my_value = nil::marshalling::bincode::field<ethereum::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
             priv_key_vector.begin(), priv_key_vector.end() );
@@ -54,16 +53,12 @@ namespace ethereum
 
         nil::marshalling::bincode::field<ethereum::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().to_affine().Y.data, x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2 );
-        if ( !util::isLittleEndian() )
-        {
-            std::reverse( x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2 );
-        }
+        
         nil::marshalling::bincode::field<ethereum::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
             pub_key.pubkey_data().to_affine().X.data, x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );
-        if ( !util::isLittleEndian() )
-        {
-            std::reverse( x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );
-        }
+        
+        util::AdjustEndianess( x_y_ser, x_y_ser.begin(), x_y_ser.begin() + x_y_ser.size() / 2);
+        util::AdjustEndianess( x_y_ser, x_y_ser.begin() + x_y_ser.size() / 2, x_y_ser.end() );
 
         return DeriveAddress( x_y_ser );
     }
@@ -79,7 +74,7 @@ namespace ethereum
             auto *p_char = &keccak_hash[i + 24];
             if ( std::isalpha( *p_char ) )
             {
-                if ( util::HexASCII2Num( &checksum[i], 1 ) > 7 )
+                if ( util::HexASCII2Num<std::uint8_t>( &checksum[i], 1 ) > 7 )
                 {
                     *p_char = std::toupper( *p_char );
                 }
