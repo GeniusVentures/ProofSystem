@@ -46,20 +46,12 @@ TEST( BitcoinKeyGeneratorTest, BitCoinAddressTest )
 }
 TEST( BitcoinKeyGeneratorTest, BitCoinKeyImportTest )
 {
-    //std::string               priv_key_data        = "c2efa9794718983d9f2ab39cb785ab22b8455ecfe5c858131cd359bc7d34cf60";
     std::string               priv_key_data        = "60cf347dbc59d31c1358c8e5cf5e45b822ab85b79cb32a9f3d98184779a9efc2";
-
-    std::vector<std::uint8_t> x_expected_pub_key = { 0x1e, 0x7b, 0xcc, 0x70, 0xc7, 0x27, 0x70, 0xdb, 0xb7, 0x2f, 0xea, 0x02, 0x2e, 0x8a, 0x6d, 0x07,
-                                                     0xf8, 0x14, 0xd2, 0xeb, 0xe4, 0xde, 0x9a, 0xe3, 0xf7, 0xaf, 0x75, 0xbf, 0x70, 0x69, 0x02, 0xa7 };
 
     BitcoinKeyGenerator key_generator( priv_key_data );
 
-    std::reverse(x_expected_pub_key.begin(),x_expected_pub_key.end());
-    std::vector<std::uint8_t> pub_key_export_data( bitcoin::CurveType::g1_type<>::value_bits / 8 );
-    nil::marshalling::bincode::field<bitcoin::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
-        key_generator.get_public_key().pubkey_data().to_affine().X.data, pub_key_export_data.begin(), pub_key_export_data.end() );
 
-    EXPECT_EQ( pub_key_export_data, x_expected_pub_key );
+    EXPECT_EQ( key_generator.GetPublicKeyValue(), "031e7bcc70c72770dbb72fea022e8a6d07f814d2ebe4de9ae3f7af75bf706902a7" );
     EXPECT_EQ( key_generator.get_address(), "17JsmEygbbEUEpvt4PFtYaTeSqfb9ki1F1" );
 }
 

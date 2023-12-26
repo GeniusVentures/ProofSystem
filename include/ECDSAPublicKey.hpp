@@ -25,7 +25,7 @@ public:
     virtual ~ECDSAPublicKey()
     {
     }
-    
+
     const std::string               X;      ///< String representation of X coordinate
     const std::string               Y;      ///< String representation of Y coordinate
     const std::vector<std::uint8_t> X_vect; ///< Vector representation of X coordinate
@@ -45,8 +45,7 @@ public:
     }
 
 private:
-
-    std::string         pubkey_used_value      = ""; ///< Used value of the public key (compressed, uncompressed..)
+    std::string pubkey_used_value = ""; ///< Used value of the public key (compressed, uncompressed..)
 
     /**
      * @brief       Calculates the single data used key value

@@ -45,6 +45,10 @@ namespace ethereum
         {
             return *pubkey;
         }
+        /**
+         * @brief       Get the single public key value used by ethereum addressing
+         * @return      The concatenated X and Y coordinates in string form
+         */
         const std::string GetPublicKeyValue() const
         {
             return *pubkey_info;
@@ -59,9 +63,9 @@ namespace ethereum
             return address;
         }
         /**
-         * @brief       Derive the ethereum address from the ECDSA public key
+         * @brief       Extract the key vector data from the ECDSA public key
          * @param[in]   pub_key: Public ECDSA key
-         * @return      Ethereum address in string form
+         * @return      Key data (X + Y) of the public key
          */
         static std::vector<std::uint8_t> ExtractPubKeyFromField( const pubkey::public_key<ethereum::policy_type> &pub_key );
         /**
@@ -92,16 +96,25 @@ namespace ethereum
          * @return      Ethereum address in string form
          */
         std::string DeriveAddress( void );
+
+        /**
+         * @brief       Ethereum ECDSA public key derived class
+         */
         class EthereumECDSAPublicKey : public ECDSAPublicKey
         {
             using ECDSAPublicKey::ECDSAPublicKey;
+
+            /**
+             * @brief       Implements the calculation for the public key value used for ethereum
+             * @return      The concatenated X and Y key data in string form
+             */
             std::string CalcPubkeyUsedValue() const override
             {
                 return ( X + Y );
             }
         };
 
-        std::shared_ptr<EthereumECDSAPublicKey> pubkey_info;
+        std::shared_ptr<EthereumECDSAPublicKey> pubkey_info;///< Instance of public key information class
     };
 
 } // namespace ethereum

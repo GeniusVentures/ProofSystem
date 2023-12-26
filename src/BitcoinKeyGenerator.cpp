@@ -47,7 +47,7 @@ namespace bitcoin
         return std::make_shared<pubkey::private_key<bitcoin::policy_type>>( BitcoinKeyGenerator::key_gen() );
     }
 
-    std::string BitcoinKeyGenerator::DeriveAddress( const pubkey::public_key<bitcoin::policy_type> &pub_key )
+    std::vector<std::uint8_t> BitcoinKeyGenerator::ExtractPubKeyFromField( const pubkey::public_key<bitcoin::policy_type> &pub_key )
     {
         std::vector<std::uint8_t> x_ser( bitcoin::CurveType::g1_type<>::value_bits / 8 );
 
@@ -56,7 +56,7 @@ namespace bitcoin
 
         util::AdjustEndianess( x_ser );
 
-        return DeriveAddress( x_ser );
+        return x_ser;
     }
 
     std::string BitcoinKeyGenerator::DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect )
@@ -79,6 +79,15 @@ namespace bitcoin
 
     std::string BitcoinKeyGenerator::DeriveAddress( void )
     {
-        return DeriveAddress( *this->pubkey );
+        std::vector<std::uint8_t> pubkey_data = ExtractPubKeyFromField( *pubkey );
+        std::vector<std::uint8_t> y_ser( bitcoin::CurveType::g1_type<>::value_bits / 8 );
+
+        nil::marshalling::bincode::field<bitcoin::base_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
+            pubkey->pubkey_data().to_affine().Y.data, y_ser.begin(), y_ser.end() );
+
+        util::AdjustEndianess( y_ser );
+        pubkey_info = std::make_shared<BitcoinECDSAPublicKey>(
+            pubkey_data, y_ser);
+        return DeriveAddress( pubkey_data );
     }
 }
