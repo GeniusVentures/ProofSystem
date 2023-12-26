@@ -20,7 +20,17 @@ namespace util
      * @param bytes A vector of bytes to be converted.
      * @return A hexadecimal string representation of the bytes.
      */
-    std::string to_string( const std::vector<unsigned char> &bytes );
+    static std::string to_string( const std::vector<unsigned char> &bytes )
+    {
+        std::string out_str;
+        char temp_buf[3];
+        for (auto it = bytes.rbegin(); it!= bytes.rend(); ++it)
+        {
+            snprintf(temp_buf,sizeof(temp_buf),"%02x", *it);
+            out_str.append(temp_buf,sizeof(temp_buf)-1);
+        }
+        return out_str;
+    }
 
     // Additional utility functions can be declared here.
 
