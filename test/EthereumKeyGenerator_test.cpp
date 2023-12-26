@@ -43,6 +43,7 @@ TEST( EthereumKeyGeneratorTest, EthereumKeyImportTest )
 {
     std::string          private_key = "4256949314A06D963EBB6B40515E564679C931A6DCB6A3B95D90BB532C6798A5";
     EthereumKeyGenerator key_generator( private_key );
+    EXPECT_EQ( key_generator.GetPublicKeyValue(), "b8c611cdf2c0afc59afab613b89da83464284928b482c0b604b2a99642cb4d06b3325e5990b7fabc60b739f44657774f96cd10417506e3143059a34da07af45d" );
     EXPECT_EQ( key_generator.get_address(), "0xEb01f251BA36f6b96105f9eAEBfA86092756514B" );
 }
 

@@ -2,8 +2,10 @@
 #ifndef ETHEREUM_KEY_GENERATOR_HPP
 #define ETHEREUM_KEY_GENERATOR_HPP
 
+#include <string>
 #include "EthereumKeyPairParams.hpp"
 #include "util.hpp"
+#include "ECDSAPublicKey.hpp"
 
 using namespace nil::crypto3;
 using namespace nil::crypto3::algebra;
@@ -43,6 +45,11 @@ namespace ethereum
         {
             return *pubkey;
         }
+        const std::string GetPublicKeyValue() const
+        {
+            return *pubkey_info;
+        }
+
         /**
          * @brief       Getter for the Ethereum address
          * @return      Ethereum address
@@ -56,7 +63,7 @@ namespace ethereum
          * @param[in]   pub_key: Public ECDSA key
          * @return      Ethereum address in string form
          */
-        static std::string DeriveAddress( const pubkey::public_key<ethereum::policy_type> &pub_key );
+        static std::vector<std::uint8_t> ExtractPubKeyFromField( const pubkey::public_key<ethereum::policy_type> &pub_key );
         /**
          * @brief       Derive the ethereum address from de XY concatenated coordinates
          * @param[in]   pub_key_vect: The concatenated vector representation of both X and Y coordinates
@@ -85,6 +92,16 @@ namespace ethereum
          * @return      Ethereum address in string form
          */
         std::string DeriveAddress( void );
+        class EthereumECDSAPublicKey : public ECDSAPublicKey
+        {
+            using ECDSAPublicKey::ECDSAPublicKey;
+            std::string CalcPubkeyUsedValue() const override
+            {
+                return ( X + Y );
+            }
+        };
+
+        std::shared_ptr<EthereumECDSAPublicKey> pubkey_info;
     };
 
 } // namespace ethereum

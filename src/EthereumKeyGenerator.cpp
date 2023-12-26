@@ -47,7 +47,7 @@ namespace ethereum
         return std::make_shared<pubkey::private_key<ethereum::policy_type>>( EthereumKeyGenerator::key_gen() );
     }
 
-    std::string EthereumKeyGenerator::DeriveAddress( const pubkey::public_key<ethereum::policy_type> &pub_key )
+    std::vector<std::uint8_t> EthereumKeyGenerator::ExtractPubKeyFromField( const pubkey::public_key<ethereum::policy_type> &pub_key )
     {
         std::vector<std::uint8_t> x_y_ser( ( ethereum::CurveType::g1_type<>::value_bits / 8 ) * 2 );
 
@@ -61,7 +61,7 @@ namespace ethereum
         util::AdjustEndianess( x_y_ser, x_y_ser.begin(), middle_pos );
         util::AdjustEndianess( x_y_ser, middle_pos, x_y_ser.end() );
 
-        return DeriveAddress( x_y_ser );
+        return x_y_ser;
     }
 
     std::string EthereumKeyGenerator::DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect )
@@ -92,6 +92,10 @@ namespace ethereum
 
     std::string EthereumKeyGenerator::DeriveAddress( void )
     {
-        return DeriveAddress( *this->pubkey );
+        std::vector<std::uint8_t> pubkey_data = ExtractPubKeyFromField( *pubkey );
+        pubkey_info                           = std::make_shared<EthereumECDSAPublicKey>(
+            std::vector<std::uint8_t>( pubkey_data.data() + pubkey_data.size() / 2, pubkey_data.data() + pubkey_data.size() ),
+            std::vector<std::uint8_t>( pubkey_data.data(), pubkey_data.data() + pubkey_data.size() / 2 ) );
+        return DeriveAddress( pubkey_data );
     }
 }
