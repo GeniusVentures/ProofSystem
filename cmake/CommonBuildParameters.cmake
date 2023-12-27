@@ -79,6 +79,7 @@ include_directories(
         "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/stream/include"
         "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/threshold/include"
         "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/vdf/include"
+        "${CMAKE_CURRENT_LIST_DIR}/../zkLLVM/libs/crypto3/libs/zk/include"
         )
 
 add_library(${PROJECT_NAME}
@@ -92,6 +93,7 @@ if(BUILD_TESTS)
                 "${CMAKE_CURRENT_LIST_DIR}/../test/main_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/BitcoinKeyGenerator_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/EthereumKeyGenerator_test.cpp"
+                "${CMAKE_CURRENT_LIST_DIR}/../test/PallasMapper_test.cpp"
         )
         target_link_libraries(${PROJECT_NAME}_test PUBLIC ${PROJECT_NAME} GTest::gtest Boost::random)
 endif()
