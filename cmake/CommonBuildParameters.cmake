@@ -92,6 +92,7 @@ if(BUILD_TESTS)
                 "${CMAKE_CURRENT_LIST_DIR}/../test/main_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/BitcoinKeyGenerator_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/EthereumKeyGenerator_test.cpp"
+                "${CMAKE_CURRENT_LIST_DIR}/../test/KDFGenerator_test.cpp"
         )
         target_link_libraries(${PROJECT_NAME}_test PUBLIC ${PROJECT_NAME} GTest::gtest Boost::random)
 endif()
