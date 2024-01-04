@@ -44,6 +44,11 @@ public:
         return pubkey_used_value;
     }
 
+    std::string GetEntireKey()
+    {
+        return (X + Y);
+    }
+
 private:
     std::string pubkey_used_value = ""; ///< Used value of the public key (compressed, uncompressed..)
 
