@@ -86,8 +86,7 @@ namespace bitcoin
             pubkey->pubkey_data().to_affine().Y.data, y_ser.begin(), y_ser.end() );
 
         util::AdjustEndianess( y_ser );
-        pubkey_info = std::make_shared<BitcoinECDSAPublicKey>(
-            pubkey_data, y_ser);
+        pubkey_info = std::make_shared<BitcoinECDSAPublicKey>( pubkey_data, y_ser );
         return DeriveAddress( pubkey_data );
     }
 }

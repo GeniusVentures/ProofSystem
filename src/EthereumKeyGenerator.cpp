@@ -11,7 +11,6 @@
 #include <nil/crypto3/codec/adaptor/coded.hpp>
 #include <nil/crypto3/codec/base.hpp>
 #include <vector>
-#include <sstream>
 #include <util.hpp>
 
 namespace ethereum

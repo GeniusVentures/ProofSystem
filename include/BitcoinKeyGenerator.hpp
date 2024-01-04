@@ -60,6 +60,14 @@ namespace bitcoin
         {
             return *pubkey_info;
         }
+        /**
+         * @brief       Get all key value of the public key
+         * @return      The concatenated X+Y key
+         */
+        const std::string GetPublicKeyEntireValue() const
+        {
+            return pubkey_info->GetEntireKey();
+        }
 
         /**
          * @brief       Extract the key vector data from the ECDSA public key
