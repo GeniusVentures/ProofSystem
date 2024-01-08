@@ -2,7 +2,6 @@
 // Created by Super Genius on 12/7/23.
 //
 #include "BitcoinKeyGenerator.hpp"
-#include "ext_private_key.hpp"
 #include <nil/crypto3/hash/algorithm/hash.hpp>
 #include <nil/crypto3/hash/adaptor/hashed.hpp>
 #include <nil/crypto3/hash/ripemd.hpp>

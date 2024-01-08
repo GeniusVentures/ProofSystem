@@ -1,6 +1,10 @@
 #include <string>
 #include <vector>
 #include "util.hpp"
+
+
+#ifndef _ECDSA_PUBLIC_KEY_HPP_
+#define _ECDSA_PUBLIC_KEY_HPP_
 /**
  * @brief       Base class to organize public key values of ECDSA
  */
@@ -58,3 +62,5 @@ private:
      */
     virtual std::string CalcPubkeyUsedValue() const = 0;
 };
+
+#endif

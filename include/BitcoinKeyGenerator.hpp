@@ -57,7 +57,7 @@ namespace bitcoin
          * @brief       Get the single public key value used by bitcoin addressing
          * @return      The compressed X coordinate in string form
          */
-        const std::string GetPublicKeyValue() const
+        const std::string GetUsedPubKeyValue() const
         {
             return *pubkey_info;
         }
@@ -65,7 +65,7 @@ namespace bitcoin
          * @brief       Get all key value of the public key
          * @return      The concatenated X+Y key
          */
-        const std::string GetPublicKeyEntireValue() const
+        const std::string GetEntirePubValue() const
         {
             return pubkey_info->GetEntireKey();
         }
@@ -85,10 +85,10 @@ namespace bitcoin
         static std::string DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect );
 
     private:
-        static bitcoin::generator_type                             key_gen;
+        static bitcoin::generator_type                                 key_gen;
         std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> privkey;
-        std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>  pubkey;
-        std::string                                                address;
+        std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>      pubkey;
+        std::string                                                    address;
 
         static constexpr std::uint8_t MAIN_NETWORK_ID     = 0; ///< ID of the Main Bitcoin network
         static constexpr std::uint8_t PARITY_EVEN_ID      = 2; ///< If even, the compressed address is prepend this

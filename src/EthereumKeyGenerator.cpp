@@ -35,15 +35,15 @@ namespace ethereum
         auto my_value = nil::marshalling::bincode::field<ethereum::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
             priv_key_vector.begin(), priv_key_vector.end() );
 
-        privkey = std::make_shared<pubkey::private_key<ethereum::policy_type>>( my_value.second );
+        privkey = std::make_shared<pubkey::ext_private_key<ethereum::policy_type>>( my_value.second );
         pubkey  = std::make_shared<pubkey::public_key<ethereum::policy_type>>( *privkey );
 
         address = DeriveAddress();
     }
 
-    std::shared_ptr<pubkey::private_key<ethereum::policy_type>> EthereumKeyGenerator::CreateKeys()
+    std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> EthereumKeyGenerator::CreateKeys()
     {
-        return std::make_shared<pubkey::private_key<ethereum::policy_type>>( EthereumKeyGenerator::key_gen() );
+        return std::make_shared<pubkey::ext_private_key<ethereum::policy_type>>( EthereumKeyGenerator::key_gen() );
     }
 
     std::vector<std::uint8_t> EthereumKeyGenerator::ExtractPubKeyFromField( const pubkey::public_key<ethereum::policy_type> &pub_key )

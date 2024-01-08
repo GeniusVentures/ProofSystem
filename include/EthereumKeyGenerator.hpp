@@ -4,6 +4,7 @@
 
 #include <string>
 #include "EthereumKeyPairParams.hpp"
+#include "ext_private_key.hpp"
 #include "util.hpp"
 #include "ECDSAPublicKey.hpp"
 
@@ -33,7 +34,7 @@ namespace ethereum
          * @brief       Getter for private key (be careful with security implications)
          * @return      Reference to the private key 
          */
-        const pubkey::private_key<ethereum::policy_type> get_private_key() const
+        const pubkey::ext_private_key<ethereum::policy_type> get_private_key() const
         {
             return *privkey;
         }
@@ -77,10 +78,10 @@ namespace ethereum
         static std::string DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect );
 
     private:
-        static ethereum::generator_type                             key_gen; ///< Ethereum random key generator
-        std::shared_ptr<pubkey::private_key<ethereum::policy_type>> privkey; ///< Private key pointer
-        std::shared_ptr<pubkey::public_key<ethereum::policy_type>>  pubkey;  ///< Public key pointer
-        std::string                                                 address; ///< Ethereum address
+        static ethereum::generator_type                                 key_gen; ///< Ethereum random key generator
+        std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> privkey; ///< Private key pointer
+        std::shared_ptr<pubkey::public_key<ethereum::policy_type>>      pubkey;  ///< Public key pointer
+        std::string                                                     address; ///< Ethereum address
 
         static constexpr std::string ADDRESS_HEADER       = "0x";                     ///< Ethereum address header
         static constexpr std::size_t KECCAK_RES_VALID_POS = 24;                       ///< Start position for address derivation
@@ -90,7 +91,7 @@ namespace ethereum
          * @brief       Create the ECDSA key pair
          * @return      Private key pointer
          */
-        static std::shared_ptr<pubkey::private_key<ethereum::policy_type>> CreateKeys();
+        static std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> CreateKeys();
         /**
          * @brief       Derive the Ethereum address from own key
          * @return      Ethereum address in string form
@@ -114,7 +115,7 @@ namespace ethereum
             }
         };
 
-        std::shared_ptr<EthereumECDSAPublicKey> pubkey_info;///< Instance of public key information class
+        std::shared_ptr<EthereumECDSAPublicKey> pubkey_info; ///< Instance of public key information class
     };
 
 } // namespace ethereum

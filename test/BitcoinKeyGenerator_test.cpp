@@ -18,7 +18,7 @@ TEST( BitcoinKeyGeneratorTest, PrivateKeyGenerated )
     BitcoinKeyGenerator key_generator;
 
     // Act
-    const pubkey::private_key<bitcoin::policy_type> &privkey = key_generator.get_private_key();
+    const pubkey::ext_private_key<bitcoin::policy_type> &privkey = key_generator.get_private_key();
 
     // Assert
     EXPECT_TRUE( !privkey.pubkey_data().is_zero() );
@@ -46,12 +46,12 @@ TEST( BitcoinKeyGeneratorTest, BitCoinAddressTest )
 }
 TEST( BitcoinKeyGeneratorTest, BitCoinKeyImportTest )
 {
-    std::string               priv_key_data        = "60cf347dbc59d31c1358c8e5cf5e45b822ab85b79cb32a9f3d98184779a9efc2";
+    std::string priv_key_data = "60cf347dbc59d31c1358c8e5cf5e45b822ab85b79cb32a9f3d98184779a9efc2";
 
     BitcoinKeyGenerator key_generator( priv_key_data );
 
+    EXPECT_EQ( key_generator.GetUsedPubKeyValue(), "031e7bcc70c72770dbb72fea022e8a6d07f814d2ebe4de9ae3f7af75bf706902a7" );
 
-    EXPECT_EQ( key_generator.GetPublicKeyValue(), "031e7bcc70c72770dbb72fea022e8a6d07f814d2ebe4de9ae3f7af75bf706902a7" );
     EXPECT_EQ( key_generator.get_address(), "17JsmEygbbEUEpvt4PFtYaTeSqfb9ki1F1" );
 }
 
