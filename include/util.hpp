@@ -11,6 +11,7 @@
 #include <vector>
 #include <type_traits>
 #include <optional>
+#include <algorithm>
 
 namespace util
 {

@@ -1,13 +1,14 @@
 /**
  * @file       ECDSATypes.hpp
  * @brief      Common types and definitions of ECDSA 
+ * @date       2024-01-04
  * @author     Henrique A. Klein (henryaklein@gmail.com)
  */
 
 #ifndef _ECDSA_TYPES_HPP_
 #define _ECDSA_TYPES_HPP_
 
-namespace ecdsa
+namespace ecdsa_t
 {
     using CurveType               = algebra::curves::secp256k1;
     using base_field_type         = typename CurveType::base_field_type;
