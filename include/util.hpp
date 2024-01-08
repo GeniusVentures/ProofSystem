@@ -12,6 +12,8 @@
 #include <type_traits>
 #include <optional>
 #include <algorithm>
+#include <tuple>
+#include <array>
 
 namespace util
 {
@@ -87,11 +89,12 @@ namespace util
         }
         return out_vect;
     }
-    template <typename T, std::size_t N = std::extent_v<T>>
-    void AdjustEndianess( T &data, std::optional<typename T::iterator> start = std::nullopt,
+
+    template <typename T>
+    typename std::enable_if<std::is_same<typename T::value_type, uint8_t>::value>::type
+    AdjustEndianess( T &data, std::optional<typename T::iterator> start = std::nullopt,
                           std::optional<typename T::iterator> finish = std::nullopt )
     {
-        static_assert( std::is_same_v<T, std::vector<uint8_t>> || std::is_same_v<T, std::array<uint8_t, N>> );
         if ( !start )
         {
             start = data.begin();
