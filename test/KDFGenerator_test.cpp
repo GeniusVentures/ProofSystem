@@ -11,12 +11,18 @@ TEST( KDFGeneratorTest, KDFGeneratorMaster )
 
     KDFGenerator<bitcoin::policy_type> KDFInstance_Proover( bitcoin_proover.get_private_key(), bitcoin_revealer.GetEntirePubValue() );
     KDFGenerator<bitcoin::policy_type> KDFInstance_Revealer( bitcoin_revealer.get_private_key(), bitcoin_proover.GetEntirePubValue() );
-    
+
     auto signed_key  = KDFInstance_Proover.GenerateSharedSecret( bitcoin_proover.get_private_key(), bitcoin_revealer.GetEntirePubValue() );
     auto signed_key2 = KDFInstance_Revealer.GenerateSharedSecret( bitcoin_revealer.get_private_key(), bitcoin_proover.GetEntirePubValue() );
-    
+
     EXPECT_EQ( signed_key.size(), 192 );
     EXPECT_EQ( signed_key2.size(), 192 );
-    EXPECT_TRUE( KDFInstance_Proover.CheckSharedSecret( signed_key, bitcoin_proover.GetEntirePubValue(), bitcoin_revealer.GetEntirePubValue() ) );
-    EXPECT_TRUE( KDFInstance_Revealer.CheckSharedSecret( signed_key2, bitcoin_revealer.GetEntirePubValue(), bitcoin_proover.GetEntirePubValue() ) );
+    auto new_scalar_1 = KDFInstance_Proover.GetNewKeyFromSecret( signed_key, bitcoin_proover.GetEntirePubValue(), bitcoin_revealer.GetEntirePubValue() );
+    EXPECT_NE(new_scalar_1, 0);
+
+    std::cout << "scalar 1 " << std::hex << new_scalar_1 <<std::endl;
+    auto new_scalar_2 = KDFInstance_Revealer.GetNewKeyFromSecret( signed_key2, bitcoin_revealer.GetEntirePubValue(), bitcoin_proover.GetEntirePubValue() );
+    EXPECT_NE(new_scalar_2, 0);
+    std::cout << "scalar 2 " << std::hex << new_scalar_2 <<std::endl;
+    EXPECT_THROW( KDFInstance_Revealer.GetNewKeyFromSecret( signed_key, bitcoin_proover.GetEntirePubValue(), bitcoin_proover.GetEntirePubValue() ),std::runtime_error );
 }

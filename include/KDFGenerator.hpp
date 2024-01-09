@@ -45,7 +45,15 @@ public:
      * @return      The secret that represents the signed data and new derived key
      */
     std::string GenerateSharedSecret( const pubkey::ext_private_key<PolicyType> &prvt_key, const ECDSAPubKey &sgnus_key );
-    bool        CheckSharedSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key, const ECDSAPubKey &sgnus_key );
+
+    /**
+     * @brief       Checks if the shared secret is valid
+     * @param[in]   signed_secret The shared secret 
+     * @param[in]   prover_key 
+     * @param[in]   sgnus_key 
+     * @return      true if secret is valid is verified, false otherwise
+     */
+    ecdsa_t::scalar_field_value_type GetNewKeyFromSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key, const ECDSAPubKey &sgnus_key );
 
 private:
     std::shared_ptr<Encryption> encryptor; ///< The encryptor used by KDF to hide the shared secret
@@ -84,7 +92,7 @@ std::string KDFGenerator<PolicyType>::GenerateSharedSecret( const pubkey::ext_pr
     return util::to_string( encryptor->EncryptData( signed_vector, key_vector ) );
 }
 template <typename PolicyType>
-bool KDFGenerator<PolicyType>::CheckSharedSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key, const ECDSAPubKey &sgnus_key )
+ecdsa_t::scalar_field_value_type KDFGenerator<PolicyType>::GetNewKeyFromSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key, const ECDSAPubKey &sgnus_key )
 {
     std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( sgnus_key.data(), sgnus_key.size() );
     const auto                pubkey     = BuildPublicKeyECDSA( prover_key );
@@ -93,15 +101,25 @@ bool KDFGenerator<PolicyType>::CheckSharedSecret( const std::string &signed_secr
 
     std::vector<std::uint8_t> decoded_vector = encryptor->DecryptData( signed_vector, key_vector );
 
-    auto my_first_value = nil::marshalling::bincode::field<ecdsa_t::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
+    auto sign_first_part = nil::marshalling::bincode::field<ecdsa_t::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
         decoded_vector.begin(), decoded_vector.begin() + 32 );
-    auto my_second_value =
+    auto sign_second_part =
         nil::marshalling::bincode::field<ecdsa_t::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
             decoded_vector.begin() + 32, decoded_vector.begin() + 64 );
 
-    SignatureType signed_data( my_first_value.second, my_second_value.second );
+    //SignatureType signed_data( sign_first_part.second, sign_second_part.second );
 
-    return static_cast<bool>( verify<PolicyType>( sgnus_key, signed_data, pubkey ) );
+    bool valid = static_cast<bool>( verify<PolicyType>( sgnus_key, SignatureType(sign_first_part.second, sign_second_part.second), pubkey ) );
+
+    if (valid == false)
+    {
+        throw std::runtime_error ("Can't verify the signature");
+    }
+    auto derived_key_pair =
+        nil::marshalling::bincode::field<ecdsa_t::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
+            decoded_vector.begin() + 64, decoded_vector.end());
+
+    return derived_key_pair.second;
 }
 
 template <typename PolicyType>
