@@ -1,42 +1,71 @@
+/**
+ * @file       KDFGenerator.hpp
+ * @brief      Key Derivation Function Generator
+ * @date       2024-01-08
+ * @author     Henrique A. Klein (henryaklein@gmail.com)
+ */
+
+#ifndef _KDF_GENERATOR_HPP_
+#define _KDF_GENERATOR_HPP_
+
 #include <vector>
-#include <nil/crypto3/hash/algorithm/hash.hpp>
-#include <nil/crypto3/hash/sha2.hpp>
+#include <string>
+#include <nil/crypto3/pubkey/ecdsa.hpp>
 #include <nil/crypto3/pubkey/algorithm/sign.hpp>
 #include <nil/crypto3/pubkey/algorithm/verify.hpp>
 #include <nil/crypto3/algebra/marshalling.hpp>
-#include "ext_private_key.hpp"
-#include "ECDHEncryption.hpp"
+#include <nil/crypto3/hash/algorithm/hash.hpp>
+#include <nil/crypto3/hash/sha2.hpp>
 #include "ECDSATypes.hpp"
+#include "Encryption.hpp"
+#include "ECDHEncryption.hpp"
+#include "ext_private_key.hpp"
 
+/**
+ * @brief       KDF Generator class
+ */
 template <typename PolicyType>
 class KDFGenerator
 {
 public:
-    using SignatureType   = typename pubkey::public_key<PolicyType>::signature_type;
-    using SgnusPubKeyType = std::string;
-    using ECDSAPubKey     = std::string;
+    using SignatureType = typename pubkey::public_key<PolicyType>::signature_type;
+    using ECDSAPubKey   = std::string;
 
-    std::string GenerateSharedSecret( const pubkey::ext_private_key<PolicyType> &prvt_key, const SgnusPubKeyType &sgnus_key );
-    bool        CheckSharedSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key, const SgnusPubKeyType &sgnus_key );
-    explicit KDFGenerator( const pubkey::ext_private_key<PolicyType> &own_prvt_key, const SgnusPubKeyType &other_party_key );
-    ~KDFGenerator();
+    /**
+     * @brief       Constructs a new KDFGenerator object
+     * @param[in]   own_prvt_key The private key from the owner of the instance
+     * @param[in]   other_party_key The public key data from the other party
+     */
+    explicit KDFGenerator( const pubkey::ext_private_key<PolicyType> &own_prvt_key, const ECDSAPubKey &other_party_key );
+
+    /**
+     * @brief       Generates a shared secret with a new derived key
+     * @param[in]   prvt_key Key to sign the secret
+     * @param[in]   sgnus_key public key of other party
+     * @return      The secret that represents the signed data and new derived key
+     */
+    std::string GenerateSharedSecret( const pubkey::ext_private_key<PolicyType> &prvt_key, const ECDSAPubKey &sgnus_key );
+    bool        CheckSharedSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key, const ECDSAPubKey &sgnus_key );
 
 private:
-    SignatureType secret_sign;
+    std::shared_ptr<Encryption> encryptor; ///< The encryptor used by KDF to hide the shared secret
 
-    std::shared_ptr<Encryption> encryptor;
-
+    /**
+     * @brief       Builds the public key data type from the data
+     * @param[in]   pubkey_data String representation of X+Y coordinates
+     * @return      The ECDSA public key object 
+     */
     static pubkey::public_key<PolicyType> BuildPublicKeyECDSA( const ECDSAPubKey &pubkey_data );
 };
 
 template <typename PolicyType>
-KDFGenerator<PolicyType>::KDFGenerator( const pubkey::ext_private_key<PolicyType> &own_prvt_key, const SgnusPubKeyType &other_party_key )
+KDFGenerator<PolicyType>::KDFGenerator( const pubkey::ext_private_key<PolicyType> &own_prvt_key, const ECDSAPubKey &other_party_key )
 {
     encryptor = std::make_shared<ECDHEncryption<PolicyType>>( own_prvt_key, BuildPublicKeyECDSA( other_party_key ) );
 }
 
 template <typename PolicyType>
-std::string KDFGenerator<PolicyType>::GenerateSharedSecret( const pubkey::ext_private_key<PolicyType> &prvt_key, const SgnusPubKeyType &sgnus_key )
+std::string KDFGenerator<PolicyType>::GenerateSharedSecret( const pubkey::ext_private_key<PolicyType> &prvt_key, const ECDSAPubKey &sgnus_key )
 {
     KDFGenerator::SignatureType signed_secret = sign<PolicyType>( sgnus_key, prvt_key );
     std::vector<std::uint8_t>   signed_vector( 64 );
@@ -55,7 +84,7 @@ std::string KDFGenerator<PolicyType>::GenerateSharedSecret( const pubkey::ext_pr
     return util::to_string( encryptor->EncryptData( signed_vector, key_vector ) );
 }
 template <typename PolicyType>
-bool KDFGenerator<PolicyType>::CheckSharedSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key, const SgnusPubKeyType &sgnus_key )
+bool KDFGenerator<PolicyType>::CheckSharedSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key, const ECDSAPubKey &sgnus_key )
 {
     std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( sgnus_key.data(), sgnus_key.size() );
     const auto                pubkey     = BuildPublicKeyECDSA( prover_key );
@@ -90,7 +119,4 @@ pubkey::public_key<PolicyType> KDFGenerator<PolicyType>::BuildPublicKeyECDSA( co
     return typename pubkey::public_key<PolicyType>::public_key_type( x_data.second, y_data.second, z_data_one );
 }
 
-template <typename PolicyType>
-KDFGenerator<PolicyType>::~KDFGenerator()
-{
-}
+#endif

@@ -61,7 +61,7 @@ public:
 
         auto new_point = own_key * foreign_key;
 
-        nil::marshalling::bincode::field<bitcoin::base_field_type>::field_element_to_bytes<std::array<std::uint8_t, 32>::iterator>(
+        nil::marshalling::bincode::field<ecdsa_t::base_field_type>::field_element_to_bytes<std::array<std::uint8_t, 32>::iterator>(
             new_point.pubkey_data().to_affine().X.data, session_secret.begin(), session_secret.end() );
 
         util::AdjustEndianess( session_secret );
