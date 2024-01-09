@@ -17,11 +17,10 @@
 
 namespace util
 {
-
     /**
-     * Convert a byte array to a hexadecimal string.
-     * @param bytes A vector of bytes to be converted.
-     * @return A hexadecimal string representation of the bytes.
+     * @brief       Convert a byte array to a hexadecimal string.
+     * @param[in]   bytes A vector of bytes to be converted.
+     * @return      A hexadecimal string representation of the bytes.
      */
     static std::string to_string( const std::vector<unsigned char> &bytes )
     {
@@ -35,8 +34,10 @@ namespace util
         return out_str;
     }
 
-    // Additional utility functions can be declared here.
-
+    /**
+     * @brief       Checks if the architecture is little endian
+     * @return      true if little endian, false otherwise
+     */
     static bool isLittleEndian()
     {
         std::uint32_t num     = 1;
@@ -45,6 +46,12 @@ namespace util
         return ( *bytePtr == 1 );
     }
 
+    /**
+     * @brief       Converts a hexadecimal ASCII char array into a number
+     * @param[in]   p_char Hexadecimal ASCII char array
+     * @param[in]   num_nibbles_resolution How many nibbles will constitute a number
+     * @return      The converted number (8-64 bit variable)
+     */
     template <typename T>
     static T HexASCII2Num( const char *p_char, std::size_t num_nibbles_resolution = sizeof( T ) * 2 )
     {
@@ -65,6 +72,13 @@ namespace util
 
         return sum;
     }
+
+    /**
+     * @brief       Converts a hexadecimal ASCII char array into a vector of numbers
+     * @param[in]   p_char Hexadecimal ASCII char array
+     * @param[in]   char_ptr_size Size of the char array
+     * @return      The vector of converted numbers
+     */
     template <typename T>
     static std::vector<T> HexASCII2NumStr( const char *p_char, std::size_t char_ptr_size )
     {
@@ -90,6 +104,12 @@ namespace util
         return out_vect;
     }
 
+    /**
+     * @brief       Adjust endianess if needed
+     * @param[in]   data The container of data (vector/array)
+     * @param[in]   start Optional beginning of the valid data
+     * @param[in]   finish Optional ending of the valid data
+     */
     template <typename T>
     typename std::enable_if<std::is_same<typename T::value_type, uint8_t>::value>::type
     AdjustEndianess( T &data, std::optional<typename T::iterator> start = std::nullopt,

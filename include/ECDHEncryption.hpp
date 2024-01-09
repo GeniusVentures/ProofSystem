@@ -17,19 +17,34 @@
 #include "util.hpp"
 
 using namespace nil::crypto3::pubkey;
+/**
+ * @brief       Elliptic-curve Diffie-Hellman class using AES 256
+ */
 template <typename PolicyType>
 class ECDHEncryption : public Encryption
 {
 private:
-    std::array<std::uint8_t, 32> session_secret;
+    std::array<std::uint8_t, 32> session_secret; ///< The session secret used in encryption and decryption
 
 public:
+    /**
+     * @brief       Encrypts a vector of data using the session secret
+     * @param[in]   data Vector of data to be encrypted
+     * @param[in]   key_data Unused in this implementation
+     * @return      Encrypted data vector
+     */
     std::vector<std::uint8_t> EncryptData( std::vector<std::uint8_t> data, std::vector<std::uint8_t> key_data ) override
     {
         (void)key_data;
         return nil::crypto3::encrypt<nil::crypto3::block::aes<256>>( data, session_secret );
     }
 
+    /**
+     * @brief       Decrypts a vector of data using the session secret
+     * @param[in]   data Vector of data to be decrypted
+     * @param[in]   key_data Unused in this implementation
+     * @return      Decrypted data vector
+     */
     std::vector<std::uint8_t> DecryptData( std::vector<std::uint8_t> data, std::vector<std::uint8_t> key_data ) override
     {
         (void)key_data;
@@ -48,15 +63,6 @@ public:
 
         session_secret = static_cast<std::array<std::uint8_t, 32>>( hash<hashes::sha2<256>>( session_secret.rbegin(), session_secret.rend() ) );
 
-
-       // std::cout << "X original " << std::hex << foreign_key.pubkey_data().to_affine().X.data << std::endl;
-       // std::cout << "new_point X original " << std::hex << new_point.pubkey_data().to_affine().X.data << std::endl;
-       // std::cout << "new_point X coded ";
-       // for ( auto i : session_secret )
-       // {
-       //     printf( "%02x", i );
-       // }
-       // std::cout << std::endl;
     }
 };
 

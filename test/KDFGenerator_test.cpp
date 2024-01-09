@@ -16,6 +16,7 @@ TEST( KDFGeneratorTest, KDFGeneratorMaster )
     auto signed_key2 = KDFInstance_Revealer.GenerateSharedSecret( bitcoin_revealer.get_private_key(), bitcoin_proover.GetEntirePubValue() );
 
     EXPECT_EQ( signed_key.size(), 192 );
-    //EXPECT_TRUE( KDFGenerator<bitcoin::policy_type>::CheckSharedSecret( signed_key, bitcoin_keygen.GetEntirePubValue(), test_sgnus_key ) );
-    //EXPECT_FALSE( KDFGenerator<bitcoin::policy_type>::CheckSharedSecret( signed_key, bitcoin_keygen.GetEntirePubValue(), wrong_sgnus_key ) );
+    EXPECT_EQ( signed_key2.size(), 192 );
+    EXPECT_TRUE( KDFInstance_Proover.CheckSharedSecret( signed_key, bitcoin_proover.GetEntirePubValue(), bitcoin_revealer.GetEntirePubValue() ) );
+    EXPECT_TRUE( KDFInstance_Revealer.CheckSharedSecret( signed_key2, bitcoin_revealer.GetEntirePubValue(), bitcoin_proover.GetEntirePubValue()  ) );
 }
