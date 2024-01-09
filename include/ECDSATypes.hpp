@@ -8,6 +8,11 @@
 #ifndef _ECDSA_TYPES_HPP_
 #define _ECDSA_TYPES_HPP_
 
+#include <nil/crypto3/pubkey/ecdsa.hpp>
+#include <nil/crypto3/algebra/curves/secp_k1.hpp>
+#include <nil/crypto3/random/algebraic_random_device.hpp>
+
+using namespace nil::crypto3;
 namespace ecdsa_t
 {
     using CurveType               = algebra::curves::secp256k1;
