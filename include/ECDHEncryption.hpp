@@ -51,6 +51,11 @@ public:
         return nil::crypto3::decrypt<nil::crypto3::block::aes<256>>( data, session_secret );
     }
 
+    /**
+     * @brief       Constructs an ECDHEncryption object and creates a session secret
+     * @param[in]   own_key The owner's private ECDSA key
+     * @param[in]   foreign_key The other party's public key
+     */
     ECDHEncryption( const ext_private_key<PolicyType> &own_key, const public_key<PolicyType> &foreign_key )
     {
 
