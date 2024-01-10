@@ -27,7 +27,7 @@ namespace nil
             template <typename CurveType, typename Padding, typename GeneratorType, typename DistributionType>
             struct ext_private_key<
                 ecdsa<CurveType, Padding, GeneratorType, DistributionType>,
-                typename std::enable_if<!std::is_same<
+                typename std::enable_if<std::is_same<
                     GeneratorType, random::rfc6979<typename CurveType::scalar_field_type::value_type,
                                                    typename ecdsa<CurveType, Padding, GeneratorType, DistributionType>::hash_type>>::value>::type> :
                 public private_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>>

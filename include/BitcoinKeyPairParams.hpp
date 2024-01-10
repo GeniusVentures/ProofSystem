@@ -19,9 +19,10 @@ namespace bitcoin
     using base_field_type         = typename ecdsa_t::base_field_type;
     using scalar_field_type       = typename ecdsa_t::scalar_field_type;
     using scalar_field_value_type = typename ecdsa_t::scalar_field_value_type;
-    using generator_type          = ecdsa_t::generator_type;
+    using random_generator_type   = ecdsa_t::random_generator_type;
 
     using hash_type      = hashes::sha2<256>;
+    using generator_type = ecdsa_t::generator_type<hash_type>;
     using padding_policy = pubkey::padding::emsa1<scalar_field_value_type, hash_type>;
     using policy_type    = pubkey::ecdsa<CurveType, padding_policy, generator_type>;
     using signature_type = typename pubkey::public_key<policy_type>::signature_type;

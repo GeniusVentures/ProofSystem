@@ -17,7 +17,7 @@
 namespace bitcoin
 {
 
-    bitcoin::generator_type BitcoinKeyGenerator::key_gen;
+    bitcoin::random_generator_type BitcoinKeyGenerator::key_gen;
 
     BitcoinKeyGenerator::BitcoinKeyGenerator()
     {

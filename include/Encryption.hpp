@@ -14,8 +14,11 @@ class Encryption
 {
 private:
 public:
-    virtual std::vector<std::uint8_t> EncryptData(std::vector<std::uint8_t> data, std::vector<std::uint8_t> key_data) = 0;
-    virtual std::vector<std::uint8_t> DecryptData(std::vector<std::uint8_t> data, std::vector<std::uint8_t> key_data) = 0;
+    virtual ~Encryption()
+    {
+    }
+    virtual std::vector<std::uint8_t> EncryptData( std::vector<std::uint8_t> data, std::vector<std::uint8_t> key_data ) = 0;
+    virtual std::vector<std::uint8_t> DecryptData( std::vector<std::uint8_t> data, std::vector<std::uint8_t> key_data ) = 0;
 };
 
 #endif

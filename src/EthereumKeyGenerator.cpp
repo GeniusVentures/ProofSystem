@@ -16,7 +16,7 @@
 namespace ethereum
 {
 
-    ethereum::generator_type EthereumKeyGenerator::key_gen;
+    ethereum::random_generator_type EthereumKeyGenerator::key_gen;
 
     EthereumKeyGenerator::EthereumKeyGenerator()
     {

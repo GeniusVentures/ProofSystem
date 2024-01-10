@@ -85,7 +85,7 @@ namespace bitcoin
         static std::string DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect );
 
     private:
-        static bitcoin::generator_type                                 key_gen;
+        static bitcoin::random_generator_type                          key_gen;
         std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> privkey;
         std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>      pubkey;
         std::string                                                    address;

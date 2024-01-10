@@ -78,7 +78,7 @@ namespace ethereum
         static std::string DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect );
 
     private:
-        static ethereum::generator_type                                 key_gen; ///< Ethereum random key generator
+        static ethereum::random_generator_type                          key_gen; ///< Ethereum random key generator
         std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> privkey; ///< Private key pointer
         std::shared_ptr<pubkey::public_key<ethereum::policy_type>>      pubkey;  ///< Public key pointer
         std::string                                                     address; ///< Ethereum address
