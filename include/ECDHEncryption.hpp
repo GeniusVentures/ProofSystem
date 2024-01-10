@@ -50,6 +50,11 @@ public:
         (void)key_data;
         return nil::crypto3::decrypt<nil::crypto3::block::aes<256>>( data, session_secret );
     }
+    bool CheckEqual( const Encryption &own, const Encryption &other ) const override
+    {
+        return ( dynamic_cast<ECDHEncryption &>( const_cast<Encryption &>( own ) ) ).session_secret ==
+               ( dynamic_cast<ECDHEncryption &>( const_cast<Encryption &>( other ) ) ).session_secret;
+    }
 
     /**
      * @brief       Constructs an ECDHEncryption object and creates a session secret
@@ -67,7 +72,6 @@ public:
         util::AdjustEndianess( session_secret );
 
         session_secret = static_cast<std::array<std::uint8_t, 32>>( hash<hashes::sha2<256>>( session_secret.rbegin(), session_secret.rend() ) );
-
     }
 };
 
