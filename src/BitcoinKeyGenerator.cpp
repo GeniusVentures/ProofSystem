@@ -41,6 +41,14 @@ namespace bitcoin
 
         address = DeriveAddress();
     }
+    BitcoinKeyGenerator::BitcoinKeyGenerator( const bitcoin::scalar_field_value_type &private_key )
+    {
+
+        privkey = std::make_shared<pubkey::ext_private_key<bitcoin::policy_type>>( private_key );
+        pubkey  = std::make_shared<pubkey::public_key<bitcoin::policy_type>>( *privkey );
+
+        address = DeriveAddress();
+    }
 
     std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> BitcoinKeyGenerator::CreateKeys()
     {

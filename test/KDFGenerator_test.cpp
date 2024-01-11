@@ -89,3 +89,32 @@ TEST( KDFGeneratorTest, KDFGeneratorECDHSecurity )
     EXPECT_FALSE( KDFInstance_Revealer == ( *KDFInstance_Intruder ) );
     delete ( KDFInstance_Intruder );
 }
+TEST( KDFGeneratorTest, KDFGeneratorNewBitcoin )
+{
+
+    BitcoinKeyGenerator proover_instance;
+    BitcoinKeyGenerator sgnus_instance;
+
+    auto        proover_key        = proover_instance.get_private_key();
+    std::string sgnus_pubkey_data  = sgnus_instance.GetEntirePubValue();
+    auto        sgnus_key          = sgnus_instance.get_private_key();
+    std::string signer_pubkey_data = proover_instance.GetEntirePubValue();
+
+    KDFGenerator<bitcoin::policy_type> *KDF = new KDFGenerator<bitcoin::policy_type>( proover_key, sgnus_pubkey_data );
+
+    auto shared_secret = KDF->GenerateSharedSecret( proover_key, sgnus_pubkey_data );
+    delete ( KDF );
+
+    EXPECT_EQ( shared_secret.size(), KDFGenerator<bitcoin::policy_type>::EXPECTED_SECRET_SIZE );
+
+    KDF = new KDFGenerator<bitcoin::policy_type>( sgnus_key, signer_pubkey_data );
+
+    auto derived_scalar_value = KDF->GetNewKeyFromSecret( shared_secret, signer_pubkey_data, sgnus_pubkey_data );
+    EXPECT_NE( derived_scalar_value, 0 );
+
+    BitcoinKeyGenerator *newBitcoin = new BitcoinKeyGenerator( derived_scalar_value );
+
+    EXPECT_NE( newBitcoin->get_address(), "" );
+    EXPECT_NE( newBitcoin->GetUsedPubKeyValue(), "" );
+    delete ( newBitcoin );
+}

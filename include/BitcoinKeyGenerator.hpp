@@ -40,6 +40,11 @@ namespace bitcoin
          */
         BitcoinKeyGenerator( const std::string &private_key );
         /**
+         * @brief       Import a private key and construct a new Bitcoin Key Generator
+         * @param[in]   private_key: Private key in string form
+         */
+        BitcoinKeyGenerator( const bitcoin::scalar_field_value_type &private_key );
+        /**
          * @brief       Returns the private key reference
          * @return      Reference to the private key
          */
