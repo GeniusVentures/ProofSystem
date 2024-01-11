@@ -1,6 +1,6 @@
 /**
  * @file       ECDHEncryption.hpp
- * @brief       
+ * @brief      Elliptic-curve Diffie-Hellman @ref Encryption header file
  * @date       2024-01-05
  * @author     Henrique A. Klein (henryaklein@gmail.com)
  */
@@ -18,7 +18,7 @@
 
 using namespace nil::crypto3::pubkey;
 /**
- * @brief       Elliptic-curve Diffie-Hellman class using AES 256
+ * @brief       Elliptic-curve Diffie-Hellman class using AES 256 Encryption
  */
 template <typename PolicyType>
 class ECDHEncryption : public Encryption
@@ -50,10 +50,16 @@ public:
         (void)key_data;
         return nil::crypto3::decrypt<nil::crypto3::block::aes<256>>( data, session_secret );
     }
-    bool CheckEqual( const Encryption &own, const Encryption &other ) const override
+    /**
+     * @brief       Checks if two @ref ECDHEncryption instances are equal
+     * @param[in]   lhs First instance of @ref Encryption to be downcasted
+     * @param[in]   rhs Second instance of @ref Encryption to be downcasted
+     * @return      true if session secrets are equal, false otherwise
+     */
+    bool CheckEqual( const Encryption &lhs, const Encryption &rhs ) const override
     {
-        return ( dynamic_cast<ECDHEncryption &>( const_cast<Encryption &>( own ) ) ).session_secret ==
-               ( dynamic_cast<ECDHEncryption &>( const_cast<Encryption &>( other ) ) ).session_secret;
+        return ( dynamic_cast<ECDHEncryption &>( const_cast<Encryption &>( lhs ) ) ).session_secret ==
+               ( dynamic_cast<ECDHEncryption &>( const_cast<Encryption &>( rhs ) ) ).session_secret;
     }
 
     /**

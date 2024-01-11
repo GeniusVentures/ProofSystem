@@ -31,7 +31,7 @@ public:
     using SignatureType = typename pubkey::public_key<PolicyType>::signature_type;
     using ECDSAPubKey   = std::string;
 
-    static constexpr std::size_t EXPECTED_SECRET_SIZE = 192;
+    static constexpr std::size_t EXPECTED_SECRET_SIZE = 192; ///< Expected size of the signature in bytes
 
     /**
      * @brief       Constructs a new KDFGenerator object
@@ -42,25 +42,31 @@ public:
 
     /**
      * @brief       Generates a shared secret with a new derived key
-     * @param[in]   prvt_key Key to sign the secret
-     * @param[in]   sgnus_key public key of other party
+     * @param[in]   own_prvt_key Key to sign the secret
+     * @param[in]   other_party_key public key of other party
      * @return      The secret that represents the signed data and new derived key
      */
-    std::string GenerateSharedSecret( const pubkey::ext_private_key<PolicyType> &prvt_key, const ECDSAPubKey &sgnus_key );
+    std::string GenerateSharedSecret( const pubkey::ext_private_key<PolicyType> &own_prvt_key, const ECDSAPubKey &other_party_key );
 
     /**
-     * @brief       Checks if the shared secret is valid
+     * @brief       Extracts the derived new key from the signed secret
      * @param[in]   signed_secret The shared secret 
-     * @param[in]   prover_key 
-     * @param[in]   sgnus_key 
-     * @return      true if secret is valid is verified, false otherwise
+     * @param[in]   signer_pubkey The public key data from the signer of the secret
+     * @param[in]   verifier_pubkey The public key data that will be checked on the signature
+     * @return      New derived key scalar value
+     * @warning     If the signature can't be verified or the data decrypted, it throws a runtime exception
      */
-    ecdsa_t::scalar_field_value_type GetNewKeyFromSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key,
-                                                          const ECDSAPubKey &sgnus_key );
+    ecdsa_t::scalar_field_value_type GetNewKeyFromSecret( const std::string &signed_secret, const ECDSAPubKey &signer_pubkey,
+                                                          const ECDSAPubKey &verifier_pubkey );
 
+    /**
+     * @brief       Checks if the encryptor is the same for the KDF
+     * @param[in]   other The other KDF instance
+     * @return      true if the encryptors are the same, false otherwise
+     */
     const bool operator==( const KDFGenerator &other ) const
     {
-        return ( *(this->encryptor) == *(other.encryptor) );
+        return ( *( this->encryptor ) == *( other.encryptor ) );
     }
 
 private:
@@ -81,9 +87,9 @@ KDFGenerator<PolicyType>::KDFGenerator( const pubkey::ext_private_key<PolicyType
 }
 
 template <typename PolicyType>
-std::string KDFGenerator<PolicyType>::GenerateSharedSecret( const pubkey::ext_private_key<PolicyType> &prvt_key, const ECDSAPubKey &sgnus_key )
+std::string KDFGenerator<PolicyType>::GenerateSharedSecret( const pubkey::ext_private_key<PolicyType> &own_prvt_key, const ECDSAPubKey &other_party_key )
 {
-    KDFGenerator::SignatureType signed_secret = sign<PolicyType>( sgnus_key, prvt_key );
+    KDFGenerator::SignatureType signed_secret = sign<PolicyType>( other_party_key, own_prvt_key );
     std::vector<std::uint8_t>   signed_vector( 64 );
 
     nil::marshalling::bincode::field<ecdsa_t::scalar_field_type>::field_element_to_bytes<std::vector<std::uint8_t>::iterator>(
@@ -95,16 +101,16 @@ std::string KDFGenerator<PolicyType>::GenerateSharedSecret( const pubkey::ext_pr
         static_cast<std::vector<std::uint8_t>>( hash<hashes::sha2<256>>( signed_vector.begin(), signed_vector.end() ) );
     signed_vector.insert( signed_vector.end(), derived_key_vector.begin(), derived_key_vector.end() );
 
-    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( sgnus_key.data(), sgnus_key.size() );
+    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( other_party_key.data(), other_party_key.size() );
 
     return util::to_string( encryptor->EncryptData( signed_vector, key_vector ) );
 }
 template <typename PolicyType>
-ecdsa_t::scalar_field_value_type KDFGenerator<PolicyType>::GetNewKeyFromSecret( const std::string &signed_secret, const ECDSAPubKey &prover_key,
-                                                                                const ECDSAPubKey &sgnus_key )
+ecdsa_t::scalar_field_value_type KDFGenerator<PolicyType>::GetNewKeyFromSecret( const std::string &signed_secret, const ECDSAPubKey &signer_pubkey,
+                                                                                const ECDSAPubKey &verifier_pubkey )
 {
-    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( sgnus_key.data(), sgnus_key.size() );
-    const auto                pubkey     = BuildPublicKeyECDSA( prover_key );
+    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( verifier_pubkey.data(), verifier_pubkey.size() );
+    const auto                signer_key     = BuildPublicKeyECDSA( signer_pubkey );
 
     std::vector<std::uint8_t> signed_vector = util::HexASCII2NumStr<std::uint8_t>( signed_secret.data(), signed_secret.size() );
 
@@ -117,9 +123,7 @@ ecdsa_t::scalar_field_value_type KDFGenerator<PolicyType>::GetNewKeyFromSecret( 
         nil::marshalling::bincode::field<ecdsa_t::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
             decoded_vector.begin() + 32, decoded_vector.begin() + 64 );
 
-    //SignatureType signed_data( sign_first_part.second, sign_second_part.second );
-
-    bool valid = static_cast<bool>( verify<PolicyType>( sgnus_key, SignatureType( sign_first_part.second, sign_second_part.second ), pubkey ) );
+    bool valid = static_cast<bool>( verify<PolicyType>( verifier_pubkey, SignatureType( sign_first_part.second, sign_second_part.second ), signer_key ) );
 
     if ( valid == false )
     {
