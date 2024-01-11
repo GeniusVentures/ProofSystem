@@ -1,3 +1,9 @@
+/**
+ * @file       ECDSAPublicKey.hpp
+ * @brief      ECDSA public key base class
+ * @date       2023-12-26
+ * @author     Henrique A. Klein (henryaklein@gmail.com)
+ */
 #include <string>
 #include <vector>
 #include "util.hpp"

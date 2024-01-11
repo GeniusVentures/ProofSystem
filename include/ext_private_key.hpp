@@ -1,6 +1,10 @@
-//
-// Created by Super Genius on 12/16/23.
-//
+/**
+ * @file       ext_private_key.hpp
+ * @brief      Extented private key class header file
+ * @date       2023-12-16
+ * @author     Super Genius (ken@gnus.ai)
+ * @author     Henrique A. Klein (henryaklein@gmail.com)
+ */
 
 #ifndef PROOFSYSTEM_EXT_PRIVATE_KEY_HPP
 #define PROOFSYSTEM_EXT_PRIVATE_KEY_HPP
@@ -20,10 +24,15 @@ namespace nil
     {
         namespace pubkey
         {
-
+            /**
+             * @brief       Forward declaration of class
+             */
             template <typename Scheme, typename = void>
             struct ext_private_key;
 
+            /**
+             * @brief       Extended private key class with deterministic generator and operator modifications
+             */
             template <typename CurveType, typename Padding, typename GeneratorType, typename DistributionType>
             struct ext_private_key<
                 ecdsa<CurveType, Padding, GeneratorType, DistributionType>,
@@ -35,7 +44,11 @@ namespace nil
                 using private_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>>::private_key;
 
 
-
+                /**
+                 * @brief       Multiplication overload to derive public key from private key multiplication
+                 * @param[in]   lhs: public key to be multiplied by own private key data
+                 * @return      New public key
+                 */
                 const public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>> 
                 operator*(const public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>> &lhs ) const 
                 {

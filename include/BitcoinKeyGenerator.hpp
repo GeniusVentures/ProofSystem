@@ -1,3 +1,10 @@
+/**
+ * @file       BitcoinKeyGenerator.hpp
+ * @brief      Bitcoin address generator header file
+ * @date       2023-12-08
+ * @author     Super Genius (ken@gnus.ai)
+ * @author     Henrique A. Klein (henryaklein@gmail.com)
+ */
 #ifndef BITCOIN_KEY_GENERATOR_HPP
 #define BITCOIN_KEY_GENERATOR_HPP
 
@@ -11,6 +18,9 @@ using namespace nil::crypto3;
 using namespace nil::crypto3::algebra;
 using namespace nil::crypto3::hashes;
 
+/**
+ * @brief       Bitcoin namespace
+ */
 namespace bitcoin
 {
 
@@ -84,22 +94,24 @@ namespace bitcoin
          */
         static std::string DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect );
 
+        /**
+         * @brief       Create the ECDSA key pair
+         * @return      Private key pointer
+         */
+        static std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> CreateKeys();
+
     private:
+        /// The random scalar number generator used to create new bitcoin address
         static bitcoin::random_generator_type                          key_gen;
-        std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> privkey;
-        std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>      pubkey;
-        std::string                                                    address;
+        std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> privkey; ///< The ECDSA private key
+        std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>      pubkey;  ///< The ECDSA public key
+        std::string                                                    address; ///< The Bitcoin Address in string form
 
         static constexpr std::uint8_t MAIN_NETWORK_ID     = 0; ///< ID of the Main Bitcoin network
         static constexpr std::uint8_t PARITY_EVEN_ID      = 2; ///< If even, the compressed address is prepend this
         static constexpr std::uint8_t PARITY_ODD_ID       = 3; ///< If odd, the compressed address is prepend this
         static constexpr std::uint8_t CHECKSUM_SIZE_BYTES = 4; ///< Number of used checksum bytes
 
-        /**
-         * @brief       Create the ECDSA key pair
-         * @return      Private key pointer
-         */
-        static std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> CreateKeys();
         /**
          * @brief       Derive the bitcoin address from own key
          * @return      the Bitcoin base58 address

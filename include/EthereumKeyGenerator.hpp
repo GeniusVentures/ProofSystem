@@ -1,3 +1,10 @@
+/**
+ * @file       EthereumKeyGenerator.hpp
+ * @brief      Ethereum address generator header file
+ * @date       2023-12-08
+ * @author     Super Genius (ken@gnus.ai)
+ * @author     Henrique A. Klein (henryaklein@gmail.com)
+ */
 
 #ifndef ETHEREUM_KEY_GENERATOR_HPP
 #define ETHEREUM_KEY_GENERATOR_HPP
@@ -76,6 +83,11 @@ namespace ethereum
          * @warning     The LSB is the 0 index and the MSB is the 63th.
          */
         static std::string DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect );
+        /**
+         * @brief       Create the ECDSA key pair
+         * @return      Private key pointer
+         */
+        static std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> CreateKeys();
 
     private:
         static ethereum::random_generator_type                          key_gen; ///< Ethereum random key generator
@@ -87,11 +99,6 @@ namespace ethereum
         static constexpr std::size_t KECCAK_RES_VALID_POS = 24;                       ///< Start position for address derivation
         static constexpr std::size_t ADDRESS_VALID_POS    = KECCAK_RES_VALID_POS - 2; ///< Start position of the address
         static constexpr std::size_t ADDRESS_SIZE_CHARS   = 42;                       ///< Size of the address in characters
-        /**
-         * @brief       Create the ECDSA key pair
-         * @return      Private key pointer
-         */
-        static std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> CreateKeys();
         /**
          * @brief       Derive the Ethereum address from own key
          * @return      Ethereum address in string form
