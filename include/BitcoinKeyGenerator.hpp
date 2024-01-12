@@ -9,46 +9,47 @@
 #define BITCOIN_KEY_GENERATOR_HPP
 
 #include <string>
+#include <vector>
+#include <memory>
+#include <cstdint>
+#include <utility>
 #include "BitcoinKeyPairParams.hpp"
 #include "ext_private_key.hpp"
 #include "util.hpp"
 #include "ECDSAPublicKey.hpp"
 
 using namespace nil::crypto3;
-using namespace nil::crypto3::algebra;
-using namespace nil::crypto3::hashes;
 
-/**
- * @brief       Bitcoin namespace
- */
 namespace bitcoin
 {
 
     /**
-     * @brief       Creates a pair of ECDSA keys and a bitcoin address from a compressed key
+     * @brief       Creates a pair of ECDSA keys and a Bitcoin address from a compressed key
      */
     class BitcoinKeyGenerator
     {
     public:
+        using PubKeyPair_t = std::pair<std::vector<std::uint8_t>, std::vector<std::uint8_t>>;
+
         /**
-         * @brief       Construct a new Bitcoin Key Generator
+         * @brief       Constructs a new randomly generated Bitcoin key and address
          */
         BitcoinKeyGenerator();
         /**
-         * @brief       Import a private key and construct a new Bitcoin Key Generator
+         * @brief       Import private key string data to construct Bitcoin key and address
          * @param[in]   private_key: Private key in string form
          */
         BitcoinKeyGenerator( const std::string &private_key );
         /**
-         * @brief       Import a private key and construct a new Bitcoin Key Generator
-         * @param[in]   private_key: Private key in string form
+         * @brief       Import a private key scalar value to construct Bitcoin key and address
+         * @param[in]   private_key: Private key scalar value
          */
-        BitcoinKeyGenerator( const bitcoin::scalar_field_value_type &private_key );
+        BitcoinKeyGenerator( const scalar_field_value_type &private_key );
         /**
          * @brief       Returns the private key reference
          * @return      Reference to the private key
          */
-        const pubkey::ext_private_key<bitcoin::policy_type> &get_private_key() const
+        const pubkey::ext_private_key<policy_type> &get_private_key() const
         {
             return *privkey;
         }
@@ -56,20 +57,20 @@ namespace bitcoin
          * @brief       Returns the public key reference
          * @return      Reference to the public key
          */
-        const pubkey::public_key<bitcoin::policy_type> &get_public_key() const
+        const pubkey::public_key<policy_type> &get_public_key() const
         {
             return *pubkey;
         }
         /**
          * @brief       Returns the bitcoin base58 address
-         * @return      Bitcoin base58 address
+         * @return      Bitcoin base58 address in string form
          */
         const std::string &get_address() const
         {
             return address;
         }
         /**
-         * @brief       Get the single public key value used by bitcoin addressing
+         * @brief       Get the public key value used for bitcoin address derivation
          * @return      The compressed X coordinate in string form
          */
         const std::string GetUsedPubKeyValue() const
@@ -77,20 +78,20 @@ namespace bitcoin
             return *pubkey_info;
         }
         /**
-         * @brief       Get all key value of the public key
-         * @return      The concatenated X+Y key
+         * @brief       Get entire key value of the public key
+         * @return      The concatenated X+Y key values in string form
          */
         const std::string GetEntirePubValue() const
         {
             return pubkey_info->GetEntireKey();
         }
-
         /**
          * @brief       Extract the key vector data from the ECDSA public key
          * @param[in]   pub_key: Public ECDSA key
-         * @return      Key data (X compressed) of the public key
+         * @return      
          */
-        static std::vector<std::uint8_t> ExtractPubKeyFromField( const pubkey::public_key<bitcoin::policy_type> &pub_key );
+        template <typename T>
+        static T ExtractPubKeyFromField( const pubkey::public_key<policy_type> &pub_key );
         /**
          * @brief       Derive the bitcoin address from de X coordinate of the public key
          * @param[in]   pub_key_vect: The vector representation of the X coordinate of public key
@@ -103,14 +104,13 @@ namespace bitcoin
          * @brief       Create the ECDSA key pair
          * @return      Private key pointer
          */
-        static std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> CreateKeys();
+        static std::shared_ptr<pubkey::ext_private_key<policy_type>> CreateKeys();
 
     private:
-        /// The random scalar number generator used to create new bitcoin address
-        static bitcoin::random_generator_type                          key_gen;
-        std::shared_ptr<pubkey::ext_private_key<bitcoin::policy_type>> privkey; ///< The ECDSA private key
-        std::shared_ptr<pubkey::public_key<bitcoin::policy_type>>      pubkey;  ///< The ECDSA public key
-        std::string                                                    address; ///< The Bitcoin Address in string form
+        static random_generator_type                          key_gen; ///< Bitcoin random key generator
+        std::shared_ptr<pubkey::ext_private_key<policy_type>> privkey; ///< The ECDSA private key
+        std::shared_ptr<pubkey::public_key<policy_type>>      pubkey;  ///< The ECDSA public key
+        std::string                                           address; ///< The Bitcoin Address in string form
 
         static constexpr std::uint8_t MAIN_NETWORK_ID     = 0; ///< ID of the Main Bitcoin network
         static constexpr std::uint8_t PARITY_EVEN_ID      = 2; ///< If even, the compressed address is prepend this

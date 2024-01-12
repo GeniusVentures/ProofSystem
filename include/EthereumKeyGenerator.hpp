@@ -28,6 +28,7 @@ namespace ethereum
     class EthereumKeyGenerator
     {
     public:
+        using PubKeyPair_t = std::pair<std::vector<std::uint8_t>,std::vector<std::uint8_t>>;
         /**
          * @brief       Construct a new Ethereum Key Generator 
          */
@@ -37,6 +38,11 @@ namespace ethereum
          * @param[in]   private_key: Private key in string form
          */
         EthereumKeyGenerator( const std::string &private_key );
+        /**
+         * @brief       Import a private key and construct a new Ethereum Key Generator
+         * @param[in]   private_key: Private key in string form
+         */
+        EthereumKeyGenerator( const ethereum::scalar_field_value_type &private_key );
         /**
          * @brief       Getter for private key (be careful with security implications)
          * @return      Reference to the private key 
@@ -54,15 +60,6 @@ namespace ethereum
             return *pubkey;
         }
         /**
-         * @brief       Get the single public key value used by ethereum addressing
-         * @return      The concatenated X and Y coordinates in string form
-         */
-        const std::string GetPublicKeyValue() const
-        {
-            return *pubkey_info;
-        }
-
-        /**
          * @brief       Getter for the Ethereum address
          * @return      Ethereum address
          */
@@ -71,11 +68,28 @@ namespace ethereum
             return address;
         }
         /**
+         * @brief       Get the single public key value used by ethereum addressing
+         * @return      The concatenated X and Y coordinates in string form
+         */
+        const std::string GetUsedPubKeyValue() const
+        {
+            return *pubkey_info;
+        }
+        /**
+         * @brief       Get all key value of the public key
+         * @return      The concatenated X+Y key
+         */
+        const std::string GetEntirePubValue() const
+        {
+            return pubkey_info->GetEntireKey();
+        }
+        /**
          * @brief       Extract the key vector data from the ECDSA public key
          * @param[in]   pub_key: Public ECDSA key
          * @return      Key data (X + Y) of the public key
          */
-        static std::vector<std::uint8_t> ExtractPubKeyFromField( const pubkey::public_key<ethereum::policy_type> &pub_key );
+        template <typename T>
+        static T ExtractPubKeyFromField( const pubkey::public_key<ethereum::policy_type> &pub_key );
         /**
          * @brief       Derive the ethereum address from de XY concatenated coordinates
          * @param[in]   pub_key_vect: The concatenated vector representation of both X and Y coordinates
