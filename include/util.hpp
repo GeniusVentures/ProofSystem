@@ -1,6 +1,10 @@
-//
-// Created by Super Genius on 12/6/23.
-//
+/**
+ * @file       util.hpp
+ * @brief      Utilities functions header file
+ * @date       2024-01-12
+ * @author     Super Genius (ken@gnus.ai)
+ * @author     Henrique A. Klein (henryaklein@gmail.com)
+ */
 
 #ifndef PROOFSYSTEM_UTIL_HPP
 #define PROOFSYSTEM_UTIL_HPP
@@ -25,11 +29,11 @@ namespace util
     static std::string to_string( const std::vector<unsigned char> &bytes )
     {
         std::string out_str;
-        char temp_buf[3];
-        for (auto it = bytes.rbegin(); it!= bytes.rend(); ++it)
+        char        temp_buf[3];
+        for ( auto it = bytes.rbegin(); it != bytes.rend(); ++it )
         {
-            snprintf(temp_buf,sizeof(temp_buf),"%02x", *it);
-            out_str.append(temp_buf,sizeof(temp_buf)-1);
+            snprintf( temp_buf, sizeof( temp_buf ), "%02x", *it );
+            out_str.append( temp_buf, sizeof( temp_buf ) - 1 );
         }
         return out_str;
     }
@@ -50,6 +54,7 @@ namespace util
      * @brief       Converts a hexadecimal ASCII char array into a number
      * @param[in]   p_char Hexadecimal ASCII char array
      * @param[in]   num_nibbles_resolution How many nibbles will constitute a number
+     * @tparam      T uint8_t, uint16_t, uint32_t or uint64_t
      * @return      The converted number (8-64 bit variable)
      */
     template <typename T>
@@ -77,12 +82,13 @@ namespace util
      * @brief       Converts a hexadecimal ASCII char array into a vector of numbers
      * @param[in]   p_char Hexadecimal ASCII char array
      * @param[in]   char_ptr_size Size of the char array
+     * @tparam      T uint8_t, uint16_t, uint32_t or uint64_t
      * @return      The vector of converted numbers
      */
     template <typename T>
     static std::vector<T> HexASCII2NumStr( const char *p_char, std::size_t char_ptr_size )
     {
-        static_assert( std::is_same_v<T, uint8_t> || std::is_same_v<T, uint16_t> || std::is_same_v<T, uint32_t> );
+        static_assert( std::is_same_v<T, uint8_t> || std::is_same_v<T, uint16_t> || std::is_same_v<T, uint32_t> || std::is_same_v<T, uint64_t> );
         std::vector<T> out_vect;
         std::size_t    num_nibbles_resolution = ( sizeof( T ) * 2 );
         auto           point_of_insertion     = [&]()
@@ -109,11 +115,11 @@ namespace util
      * @param[in]   data The container of data (vector/array)
      * @param[in]   start Optional beginning of the valid data
      * @param[in]   finish Optional ending of the valid data
+     * @tparam      T std::vector<uint8_t> or std::array<uint8_t,N>
      */
     template <typename T>
-    typename std::enable_if<std::is_same<typename T::value_type, uint8_t>::value>::type
-    AdjustEndianess( T &data, std::optional<typename T::iterator> start = std::nullopt,
-                          std::optional<typename T::iterator> finish = std::nullopt )
+    static typename std::enable_if<std::is_same<typename T::value_type, uint8_t>::value>::type
+    AdjustEndianess( T &data, std::optional<typename T::iterator> start = std::nullopt, std::optional<typename T::iterator> finish = std::nullopt )
     {
         if ( !start )
         {
