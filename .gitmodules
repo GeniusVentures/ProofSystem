@@ -1,6 +1,3 @@
 [submodule "build"]
 	path = build
 	url = ../cmaketemplate
-[submodule "zkLLVM"]
-	path = zkLLVM
-	url = ../Super-Genius/zkLLVM.git
