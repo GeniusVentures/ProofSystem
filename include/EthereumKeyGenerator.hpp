@@ -30,7 +30,7 @@ namespace ethereum
     public:
         using PubKeyPair_t = std::pair<std::vector<std::uint8_t>,std::vector<std::uint8_t>>;
         /**
-         * @brief       Construct a new Ethereum Key Generator 
+         * @brief       Construct a new Ethereum Key Generator
          */
         EthereumKeyGenerator();
         /**
@@ -45,7 +45,7 @@ namespace ethereum
         EthereumKeyGenerator( const ethereum::scalar_field_value_type &private_key );
         /**
          * @brief       Getter for private key (be careful with security implications)
-         * @return      Reference to the private key 
+         * @return      Reference to the private key
          */
         const pubkey::ext_private_key<ethereum::policy_type> get_private_key() const
         {
@@ -109,7 +109,7 @@ namespace ethereum
         std::shared_ptr<pubkey::public_key<ethereum::policy_type>>      pubkey;  ///< Public key pointer
         std::string                                                     address; ///< Ethereum address
 
-        static constexpr std::string ADDRESS_HEADER       = "0x";                     ///< Ethereum address header
+        static constexpr std::string_view ADDRESS_HEADER       = "0x";                ///< Ethereum address header
         static constexpr std::size_t KECCAK_RES_VALID_POS = 24;                       ///< Start position for address derivation
         static constexpr std::size_t ADDRESS_VALID_POS    = KECCAK_RES_VALID_POS - 2; ///< Start position of the address
         static constexpr std::size_t ADDRESS_SIZE_CHARS   = 42;                       ///< Size of the address in characters

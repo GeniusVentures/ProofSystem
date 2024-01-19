@@ -35,6 +35,7 @@ TEST( BitcoinKeyGeneratorTest, PublicKeyGenerated )
     // Assert
     //EXPECT_TRUE(!pubkey.empty());
 }
+
 TEST( BitcoinKeyGeneratorTest, BitCoinAddressTest )
 {
     std::vector<std::uint8_t> x_ser = { 0x1e, 0x7b, 0xcc, 0x70, 0xc7, 0x27, 0x70, 0xdb, 0xb7, 0x2f, 0xea, 0x02, 0x2e, 0x8a, 0x6d, 0x07,
@@ -44,6 +45,7 @@ TEST( BitcoinKeyGeneratorTest, BitCoinAddressTest )
     std::string address = BitcoinKeyGenerator::DeriveAddress( x_ser );
     EXPECT_EQ( address, "17JsmEygbbEUEpvt4PFtYaTeSqfb9ki1F1" );
 }
+
 TEST( BitcoinKeyGeneratorTest, BitCoinKeyImportTest )
 {
     std::string priv_key_data = "60cf347dbc59d31c1358c8e5cf5e45b822ab85b79cb32a9f3d98184779a9efc2";

@@ -29,6 +29,7 @@ TEST( EthereumKeyGeneratorTest, PublicKeyGenerated )
     // Assert
     EXPECT_TRUE( !pubkey.pubkey_data().X.is_zero() );
 }
+
 TEST( EthereumKeyGeneratorTest, EthereumAddressTest )
 {
     std::vector<std::uint8_t> x_y_ser = { 0xb8, 0xc6, 0x11, 0xcd, 0xf2, 0xc0, 0xaf, 0xc5, 0x9a, 0xfa, 0xb6, 0x13, 0xb8, 0x9d, 0xa8, 0x34,
@@ -39,6 +40,7 @@ TEST( EthereumKeyGeneratorTest, EthereumAddressTest )
     std::string address = EthereumKeyGenerator::DeriveAddress( x_y_ser );
     EXPECT_EQ( address, "0xEb01f251BA36f6b96105f9eAEBfA86092756514B" );
 }
+
 TEST( EthereumKeyGeneratorTest, EthereumKeyImportTest )
 {
     std::string          private_key = "4256949314A06D963EBB6B40515E564679C931A6DCB6A3B95D90BB532C6798A5";
