@@ -20,6 +20,7 @@
 #include "Encryption.hpp"
 #include "ECDHEncryption.hpp"
 #include "ext_private_key.hpp"
+//#include "ElGamalKeyGenerator.hpp"
 
 /**
  * @brief       KDF Generator class
@@ -83,6 +84,7 @@ private:
 template <typename PolicyType>
 KDFGenerator<PolicyType>::KDFGenerator( const pubkey::ext_private_key<PolicyType> &own_prvt_key, const ECDSAPubKey &other_party_key )
 {
+    //ElGamalKeyGenerator();
     encryptor = std::make_shared<ECDHEncryption<PolicyType>>( own_prvt_key, BuildPublicKeyECDSA( other_party_key ) );
 }
 
