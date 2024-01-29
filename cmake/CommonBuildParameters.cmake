@@ -80,12 +80,14 @@ include_directories(
         "${THIRDPARTY_DIR}/zkLLVM/libs/crypto3/libs/threshold/include"
         "${THIRDPARTY_DIR}/zkLLVM/libs/crypto3/libs/vdf/include"
         "${THIRDPARTY_DIR}/zkLLVM/libs/crypto3/libs/zk/include"
+        "${THIRDPARTY_DIR}/zkLLVM/libs/blueprint/include"
         )
 
 add_library(${PROJECT_NAME}
         STATIC
         "${CMAKE_CURRENT_LIST_DIR}/../src/BitcoinKeyGenerator.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/../src/EthereumKeyGenerator.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../src/ElGamalKeyGenerator.cpp"
 )
 
 if(BUILD_TESTS)
@@ -93,6 +95,7 @@ if(BUILD_TESTS)
                 "${CMAKE_CURRENT_LIST_DIR}/../test/main_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/BitcoinKeyGenerator_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/EthereumKeyGenerator_test.cpp"
+                "${CMAKE_CURRENT_LIST_DIR}/../test/ElGamalKeyGenerator_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/KDFGenerator_test.cpp"
         )
         target_link_libraries(${PROJECT_NAME}_test PUBLIC ${PROJECT_NAME} GTest::gtest Boost::random)

@@ -20,7 +20,7 @@
 #include "Encryption.hpp"
 #include "ECDHEncryption.hpp"
 #include "ext_private_key.hpp"
-//#include "ElGamalKeyGenerator.hpp"
+#include "ElGamalKeyGenerator.hpp"
 
 /**
  * @brief       KDF Generator class
