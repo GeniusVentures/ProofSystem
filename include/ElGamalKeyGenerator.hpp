@@ -18,8 +18,14 @@ class ElGamalKeyGenerator
 {
 private:
     using GeneratorParamsType = std::pair<cpp_int, cpp_int>;
+    using CypherTextType      = std::pair<cpp_int, cpp_int>;
     struct Params
     {
+        const GeneratorParamsType GetParams( void ) const
+        {
+            return p_g;
+        }
+
     protected:
         GeneratorParamsType p_g;
     };
@@ -29,34 +35,36 @@ private:
 public:
     struct PublicKey : public Params
     {
-
-    protected:
         cpp_int public_key_scalar;
     };
     struct PrivateKey : public PublicKey
     {
-        PrivateKey( GeneratorParamsType p_g )
+        PrivateKey( GeneratorParamsType &&new_p_g ) //: PublicKey(new_p_g)
         {
-            auto prime = std::get<0>( p_g );
-            for ( ;; )
-            {
-                private_key_scalar = PrimeNumbers::GetRandomNumber( 2, prime - 1 );
-                cpp_int gcd        = boost::math::gcd( private_key_scalar, prime );
-                if ( gcd == 1 )
-                    break;
-            }
-            public_key_scalar = GeneratePublicKey( p_g );
+            private_key_scalar = PrimeNumbers::GetRandomNumber( new_p_g.first );
+            public_key_scalar  = GeneratePublicKey( new_p_g );
+            PublicKey::p_g     = new_p_g;
         }
 
+        cpp_int private_key_scalar;
     private:
         cpp_int GeneratePublicKey( GeneratorParamsType &p_g )
         {
-            return powm( std::get<1>( p_g ), private_key_scalar, std::get<0>( p_g ) );
+            return powm( p_g.second, private_key_scalar, p_g.first );
         }
-        cpp_int private_key_scalar;
     };
+    static CypherTextType       EncryptData( PublicKey &pubkey, std::vector<uint8_t> &data_vector );
+    static std::vector<uint8_t> DecryptData( PrivateKey &prvkey, CypherTextType &encrypted_data );
     ElGamalKeyGenerator( /* args */ );
     ~ElGamalKeyGenerator();
+    PublicKey &GetPublicKey( void ) const
+    {
+        return *public_key;
+    }
+    PrivateKey &GetPrivateKey( void ) const
+    {
+        return *private_key;
+    }
 
 private:
     std::shared_ptr<PrivateKey> private_key;

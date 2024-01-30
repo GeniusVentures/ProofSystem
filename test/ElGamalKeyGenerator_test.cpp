@@ -25,3 +25,15 @@ TEST( ElGamalKeyGeneratorTest, Initialization )
         }
     }
 }
+TEST( ElGamalKeyGeneratorTest, EncryptionDecryption )
+{
+    ElGamalKeyGenerator key_generator;
+    std::vector<uint8_t> my_vect = {0xde, 0xad, 0xbe, 0xef};
+
+    auto cypher = ElGamalKeyGenerator::EncryptData(key_generator.GetPublicKey(),my_vect);
+
+    std::vector<uint8_t> new_vect = ElGamalKeyGenerator::DecryptData(key_generator.GetPrivateKey(), cypher);
+
+    EXPECT_EQ(my_vect,new_vect );
+
+}

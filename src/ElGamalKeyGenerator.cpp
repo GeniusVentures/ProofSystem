@@ -6,18 +6,51 @@
  */
 #include "ElGamalKeyGenerator.hpp"
 #include "PrimeNumbers.hpp"
+#include "Crypto3Util.hpp"
 #include <boost/math/common_factor_rt.hpp>
 
 ElGamalKeyGenerator::ElGamalKeyGenerator()
 {
-    //PrivateKey key(CreateGeneratorParams());
-    private_key = std::make_shared<PrivateKey>(CreateGeneratorParams());
-    public_key = std::make_shared<PublicKey>(*private_key);
+    private_key = std::make_shared<PrivateKey>( CreateGeneratorParams() );
+    public_key  = std::make_shared<PublicKey>( *private_key );
 }
 
-ElGamalKeyGenerator::GeneratorParamsType ElGamalKeyGenerator::CreateGeneratorParams(void)
+ElGamalKeyGenerator::~ElGamalKeyGenerator()
 {
-    cpp_int             prime_number = 0;
+}
+
+ElGamalKeyGenerator::CypherTextType ElGamalKeyGenerator::EncryptData( PublicKey &pubkey, std::vector<uint8_t> &data_vector )
+{
+
+    auto    curr_params  = pubkey.GetParams();
+    cpp_int random_value = PrimeNumbers::GetRandomNumber( curr_params.first );
+
+    cpp_int a = powm( curr_params.second, random_value, curr_params.first );
+    cpp_int b = powm( pubkey.public_key_scalar, random_value, curr_params.first );
+
+    cpp_int message = Crypto3Util::BytesToCppInt( data_vector );
+    b *= message;
+    b %= curr_params.first;
+
+    return std::make_pair( a, b );
+}
+std::vector<uint8_t> ElGamalKeyGenerator::DecryptData( PrivateKey &prvkey, CypherTextType &encrypted_data )
+{
+    auto curr_params = ( static_cast<PublicKey &>( prvkey ) ).GetParams();
+
+    cpp_int ainv = PrimeNumbers::ModInverse( encrypted_data.first, curr_params.first );
+
+    cpp_int m = powm( ainv, prvkey.private_key_scalar, curr_params.first );
+    m *= encrypted_data.second;
+    m %= curr_params.first;
+    std::vector<uint8_t> retval = Crypto3Util::CppIntToBytes(m);
+
+    return retval;
+}
+
+ElGamalKeyGenerator::GeneratorParamsType ElGamalKeyGenerator::CreateGeneratorParams( void )
+{
+    cpp_int prime_number = 0;
 
     bool ret = PrimeNumbers::GenerateSafePrime<256>( 10, prime_number );
 
@@ -26,23 +59,14 @@ ElGamalKeyGenerator::GeneratorParamsType ElGamalKeyGenerator::CreateGeneratorPar
         throw std::runtime_error( "Prime number not found" );
     }
 
-    cpp_int order = ( prime_number - 1 ) / 2;
-
     cpp_int generator = 0;
 
-    for ( ;; )
+    ret = PrimeNumbers::GetGeneratorFromPrime( 100, prime_number, generator );
+
+    if ( ret == false )
     {
-        generator = PrimeNumbers::GetRandomNumber( 2, prime_number - 1 ); // get a random number 1 < g < p-1
-        if ( boost::math::gcd( generator, order ) == 1 )                  // must be an elment of Zp*
-        {
-            if ( powm( generator, order, prime_number ) == 1 ) // check if g^q mod p = 1 (if the element is a generator of subgroup G)
-                break;
-        }
+        throw std::runtime_error( "Generator not found" );
     }
 
     return std::make_pair( prime_number, generator );
-}
-
-ElGamalKeyGenerator::~ElGamalKeyGenerator()
-{
 }
