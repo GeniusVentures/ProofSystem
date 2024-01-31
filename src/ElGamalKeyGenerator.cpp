@@ -22,28 +22,42 @@ ElGamalKeyGenerator::~ElGamalKeyGenerator()
 ElGamalKeyGenerator::CypherTextType ElGamalKeyGenerator::EncryptData( PublicKey &pubkey, std::vector<uint8_t> &data_vector )
 {
 
+    cpp_int message = Crypto3Util::BytesToCppInt( data_vector );
+
+    return EncryptData( pubkey, message );
+}
+ElGamalKeyGenerator::CypherTextType ElGamalKeyGenerator::EncryptData( PublicKey &pubkey, cpp_int &data )
+{
+
     auto    curr_params  = pubkey.GetParams();
     cpp_int random_value = PrimeNumbers::GetRandomNumber( curr_params.first );
 
     cpp_int a = powm( curr_params.second, random_value, curr_params.first );
     cpp_int b = powm( pubkey.public_key_scalar, random_value, curr_params.first );
 
-    cpp_int message = Crypto3Util::BytesToCppInt( data_vector );
-    b *= message;
+    b *= data;
     b %= curr_params.first;
 
     return std::make_pair( a, b );
 }
-std::vector<uint8_t> ElGamalKeyGenerator::DecryptData( PrivateKey &prvkey, CypherTextType &encrypted_data )
+template <>
+cpp_int ElGamalKeyGenerator::DecryptData( PrivateKey &prvkey, CypherTextType &encrypted_data )
 {
     auto curr_params = ( static_cast<PublicKey &>( prvkey ) ).GetParams();
 
-    cpp_int ainv = PrimeNumbers::ModInverseEuclideanDivision( encrypted_data.first, curr_params.first );
+    cpp_int mod_inverse = PrimeNumbers::ModInverseEuclideanDivision( encrypted_data.first, curr_params.first );
 
-    cpp_int m = powm( ainv, prvkey.private_key_scalar, curr_params.first );
+    cpp_int m = powm( mod_inverse, prvkey.private_key_scalar, curr_params.first );
     m *= encrypted_data.second;
     m %= curr_params.first;
-    std::vector<uint8_t> retval = Crypto3Util::CppIntToBytes(m);
+
+    return m;
+}
+template <>
+std::vector<uint8_t> ElGamalKeyGenerator::DecryptData( PrivateKey &prvkey, CypherTextType &encrypted_data )
+{
+    auto                 m      = DecryptData<cpp_int>( prvkey, encrypted_data );
+    std::vector<uint8_t> retval = Crypto3Util::CppIntToBytes( m );
 
     return retval;
 }

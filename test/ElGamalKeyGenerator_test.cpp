@@ -6,6 +6,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <random>
 #include "ElGamalKeyGenerator.hpp"
 
 TEST( ElGamalKeyGeneratorTest, Initialization )
@@ -25,15 +26,30 @@ TEST( ElGamalKeyGeneratorTest, Initialization )
         }
     }
 }
-TEST( ElGamalKeyGeneratorTest, EncryptionDecryption )
+TEST( ElGamalKeyGeneratorTest, EncryptionDecryptionNum )
 {
-    ElGamalKeyGenerator key_generator;
-    std::vector<uint8_t> my_vect = {0xde, 0xad, 0xbe, 0xef};
+    ElGamalKeyGenerator  key_generator;
+    cpp_int my_value = 0xbeadfeed;
 
-    auto cypher = ElGamalKeyGenerator::EncryptData(key_generator.GetPublicKey(),my_vect);
+    auto cypher = ElGamalKeyGenerator::EncryptData( key_generator.GetPublicKey(), my_value );
 
-    std::vector<uint8_t> new_vect = ElGamalKeyGenerator::DecryptData(key_generator.GetPrivateKey(), cypher);
+    auto result = ElGamalKeyGenerator::DecryptData<cpp_int>( key_generator.GetPrivateKey(), cypher );
 
-    EXPECT_EQ(my_vect,new_vect );
+    EXPECT_EQ( my_value, result );
+}
 
+TEST( ElGamalKeyGeneratorTest, EncryptionDecryptionShortVect )
+{
+    //TODO - No more than 31 bytes. Need multiple encryptions for that
+    ElGamalKeyGenerator  key_generator;
+    std::vector<uint8_t> my_vect( 31 );
+    std::random_device   rd;
+    std::mt19937         gen( rd() );
+    std::fill(my_vect.begin(), my_vect.end(), gen());
+
+    auto cypher = ElGamalKeyGenerator::EncryptData( key_generator.GetPublicKey(), my_vect );
+
+    std::vector<uint8_t> new_vect = ElGamalKeyGenerator::DecryptData<std::vector<uint8_t>>( key_generator.GetPrivateKey(), cypher );
+
+    EXPECT_EQ( my_vect, new_vect );
 }
