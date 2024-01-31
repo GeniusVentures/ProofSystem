@@ -29,7 +29,7 @@ struct Crypto3Util
         cpp_int remaining = big_num;
         while ( remaining != 0 )
         {
-            bytes.push_back( static_cast<uint8_t>( remaining & 0xFF ) );
+            bytes.insert(bytes.begin(), static_cast<uint8_t>( remaining & 0xFF ) );
             remaining >>= 8;
         }
         return bytes;
