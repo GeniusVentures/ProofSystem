@@ -100,25 +100,43 @@ public:
         return ret;
     }
 
-    static cpp_int ModInverse( cpp_int a, cpp_int b )
+    static cpp_int ModInverseEuclideanDivision( cpp_int x, cpp_int prime )
     {
-        cpp_int original_b = b;
-        cpp_int x = 1;
-        cpp_int y = 0;
-        cpp_int xLast = 0;
-        cpp_int yLast = 1;
-        cpp_int q, r, m, n;
-        while ( a != 0 )
+        cpp_int original_prime = prime;
+        cpp_int r              = 0;
+        cpp_int r_new          = 1;
+        cpp_int t              = 1;
+        cpp_int t_new          = 0;
+        cpp_int quotient;
+        cpp_int remainder;
+        cpp_int temp;
+
+        if ( gcd( x, prime ) != 1 )
         {
-            q     = b / a;
-            r     = b % a;
-            m     = xLast - q * x;
-            n     = yLast - q * y;
-            xLast = x, yLast = y;
-            x = m, y = n;
-            b = a, a = r;
+            throw std::runtime_error( "x and prime are not co-primes" );
         }
-        return (xLast+original_b)%original_b;
+        while ( x != 0 )
+        {
+            quotient  = prime / x;
+            remainder = prime % x;
+
+            temp  = r - quotient * r_new;
+            r     = r_new;
+            r_new = temp;
+
+            temp  = t - quotient * t_new;
+            t     = t_new;
+            t_new = temp;
+
+            prime = x;
+            x     = remainder;
+        }
+        if ( r < 0 )
+        {
+            r += original_prime;
+        }
+
+        return r;
     }
 };
 

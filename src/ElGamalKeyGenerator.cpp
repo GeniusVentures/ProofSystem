@@ -38,7 +38,7 @@ std::vector<uint8_t> ElGamalKeyGenerator::DecryptData( PrivateKey &prvkey, Cyphe
 {
     auto curr_params = ( static_cast<PublicKey &>( prvkey ) ).GetParams();
 
-    cpp_int ainv = PrimeNumbers::ModInverse( encrypted_data.first, curr_params.first );
+    cpp_int ainv = PrimeNumbers::ModInverseEuclideanDivision( encrypted_data.first, curr_params.first );
 
     cpp_int m = powm( ainv, prvkey.private_key_scalar, curr_params.first );
     m *= encrypted_data.second;
