@@ -11,7 +11,8 @@
 
 ElGamalKeyGenerator::ElGamalKeyGenerator()
 {
-    private_key = std::make_shared<PrivateKey>( CreateGeneratorParams() );
+    auto params = CreateGeneratorParams();
+    private_key = std::make_shared<PrivateKey>( params,  PrivateKey::CreatePrivateScalar( params ) );
     public_key  = std::make_shared<PublicKey>( *private_key );
 }
 
@@ -47,7 +48,7 @@ cpp_int ElGamalKeyGenerator::DecryptData( PrivateKey &prvkey, CypherTextType &en
 
     cpp_int mod_inverse = PrimeNumbers::ModInverseEuclideanDivision( encrypted_data.first, curr_params.first );
 
-    cpp_int m = powm( mod_inverse, prvkey.private_key_scalar, curr_params.first );
+    cpp_int m = powm( mod_inverse, prvkey.GetPrivateKeyScalar(), curr_params.first );
     m *= encrypted_data.second;
     m %= curr_params.first;
 

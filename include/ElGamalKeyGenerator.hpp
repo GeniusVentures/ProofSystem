@@ -16,15 +16,22 @@ using namespace nil::crypto3;
 using namespace nil::crypto3::multiprecision;
 class ElGamalKeyGenerator
 {
-private:
     using GeneratorParamsType = std::pair<cpp_int, cpp_int>;
     using CypherTextType      = std::pair<cpp_int, cpp_int>;
 
+private:
     /**
      * @brief      Prime and generator parameter struct
      */
     struct Params
     {
+        /**
+         * @brief       Construct a new Params object
+         * @param[in]   new_p_g: prime and generator
+         */
+        Params( GeneratorParamsType &new_p_g ) : p_g( new_p_g )
+        {
+        }
         /**
          * @brief       Returns the prime number and its generator
          * @return      @ref GeneratorParamsType 
@@ -48,22 +55,35 @@ public:
     struct PublicKey : public Params
     {
         cpp_int public_key_scalar;
+
+        PublicKey( GeneratorParamsType &new_p_g, cpp_int pubkey_value ) :
+            public_key_scalar( pubkey_value ), //
+            Params( new_p_g )
+        {
+        }
     };
     struct PrivateKey : public PublicKey
     {
-        PrivateKey( GeneratorParamsType &&new_p_g ) //: PublicKey(new_p_g)
+        PrivateKey( GeneratorParamsType &new_p_g, cpp_int prvkey_value ) :
+            private_key_scalar( prvkey_value ),                              //
+            PublicKey( new_p_g, GeneratePublicKey( new_p_g, prvkey_value ) ) //
         {
-            private_key_scalar = PrimeNumbers::GetRandomNumber( new_p_g.first );
-            public_key_scalar  = GeneratePublicKey( new_p_g );
-            PublicKey::p_g     = new_p_g;
         }
 
-        cpp_int private_key_scalar;
+        static cpp_int CreatePrivateScalar( GeneratorParamsType &new_p_g )
+        {
+            return PrimeNumbers::GetRandomNumber( new_p_g.first );
+        }
+        const cpp_int GetPrivateKeyScalar(void) const
+        {
+            return private_key_scalar;
+        }
 
     private:
-        cpp_int GeneratePublicKey( GeneratorParamsType &p_g )
+        cpp_int private_key_scalar;
+        cpp_int GeneratePublicKey( GeneratorParamsType &new_p_g, cpp_int prvkey_value )
         {
-            return powm( p_g.second, private_key_scalar, p_g.first );
+            return powm( new_p_g.second, prvkey_value, new_p_g.first );
         }
     };
     static CypherTextType EncryptData( PublicKey &pubkey, std::vector<uint8_t> &data_vector );
