@@ -28,8 +28,8 @@ TEST( ElGamalKeyGeneratorTest, Initialization )
 }
 TEST( ElGamalKeyGeneratorTest, EncryptionDecryptionNum )
 {
-    ElGamalKeyGenerator  key_generator;
-    cpp_int my_value = 0xbeadfeed;
+    ElGamalKeyGenerator key_generator;
+    cpp_int             my_value = 0xbeadfeed;
 
     auto cypher = ElGamalKeyGenerator::EncryptData( key_generator.GetPublicKey(), my_value );
 
@@ -45,11 +45,42 @@ TEST( ElGamalKeyGeneratorTest, EncryptionDecryptionShortVect )
     std::vector<uint8_t> my_vect( 31 );
     std::random_device   rd;
     std::mt19937         gen( rd() );
-    std::fill(my_vect.begin(), my_vect.end(), gen());
+    std::fill( my_vect.begin(), my_vect.end(), gen() );
 
     auto cypher = ElGamalKeyGenerator::EncryptData( key_generator.GetPublicKey(), my_vect );
 
     std::vector<uint8_t> new_vect = ElGamalKeyGenerator::DecryptData<std::vector<uint8_t>>( key_generator.GetPrivateKey(), cypher );
 
     EXPECT_EQ( my_vect, new_vect );
+}
+TEST( ElGamalKeyGeneratorTest, MultiplicativeHomomorphism )
+{
+    ElGamalKeyGenerator key_generator;
+    cpp_int             original_balance = 50;
+    cpp_int             twice            = 2;
+
+    auto cypher_balance = ElGamalKeyGenerator::EncryptData( key_generator.GetPublicKey(), original_balance );
+    auto cypher_twice   = ElGamalKeyGenerator::EncryptData( key_generator.GetPublicKey(), twice );
+
+    auto cypher_total = std::make_pair<cpp_int, cpp_int>( cypher_balance.first * cypher_twice.first, cypher_balance.second * cypher_twice.second );
+
+    auto result = ElGamalKeyGenerator::DecryptData<cpp_int>( key_generator.GetPrivateKey(), cypher_total );
+
+    EXPECT_EQ( original_balance * twice, result );
+}
+TEST( ElGamalKeyGeneratorTest, AdditiveHomomorphism )
+{
+    ElGamalKeyGenerator key_generator;
+    cpp_int             original_balance = 50;
+    cpp_int             two              = 2;
+
+    auto cypher_balance = ElGamalKeyGenerator::EncryptDataAdditive( key_generator.GetPublicKey(), original_balance );
+    auto cypher_two     = ElGamalKeyGenerator::EncryptDataAdditive( key_generator.GetPublicKey(), two );
+
+    auto cypher_total = std::make_pair<cpp_int, cpp_int>( cypher_balance.first * cypher_two.first, cypher_balance.second * cypher_two.second );
+
+    auto result = ElGamalKeyGenerator::DecryptData<cpp_int>( key_generator.GetPrivateKey(), cypher_total );
+
+    EXPECT_EQ( powm( key_generator.GetPublicKey().GetParams().second, original_balance + two, key_generator.GetPublicKey().GetParams().first ),
+               result );
 }

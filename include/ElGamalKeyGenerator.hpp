@@ -74,7 +74,7 @@ public:
         {
             return PrimeNumbers::GetRandomNumber( new_p_g.first );
         }
-        const cpp_int GetPrivateKeyScalar(void) const
+        const cpp_int GetPrivateKeyScalar( void ) const
         {
             return private_key_scalar;
         }
@@ -86,10 +86,12 @@ public:
             return powm( new_p_g.second, prvkey_value, new_p_g.first );
         }
     };
-    static CypherTextType EncryptData( PublicKey &pubkey, std::vector<uint8_t> &data_vector );
+    static CypherTextType EncryptData( PublicKey &pubkey, std::vector<uint8_t> &data_vector);
     static CypherTextType EncryptData( PublicKey &pubkey, cpp_int &data );
+    static CypherTextType EncryptDataAdditive( PublicKey &pubkey, cpp_int &data);
     template <typename T>
     static T DecryptData( PrivateKey &prvkey, CypherTextType &encrypted_data );
+    static cpp_int DecryptDataAdditive( PrivateKey &prvkey, CypherTextType &encrypted_data );
     ElGamalKeyGenerator( /* args */ );
     ~ElGamalKeyGenerator();
     PublicKey &GetPublicKey( void ) const
