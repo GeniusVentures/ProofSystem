@@ -8,8 +8,7 @@
 #ifndef _EL_GAMAL_KEY_GENERATOR_HPP_
 #define _EL_GAMAL_KEY_GENERATOR_HPP_
 #include <memory>
-
-#include "ElGamalTypes.hpp"
+#include <nil/crypto3/detail/literals.hpp>
 #include "PrimeNumbers.hpp"
 
 using namespace nil::crypto3;
@@ -19,6 +18,7 @@ class ElGamalKeyGenerator
     using CypherTextType = std::pair<cpp_int, cpp_int>;
 
 public:
+    
     constexpr static const uint256_t SAFE_PRIME = 0xf3760a5583d3509b3f72b16e3c892129fef350406f88c268f503e877e043514f_cppui256;
     constexpr static const uint256_t GENERATOR  = 0x1a2c6b6fb9971c4a993069c76258ee18ba80f778fd4d7bc07186c70e73b93004_cppui256;
     /**
@@ -45,6 +45,9 @@ public:
         PublicKey( const Params &new_p_g, cpp_int pubkey_value ) :
             public_key_value( pubkey_value ), //
             Params( new_p_g )                 //
+        {
+        }
+        PublicKey( cpp_int pubkey_value ) : PublicKey( Params( SAFE_PRIME, GENERATOR ), pubkey_value )
         {
         }
         const cpp_int public_key_value; ///< The value of the public key
@@ -86,6 +89,8 @@ public:
     static cpp_int DecryptDataAdditive( PrivateKey &prvkey, CypherTextType &encrypted_data, cpp_int hint_start );
     ElGamalKeyGenerator( const Params &params );
     ElGamalKeyGenerator();
+    ElGamalKeyGenerator( const Params &params, const cpp_int &private_key_value );
+    ElGamalKeyGenerator( const cpp_int &private_key_value );
     ~ElGamalKeyGenerator();
     PublicKey &GetPublicKey( void ) const
     {

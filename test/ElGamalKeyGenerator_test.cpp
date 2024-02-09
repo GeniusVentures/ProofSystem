@@ -17,7 +17,7 @@ TEST( ElGamalKeyGeneratorTest, Initialization )
     {
         try
         {
-            ElGamalKeyGenerator{ElGamalKeyGenerator::CreateGeneratorParams()};
+            ElGamalKeyGenerator{ ElGamalKeyGenerator::CreateGeneratorParams() };
         }
         catch ( ... )
         {
@@ -25,6 +25,17 @@ TEST( ElGamalKeyGeneratorTest, Initialization )
             break;
         }
     }
+}
+TEST( ElGamalKeyGeneratorTest, ImportKeys )
+{
+    ElGamalKeyGenerator key_generator( 0xb22e83584f11aa1ce949bd0daff1f976da072c60e49fdd3dc40dcb28fd9f1a62_cppui256 );
+    cpp_int             pubkey_expected_value = 0x58008c145ce1d680d5157f5bd7ef883312639fb47ed0cef5dbb62676425e83a1_cppui256;
+
+    EXPECT_EQ( key_generator.GetPublicKey().public_key_value, pubkey_expected_value );
+
+    ElGamalKeyGenerator::PublicKey pubkey( pubkey_expected_value );
+
+    EXPECT_EQ( key_generator.GetPublicKey().public_key_value, pubkey.public_key_value );
 }
 TEST( ElGamalKeyGeneratorTest, EncryptionDecryptionNum )
 {
@@ -83,10 +94,8 @@ TEST( ElGamalKeyGeneratorTest, AdditiveHomomorphism )
 
     auto result_decoded = ElGamalKeyGenerator::DecryptDataAdditive( key_generator.GetPrivateKey(), cypher_total, 0 );
 
-    EXPECT_EQ( powm( key_generator.GetPublicKey().generator, original_balance + two, key_generator.GetPublicKey().prime_number ),
-               result );
+    EXPECT_EQ( powm( key_generator.GetPublicKey().generator, original_balance + two, key_generator.GetPublicKey().prime_number ), result );
     EXPECT_EQ( original_balance + two, result_decoded );
 
     EXPECT_THROW( ElGamalKeyGenerator::DecryptDataAdditive( key_generator.GetPrivateKey(), cypher_total, 100 ), std::runtime_error );
 }
-

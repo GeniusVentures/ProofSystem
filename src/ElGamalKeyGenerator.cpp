@@ -4,10 +4,9 @@
  * @date       2024-01-29
  * @author     Henrique A. Klein (henryaklein@gmail.com)
  */
+
 #include "ElGamalKeyGenerator.hpp"
-#include "PrimeNumbers.hpp"
 #include "Crypto3Util.hpp"
-#include <boost/math/common_factor_rt.hpp>
 
 ElGamalKeyGenerator::ElGamalKeyGenerator( const ElGamalKeyGenerator::Params &params )
 {
@@ -15,6 +14,17 @@ ElGamalKeyGenerator::ElGamalKeyGenerator( const ElGamalKeyGenerator::Params &par
     public_key  = std::make_shared<PublicKey>( *private_key );
 }
 ElGamalKeyGenerator::ElGamalKeyGenerator() : ElGamalKeyGenerator( ElGamalKeyGenerator::Params( SAFE_PRIME, GENERATOR ) )
+{
+    //std::cout << "private value " << std::hex << private_key->GetPrivateKeyScalar() << std::endl;
+    //std::cout << "public value " << std::hex << public_key->public_key_value << std::endl;
+}
+ElGamalKeyGenerator::ElGamalKeyGenerator( const ElGamalKeyGenerator::Params &params, const cpp_int &private_key_value )
+{
+    private_key = std::make_shared<PrivateKey>( params, private_key_value );
+    public_key  = std::make_shared<PublicKey>( *private_key );
+}
+ElGamalKeyGenerator::ElGamalKeyGenerator( const cpp_int &private_key_value ) :
+    ElGamalKeyGenerator( ElGamalKeyGenerator::Params( SAFE_PRIME, GENERATOR ), private_key_value )
 {
 }
 
