@@ -8,18 +8,14 @@
 #include "PrimeNumbers.hpp"
 #include "Crypto3Util.hpp"
 #include <boost/math/common_factor_rt.hpp>
-//#include "ECElGamal.hpp"
-//#include "ECDSATypes.hpp"
 
-ElGamalKeyGenerator::ElGamalKeyGenerator()
+ElGamalKeyGenerator::ElGamalKeyGenerator( const ElGamalKeyGenerator::Params &params )
 {
-    auto params = CreateGeneratorParams();
-    //ecdsa_t::scalar_field_value_type my_scalar = 0x60cf347dbc59d31c1358c8e5cf5e45b822ab85b79cb32a9f3d98184779a9efc2_cppui256;
-    //auto ecc_key = ECElGamal::PrivateKey<ecdsa_t::CurveType, ecdsa_t::padding_policy, ecdsa_t::generator_type>( my_scalar );
-    //std::string value_pub = "1E7BCC70C72770DBB72FEA022E8A6D07F814D2EBE4DE9AE3F7AF75BF706902A7B73FF919898C836396A6B0C96812C3213B99372050853BD1678DA0EAD14487D7";
-    //auto ecc_pubkey = ECElGamal::PublicKey<ecdsa_t::CurveType, ecdsa_t::padding_policy, ecdsa_t::generator_type>( value_pub );
     private_key = std::make_shared<PrivateKey>( params, PrivateKey::CreatePrivateScalar( params ) );
     public_key  = std::make_shared<PublicKey>( *private_key );
+}
+ElGamalKeyGenerator::ElGamalKeyGenerator() : ElGamalKeyGenerator( ElGamalKeyGenerator::Params( SAFE_PRIME, GENERATOR ) )
+{
 }
 
 ElGamalKeyGenerator::~ElGamalKeyGenerator()
@@ -28,41 +24,37 @@ ElGamalKeyGenerator::~ElGamalKeyGenerator()
 
 ElGamalKeyGenerator::CypherTextType ElGamalKeyGenerator::EncryptData( PublicKey &pubkey, std::vector<uint8_t> &data_vector )
 {
-
     cpp_int message = Crypto3Util::BytesToCppInt( data_vector );
 
     return EncryptData( pubkey, message );
 }
 ElGamalKeyGenerator::CypherTextType ElGamalKeyGenerator::EncryptData( PublicKey &pubkey, cpp_int &data )
 {
+    cpp_int random_value = PrimeNumbers::GetRandomNumber( pubkey.prime_number );
 
-    auto    curr_params     = pubkey.GetParams();
-    cpp_int random_value    = PrimeNumbers::GetRandomNumber( curr_params.first );
-
-    cpp_int a = powm( curr_params.second, random_value, curr_params.first );
-    cpp_int b = powm( pubkey.public_key_scalar, random_value, curr_params.first );
+    cpp_int a = powm( pubkey.generator, random_value, pubkey.prime_number );
+    cpp_int b = powm( pubkey.public_key_value, random_value, pubkey.prime_number );
 
     b *= data;
-    b %= curr_params.first;
+    b %= pubkey.prime_number;
 
     return std::make_pair( a, b );
 }
 ElGamalKeyGenerator::CypherTextType ElGamalKeyGenerator::EncryptDataAdditive( PublicKey &pubkey, cpp_int &data )
 {
-    auto    curr_params     = pubkey.GetParams();
-    cpp_int data_to_encrypt = powm( curr_params.second, data, curr_params.first );
+    cpp_int data_to_encrypt = powm( pubkey.generator, data, pubkey.prime_number );
     return EncryptData( pubkey, data_to_encrypt );
 }
 template <>
 cpp_int ElGamalKeyGenerator::DecryptData( PrivateKey &prvkey, CypherTextType &encrypted_data )
 {
-    auto curr_params = ( static_cast<PublicKey &>( prvkey ) ).GetParams();
+    auto pubkey = static_cast<PublicKey &>( prvkey );
 
-    cpp_int mod_inverse = PrimeNumbers::ModInverseEuclideanDivision( encrypted_data.first, curr_params.first );
+    cpp_int mod_inverse = PrimeNumbers::ModInverseEuclideanDivision( encrypted_data.first, pubkey.prime_number );
 
-    cpp_int m = powm( mod_inverse, prvkey.GetPrivateKeyScalar(), curr_params.first );
+    cpp_int m = powm( mod_inverse, prvkey.GetPrivateKeyScalar(), pubkey.prime_number );
     m *= encrypted_data.second;
-    m %= curr_params.first;
+    m %= pubkey.prime_number;
 
     return m;
 }
@@ -74,15 +66,17 @@ std::vector<uint8_t> ElGamalKeyGenerator::DecryptData( PrivateKey &prvkey, Cyphe
 
     return retval;
 }
-cpp_int ElGamalKeyGenerator::DecryptDataAdditive( PrivateKey &prvkey, CypherTextType &encrypted_data )
+cpp_int ElGamalKeyGenerator::DecryptDataAdditive( PrivateKey &prvkey, CypherTextType &encrypted_data, cpp_int hint_start )
 {
-    auto m = DecryptData<cpp_int>( prvkey, encrypted_data );
+    auto                     m        = DecryptData<cpp_int>( prvkey, encrypted_data );
+    auto                     pubkey   = static_cast<PublicKey &>( prvkey );
+    cpp_int                  hint_end = hint_start + 50000;
+    PrimeNumbers::ECDLPTable curr_table( hint_start, hint_end, pubkey.prime_number, pubkey.generator );
 
-    //return PrimeNumbers::BSGS::SolveECDLP(gen,m);
-    return m; 
+    return ( curr_table.SolveECDLP( m ) );
 }
 
-ElGamalKeyGenerator::GeneratorParamsType ElGamalKeyGenerator::CreateGeneratorParams( void )
+ElGamalKeyGenerator::Params ElGamalKeyGenerator::CreateGeneratorParams( void )
 {
     cpp_int prime_number = 0;
 
@@ -102,5 +96,5 @@ ElGamalKeyGenerator::GeneratorParamsType ElGamalKeyGenerator::CreateGeneratorPar
         throw std::runtime_error( "Generator not found" );
     }
 
-    return std::make_pair( prime_number, generator );
+    return ElGamalKeyGenerator::Params( prime_number, generator );
 }

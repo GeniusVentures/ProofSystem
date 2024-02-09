@@ -138,6 +138,39 @@ public:
 
         return r;
     }
+
+    struct ECDLPTable
+    {
+        ECDLPTable( cpp_int &min_value, cpp_int &max_value, const cpp_int &prime, const cpp_int &generator ) : prime_number( prime )
+        {
+            // step_size = static_cast<cpp_int>( sqrt( prime_number ) + 1 );
+            for ( cpp_int i = min_value; i < max_value; ++i )
+            {
+                cpp_int value      = powm( generator, i, prime_number );
+                value_table[value] = i;
+            }
+            //std::cout << "getting the inverse or whatever" << std::endl;
+            g_n_inv = powm( generator, prime_number - step_size - 1, prime_number );
+        }
+
+        cpp_int SolveECDLP( cpp_int &in_number )
+        {
+            if ( value_table.count( in_number ) )
+            {
+                // Solution found
+                return value_table[in_number];
+            }
+
+            // If no solution was found
+            throw std::runtime_error( "No ECDLP solution found" );
+        }
+
+    private:
+        cpp_int                              g_n_inv;
+        cpp_int                              step_size;
+        cpp_int                              prime_number;
+        std::unordered_map<cpp_int, cpp_int> value_table;
+    };
 };
 
 #endif

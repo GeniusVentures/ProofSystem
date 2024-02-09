@@ -17,7 +17,7 @@ TEST( ElGamalKeyGeneratorTest, Initialization )
     {
         try
         {
-            ElGamalKeyGenerator{};
+            ElGamalKeyGenerator{ElGamalKeyGenerator::CreateGeneratorParams()};
         }
         catch ( ... )
         {
@@ -81,6 +81,12 @@ TEST( ElGamalKeyGeneratorTest, AdditiveHomomorphism )
 
     auto result = ElGamalKeyGenerator::DecryptData<cpp_int>( key_generator.GetPrivateKey(), cypher_total );
 
-    EXPECT_EQ( powm( key_generator.GetPublicKey().GetParams().second, original_balance + two, key_generator.GetPublicKey().GetParams().first ),
+    auto result_decoded = ElGamalKeyGenerator::DecryptDataAdditive( key_generator.GetPrivateKey(), cypher_total, 0 );
+
+    EXPECT_EQ( powm( key_generator.GetPublicKey().generator, original_balance + two, key_generator.GetPublicKey().prime_number ),
                result );
+    EXPECT_EQ( original_balance + two, result_decoded );
+
+    EXPECT_THROW( ElGamalKeyGenerator::DecryptDataAdditive( key_generator.GetPrivateKey(), cypher_total, 100 ), std::runtime_error );
 }
+
