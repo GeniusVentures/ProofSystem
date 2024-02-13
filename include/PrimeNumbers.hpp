@@ -139,28 +139,30 @@ public:
         return r;
     }
 
-    struct ECDLPTable
+    struct BabyStepGiantStep
     {
-        ECDLPTable( cpp_int &min_value, cpp_int &max_value, const cpp_int &prime, const cpp_int &generator ) : prime_number( prime )
+        BabyStepGiantStep( cpp_int prime, cpp_int generator ) : prime_number( prime )
         {
-            // step_size = static_cast<cpp_int>( sqrt( prime_number ) + 1 );
-            for ( cpp_int i = min_value; i < max_value; ++i )
+            step_size = static_cast<cpp_int>( pow( 2, 16 ) + 1 );
+            for ( cpp_int i = 0; i < step_size; ++i )
             {
                 cpp_int value      = powm( generator, i, prime_number );
                 value_table[value] = i;
             }
-            //std::cout << "getting the inverse or whatever" << std::endl;
-            g_n_inv = powm( generator, prime_number - step_size - 1, prime_number );
+
+            g_n_inv = powm( generator, step_size * ( prime - 2 ), prime_number );
         }
 
-        cpp_int SolveECDLP( cpp_int &in_number )
+        cpp_int SolveECDLP( const cpp_int &number )
         {
-            if ( value_table.count( in_number ) )
+            for ( cpp_int i = 0, cur = number % prime_number; i <= step_size; ++i )
             {
-                // Solution found
-                return value_table[in_number];
+                if ( value_table.find( cur ) != value_table.end() )
+                {
+                    return i * step_size + value_table[cur];
+                }
+                cur = ( cur * g_n_inv ) % prime_number;
             }
-
             // If no solution was found
             throw std::runtime_error( "No ECDLP solution found" );
         }

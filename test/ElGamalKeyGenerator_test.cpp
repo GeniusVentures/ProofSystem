@@ -85,17 +85,28 @@ TEST( ElGamalKeyGeneratorTest, AdditiveHomomorphism )
     cpp_int             original_balance = 50;
     cpp_int             two              = 2;
 
-    auto cypher_balance = ElGamalKeyGenerator::EncryptDataAdditive( key_generator.GetPublicKey(), original_balance );
-    auto cypher_two     = ElGamalKeyGenerator::EncryptDataAdditive( key_generator.GetPublicKey(), two );
+    auto cypher_50_exp = ElGamalKeyGenerator::EncryptDataAdditive( key_generator.GetPublicKey(), original_balance );
+    auto cypher_2_exp  = ElGamalKeyGenerator::EncryptDataAdditive( key_generator.GetPublicKey(), two );
 
-    auto cypher_total = std::make_pair<cpp_int, cpp_int>( cypher_balance.first * cypher_two.first, cypher_balance.second * cypher_two.second );
+    auto cypher_total = std::make_pair<cpp_int, cpp_int>( cypher_50_exp.first * cypher_2_exp.first, cypher_50_exp.second * cypher_2_exp.second );
 
     auto result = ElGamalKeyGenerator::DecryptData<cpp_int>( key_generator.GetPrivateKey(), cypher_total );
 
-    auto result_decoded = ElGamalKeyGenerator::DecryptDataAdditive( key_generator.GetPrivateKey(), cypher_total, 0 );
+    auto result_decoded = key_generator.DecryptDataAdditive( cypher_total );
 
     EXPECT_EQ( powm( key_generator.GetPublicKey().generator, original_balance + two, key_generator.GetPublicKey().prime_number ), result );
     EXPECT_EQ( original_balance + two, result_decoded );
 
-    EXPECT_THROW( ElGamalKeyGenerator::DecryptDataAdditive( key_generator.GetPrivateKey(), cypher_total, 100 ), std::runtime_error );
+    auto cypher_half_mil   = ElGamalKeyGenerator::EncryptDataAdditive( key_generator.GetPublicKey(), 1500000 );
+    auto cypher_300k       = ElGamalKeyGenerator::EncryptDataAdditive( key_generator.GetPublicKey(), 300000 );
+    auto cypher_1_800_calc = ElGamalKeyGenerator::EncryptDataAdditive( key_generator.GetPublicKey(), 1800000 );
+    auto cypher_1_800_add =
+        std::make_pair<cpp_int, cpp_int>( ( cypher_half_mil.first * cypher_300k.first ) % key_generator.GetPublicKey().prime_number,
+                                          ( cypher_half_mil.second * cypher_300k.second ) % key_generator.GetPublicKey().prime_number );
+
+    auto result_1_800      = key_generator.DecryptDataAdditive( cypher_1_800_add );
+    auto result_1_800_calc = key_generator.DecryptDataAdditive( cypher_1_800_calc );
+
+    EXPECT_EQ( result_1_800, 1800000 );
+    EXPECT_EQ( result_1_800_calc, 1800000 );
 }
