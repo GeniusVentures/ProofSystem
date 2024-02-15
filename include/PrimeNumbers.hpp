@@ -139,6 +139,70 @@ public:
         return r;
     }
 
+    static cpp_int SqrtMod( const cpp_int &number, const cpp_int &prime )
+    {
+
+        cpp_int ret = -1;
+        do
+        {
+            if ( powm( number, ( prime - 1 ) / 2, prime ) != 1 )
+            {
+                // No solution exists
+                break;
+            }
+            if ( prime % 4 == 3 )
+            {
+                ret = powm( number, ( prime + 1 ) / 4, prime );
+                break;
+            }
+            cpp_int q = prime - 1;
+            cpp_int s = 0;
+            while ( q % 2 == 0 )
+            {
+                s += 1;
+                q /= 2;
+            }
+            cpp_int z = 2;
+            while ( powm( z, ( prime - 1 ) / 2, prime ) != prime - 1 )
+            {
+                z++;
+            }
+            // Find the first quadratic non-residue z by brute-force search
+
+            cpp_int c = powm( z, q, prime );
+            ret       = powm( number, ( q + 1 ) / 2, prime );
+            cpp_int t = powm( number, q, prime );
+            cpp_int m = s;
+
+            while ( t != 1 )
+            {
+                cpp_int i = 0, temp = t;
+                while ( temp != 1 && i < ( m - 1 ) )
+                {
+                    temp = powm( temp, 2, prime );
+                    i++;
+                }
+
+                cpp_int b = powm( c, cpp_int( 1 << static_cast<unsigned long long>( m - i - 1 ) ), prime );
+                ret       = ( ret * b ) % prime;
+                t         = ( t * b * b ) % prime;
+                c         = ( b * b ) % prime;
+                m         = i;
+            }
+        } while ( 0 );
+
+        return ret;
+    }
+    static cpp_int PowHighPrec( const cpp_int &value, const long &exp )
+    {
+        cpp_int retval = 1;
+        for ( std::size_t i = 0; i < exp; ++i )
+        {
+            retval *= value;
+        }
+        return retval;
+    }
+
     struct BabyStepGiantStep
     {
         BabyStepGiantStep( cpp_int prime, cpp_int generator ) : prime_number( prime )
