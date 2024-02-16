@@ -27,11 +27,12 @@ public:
 
     std::pair<ECElGamalPoint<ecdsa_t::CurveType>, ECElGamalPoint<ecdsa_t::CurveType>> EncryptData( const cpp_int &data )
     {
-        // TODO Replace with random number
-        ECElGamalPoint<ecdsa_t::CurveType> C1( 0x123456 * ECElGamalPoint<ecdsa_t::CurveType>::curve_point_type::one() );
+        ecdsa_t::random_generator_type     random_gen;
+        auto                               random_num = random_gen();
+        ECElGamalPoint<ecdsa_t::CurveType> C1( random_num * ECElGamalPoint<ecdsa_t::CurveType>::curve_point_type::one() );
 
         ECElGamalPoint<ecdsa_t::CurveType> M( data );
-        ECElGamalPoint<ecdsa_t::CurveType> kQ( 0x123456 * public_key->pubkey_data() );
+        ECElGamalPoint<ecdsa_t::CurveType> kQ( random_num * public_key->pubkey_data() );
         ECElGamalPoint<ecdsa_t::CurveType> C2 = M + kQ;
 
         return std::make_pair( C1, C2 );

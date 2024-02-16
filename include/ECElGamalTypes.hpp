@@ -73,9 +73,9 @@ struct ECElGamalPoint
         curve_point_type point_this  = *this->curve_point;
         curve_point_type point_other = *other.curve_point;
         curve_point_type new_point   = point_this + point_other;
-        std::cout << "point_this " << point_this.to_affine().X.data << std::endl;
-        std::cout << "point_other " << point_other.to_affine().X.data << std::endl;
-        std::cout << "new_point " << new_point.to_affine().X.data << std::endl;
+        //std::cout << "point_this " << point_this.to_affine().X.data << std::endl;
+        //std::cout << "point_other " << point_other.to_affine().X.data << std::endl;
+        //std::cout << "new_point " << new_point.to_affine().X.data << std::endl;
         return ECElGamalPoint( new_point );
     }
     ECElGamalPoint operator-( const ECElGamalPoint &other ) const
