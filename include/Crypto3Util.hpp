@@ -34,6 +34,6 @@ struct Crypto3Util
         }
         return bytes;
     }
-}
+};
 
 #endif
