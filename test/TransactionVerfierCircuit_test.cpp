@@ -1,7 +1,7 @@
 /**
- * @file       TransactionVerifierCircuit_test.cpp
- * @brief
- * @author
+ * @file     TransactionVerifierCircuit_test.cpp
+ * @brief    Test a Transaction circuit using a proof
+ * @author   SuperGenius
  */
 
 #include <gtest/gtest.h>
