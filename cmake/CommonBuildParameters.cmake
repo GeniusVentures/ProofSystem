@@ -5,7 +5,6 @@ set(BOOST_MINOR_VERSION "85" CACHE STRING "Boost Minor Version")
 set(BOOST_PATCH_VERSION "0" CACHE STRING "Boost Patch Version")
 # convenience settings
 set(BOOST_VERSION "${BOOST_MAJOR_VERSION}.${BOOST_MINOR_VERSION}.${BOOST_PATCH_VERSION}")
-set(BOOST_VERSION_3U "${BOOST_MAJOR_VERSION}_${BOOST_MINOR_VERSION}_${BOOST_PATCH_VERSION}")
 set(BOOST_VERSION_2U "${BOOST_MAJOR_VERSION}_${BOOST_MINOR_VERSION}")
 
 set(CMAKE_CXX_STANDARD 20)
@@ -13,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(DEFINED USE_BOOST_INCLUDE_POSTFIX)
-  set(BOOST_INCLUDE_POSTFIX "boost-${BOOST_VERSION_2U}" CACHE STRING "Boost include postfix")
+  set(BOOST_INCLUDE_POSTFIX "/boost-${BOOST_VERSION_2U}" CACHE STRING "Boost include postfix")
 endif()
 
 # --------------------------------------------------------
@@ -28,7 +27,7 @@ add_compile_definitions(CRYPTO3_CODEC_BASE58)
 # Set config of Boost project
 set(_BOOST_ROOT "${_THIRDPARTY_BUILD_DIR}/boost/build/${CMAKE_SYSTEM_NAME}${ABI_SUBFOLDER_NAME}")
 set(Boost_LIB_DIR "${_BOOST_ROOT}/lib")
-set(Boost_INCLUDE_DIR "${_BOOST_ROOT}/include/boost-${BOOST_VERSION_2U}")
+set(Boost_INCLUDE_DIR "${_BOOST_ROOT}/include${BOOST_INCLUDE_POSTFIX}")
 set(Boost_DIR "${Boost_LIB_DIR}/cmake/Boost-${BOOST_VERSION}")
 set(boost_headers_DIR "${Boost_LIB_DIR}/cmake/boost_headers-${BOOST_VERSION}")
 set(boost_random_DIR "${Boost_LIB_DIR}/cmake/boost_random-${BOOST_VERSION}")
