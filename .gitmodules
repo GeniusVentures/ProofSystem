@@ -1,3 +1,6 @@
 [submodule "build"]
 	path = build
 	url = ../cmaketemplate
+[submodule "SGProofCircuits"]
+	path = SGProofCircuits
+	url = ./SGProofCircuits
