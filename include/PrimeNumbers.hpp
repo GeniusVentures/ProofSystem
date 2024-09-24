@@ -9,7 +9,6 @@
 
 #define _USE_CRYPTO3_
 
-#include <boost/multiprecision/random.hpp>
 #include <time.h>
 #ifdef _USE_CRYPTO3_
 #include <nil/crypto3/multiprecision/cpp_int.hpp>
