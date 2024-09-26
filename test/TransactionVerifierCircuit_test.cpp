@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 #include <nil/crypto3/algebra/curves/pallas.hpp>
-#include "TransactionVerifierCircuit.hpp"
+#include <include/TransactionVerifierCircuit.hpp>
 
 using namespace nil::crypto3::algebra::curves;
 
