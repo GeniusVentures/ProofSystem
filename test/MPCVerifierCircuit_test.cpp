@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 #include <nil/crypto3/algebra/curves/pallas.hpp>
-#include "MPCVerifierCircuit.hpp"
+#include <include/MPCVerifierCircuit.hpp>
 #include "Requestor.hpp"
 #include <iostream>
 #include <nil/crypto3/algebra/curves/pallas.hpp>
