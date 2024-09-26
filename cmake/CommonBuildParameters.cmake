@@ -94,6 +94,7 @@ add_library(${PROJECT_NAME}
         "${CMAKE_CURRENT_LIST_DIR}/../src/EthereumKeyGenerator.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/../src/ElGamalKeyGenerator.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/../SGProofCircuits/src/circuits/TransactionVerifierCircuit.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../SGProofCircuits/src/circuits/MPCVerifierCircuit.cpp"
 )
 
 if(BUILD_TESTS)
@@ -104,7 +105,8 @@ if(BUILD_TESTS)
                 "${CMAKE_CURRENT_LIST_DIR}/../test/ElGamalKeyGenerator_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/ECElGamalKeyGenerator_test.cpp"
                 "${CMAKE_CURRENT_LIST_DIR}/../test/TransactionVerifierCircuit_test.cpp"
-                #"${CMAKE_CURRENT_LIST_DIR}/../test/KDFGenerator_test.cpp"
+                "${CMAKE_CURRENT_LIST_DIR}/../test/MPCVerifierCircuit_test.cpp"
+                "${CMAKE_CURRENT_LIST_DIR}/../test/Requestor.cpp"
         )
         target_link_libraries(${PROJECT_NAME}_test PUBLIC ${PROJECT_NAME} GTest::gtest Boost::random)
 endif()

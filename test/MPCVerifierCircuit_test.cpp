@@ -1,55 +1,139 @@
 /**
- * @file     GenerateProofs_test.cpp
- * @brief    Test the generation of proofs with proof carrying data using a proof
+ * @file     MPCVerifierCircuit_test.cpp
+ * @brief    Test the MPC ValidateTransaction circuit using a proof
+ * @author   Your Name
  */
 
 #include <gtest/gtest.h>
 #include <nil/crypto3/algebra/curves/pallas.hpp>
-#include "SGProofGenerator.hpp"
+#include "MPCVerifierCircuit.hpp"
+#include "Requestor.hpp"
+#include <iostream>
+#include <nil/crypto3/algebra/curves/pallas.hpp>
 
 using namespace nil::crypto3::algebra::curves;
 
-TEST(SGProofGeneratorTest, GenerateAndVerifyProofs) {
-    // Initialize the elliptic curve parameters
-    pallas::init_public_params();
-
-    // Define a generator point (example)
-    typename pallas::template g1_type<coordinates::affine>::value_type generator(1, 2);
-
-    // Generate keypair for the proofs
-    auto keypair = r1cs_gg_ppzksnark_generator<pallas>();
-
-    // Define public flags
-    std::vector<typename pallas::base_field_type::value_type> public_flags = {1, 2, 3};
-
-    // Generate Genesis Proof with Flags
-    proof_type genesis_proof = SGProofGenerator::generate_genesis_proof_with_flags(keypair, generator, public_flags);
-
-    // Extract public flags
-    auto extracted_flags_genesis = SGProofGenerator::extract_public_flags(genesis_proof);
-    EXPECT_EQ(extracted_flags_genesis, public_flags);
-
-    // Generate Account Creation Proof with Flags
-    proof_type account_creation_proof = SGProofGenerator::generate_account_creation_proof_with_flags(genesis_proof, keypair, generator, public_flags);
-
-    // Extract public flags
-    auto extracted_flags_account_creation = SGProofGenerator::extract_public_flags(account_creation_proof);
-    EXPECT_EQ(extracted_flags_account_creation, public_flags);
-
-    // Generate Transfer Proof with Flags
-    proof_type transfer_proof = SGProofGenerator::generate_transfer_proof_with_flags(account_creation_proof, keypair, generator, public_flags);
-
-    // Extract public flags
-    auto extracted_flags_transfer = SGProofGenerator::extract_public_flags(transfer_proof);
-    EXPECT_EQ(extracted_flags_transfer, public_flags);
-
-    // Output the results for debugging
-    std::cout << "Genesis Proof: " << genesis_proof << std::endl;
-    std::cout << "Account Creation Proof: " << account_creation_proof << std::endl;
-    std::cout << "Transfer Proof: " << transfer_proof << std::endl;
+// Define an output operator for curve points
+std::ostream& operator<<(std::ostream& os, const typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type& point) {
+    // Replace with actual fields of the point
+    os << "(" << point.X << ", " << point.Y << ")";
+    return os;
 }
 
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+// Simulate requestor setup for 11 nodes, each with 10 blocks
+Requestor requestor(11, 10);
+
+TEST(MPCVerifierCircuitTest, MPCValidateTransactionSetup) {
+
+    auto generator = requestor.getGenerator();
+
+    // Prepare the final aggregate from Nonce A and Nonce B
+    typename pallas::template g1_type<coordinates::affine>::value_type final_aggregate = requestor.getFinalAggregate();
+
+    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getTotalRandomSum();
+
+    // Balance and amount parameters for testing
+    typename pallas::base_field_type::value_type balance = 1000;
+    typename pallas::base_field_type::value_type amount = 500;
+
+    auto balance_commitment = generator * balance;
+    auto amount_commitment = generator * amount;
+    auto expected_new_balance_commitment = generator * (balance - amount);
+
+    // Debugging Outputs
+    std::cout << "Total Random Sum: (" << total_random_sum.X << ", " << total_random_sum.Y << ")" << std::endl;
+    std::cout << "Balance: " << balance << std::endl;
+    std::cout << "Amount: " << amount << std::endl;
+    std::cout << "Balance Commitment: (" << balance_commitment.X << ", " << balance_commitment.Y << ")" << std::endl;
+    std::cout << "Amount Commitment: (" << amount_commitment.X << ", " << amount_commitment.Y << ")" << std::endl;
+    std::cout << "Expected New Balance Commitment: (" << expected_new_balance_commitment.X << ", " << expected_new_balance_commitment.Y << ")" << std::endl;
+    std::cout << "Final Aggregate: (" << final_aggregate.X << ", " << final_aggregate.Y << ")" << std::endl;
+
+    // Validate the transaction
+    EXPECT_TRUE(MPCValidateTransaction(
+        total_random_sum,
+        balance,
+        amount,
+        balance_commitment,
+        amount_commitment,
+        expected_new_balance_commitment,
+        generator,
+        final_aggregate
+    ));
+}
+
+// Test for transaction failure due to negative balance
+TEST(MPCVerifierCircuitTest, MPCValidateTransactionFailNegativeBalance) {
+    typename pallas::base_field_type::value_type balance = 500;
+    typename pallas::base_field_type::value_type amount = 1000;
+
+    auto generator = requestor.getGenerator();
+
+    // Prepare the final aggregate from Nonce A and Nonce B
+    typename pallas::template g1_type<coordinates::affine>::value_type final_aggregate = requestor.getFinalAggregate();
+
+    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getAggregateBaseNonce(); // Calculate total random sum
+
+    auto balance_commitment = generator * balance;
+    auto amount_commitment = generator * amount;
+    auto expected_new_balance_commitment = generator * (balance - amount);
+
+    EXPECT_FALSE(MPCValidateTransaction(total_random_sum, balance, amount, balance_commitment, amount_commitment, expected_new_balance_commitment, generator, final_aggregate));
+}
+
+// Test for invalid commitments
+TEST(MPCVerifierCircuitTest, MPCValidateTransactionFailInvalidCommitments) {
+    typename pallas::base_field_type::value_type balance = 1000;
+    typename pallas::base_field_type::value_type amount = 500;
+
+    auto generator = requestor.getGenerator();
+
+    // Prepare the final aggregate from Nonce A and Nonce B
+    typename pallas::template g1_type<coordinates::affine>::value_type final_aggregate = requestor.getFinalAggregate();
+
+    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getAggregateBaseNonce(); // Calculate total random sum
+
+    auto balance_commitment = generator * balance;
+    auto amount_commitment = generator * amount;
+    auto expected_new_balance_commitment = generator * (balance - amount + 1);
+
+    EXPECT_FALSE(MPCValidateTransaction(total_random_sum, balance, amount, balance_commitment, amount_commitment, expected_new_balance_commitment, generator, final_aggregate));
+}
+
+// Test for transaction with zero amount
+TEST(MPCVerifierCircuitTest, MPCValidateTransactionPassZeroAmount) {
+    typename pallas::base_field_type::value_type balance = 1000;
+    typename pallas::base_field_type::value_type amount = 0;
+
+    auto generator = requestor.getGenerator();
+
+    // Prepare the final aggregate from Nonce A and Nonce B
+    typename pallas::template g1_type<coordinates::affine>::value_type final_aggregate = requestor.getFinalAggregate();
+
+    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getAggregateBaseNonce(); // Calculate total random sum
+
+    auto balance_commitment = generator * balance;
+    auto amount_commitment = generator * amount;
+    auto expected_new_balance_commitment = generator * balance;
+
+    EXPECT_TRUE(MPCValidateTransaction(total_random_sum, balance, amount, balance_commitment, amount_commitment, expected_new_balance_commitment, generator, final_aggregate));
+}
+
+// Test for exact balance
+TEST(MPCVerifierCircuitTest, MPCValidateTransactionPassExactBalance) {
+    typename pallas::base_field_type::value_type balance = 1000;
+    typename pallas::base_field_type::value_type amount = 1000;
+
+    auto generator = requestor.getGenerator();
+
+    // Prepare the final aggregate from Nonce A and Nonce B
+    typename pallas::template g1_type<coordinates::affine>::value_type final_aggregate = requestor.getFinalAggregate();
+
+    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getAggregateBaseNonce(); // Calculate total random sum
+
+    auto balance_commitment = generator * balance;
+    auto amount_commitment = generator * amount;
+    auto expected_new_balance_commitment = generator * 0;
+
+    EXPECT_TRUE(MPCValidateTransaction(total_random_sum, balance, amount, balance_commitment, amount_commitment, expected_new_balance_commitment, generator, final_aggregate));
 }
