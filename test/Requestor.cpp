@@ -16,14 +16,14 @@ void Requestor::setupNodes()
     std::mt19937                                 gen( rd() );
     std::uniform_int_distribution<std::uint64_t> dis( 0, 100000 ); // Random number generation
     std::uint64_t                                base_random = dis( gen );
-    base_nonce                                               = typename pallas::base_field_type::value_type( base_random );
+    base_nonce                                               = typename pallas::scalar_field_type::value_type( base_random );
     std::uniform_int_distribution<std::uint64_t> dist2( base_random + num_blocks_per_node + num_nodes, base_random + 100000 );
     for ( size_t i = 0; i < num_nodes; ++i )
     {
         std::uint64_t random_number = dist2( gen ); // Generate a random number
 
         // Store the random number as a base field element
-        random_numbers.push_back( typename pallas::base_field_type::value_type( random_number ) );
+        random_numbers.push_back( typename pallas::scalar_field_type::value_type( random_number ) );
 
         // Generate Nonce A and Nonce B for each block in the node
         generateNoncesForNode( i );
@@ -41,8 +41,8 @@ void Requestor::generateNoncesForNode( size_t node_number )
         auto negative_nonce = random_numbers[node_number] - base_nonce;
 
         // Create Nonce A and Nonce B as base field types
-        nonces_a.push_back( generator * typename pallas::base_field_type::value_type( negative_nonce - node_number - block_index ) );
-        nonces_b.push_back( generator * typename pallas::base_field_type::value_type( positive_nonce + node_number + block_index ) );
+        nonces_a.push_back( generator * typename pallas::scalar_field_type::value_type( negative_nonce - node_number - block_index ) );
+        nonces_b.push_back( generator * typename pallas::scalar_field_type::value_type( positive_nonce + node_number + block_index ) );
     }
 }
 

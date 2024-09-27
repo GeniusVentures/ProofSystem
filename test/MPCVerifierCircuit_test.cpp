@@ -33,8 +33,8 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionSetup) {
     typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getTotalRandomSum();
 
     // Balance and amount parameters for testing
-    typename pallas::base_field_type::value_type balance = 1000;
-    typename pallas::base_field_type::value_type amount = 500;
+    typename pallas::scalar_field_type::value_type balance = 1000;
+    typename pallas::scalar_field_type::value_type amount = 500;
 
     auto balance_commitment = generator * balance;
     auto amount_commitment = generator * amount;
@@ -64,8 +64,8 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionSetup) {
 
 // Test for transaction failure due to negative balance
 TEST(MPCVerifierCircuitTest, MPCValidateTransactionFailNegativeBalance) {
-    typename pallas::base_field_type::value_type balance = 500;
-    typename pallas::base_field_type::value_type amount = 1000;
+    typename pallas::scalar_field_type::value_type balance = 500;
+    typename pallas::scalar_field_type::value_type amount = 1000;
 
     auto generator = requestor.getGenerator();
 
@@ -83,8 +83,8 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionFailNegativeBalance) {
 
 // Test for invalid commitments
 TEST(MPCVerifierCircuitTest, MPCValidateTransactionFailInvalidCommitments) {
-    typename pallas::base_field_type::value_type balance = 1000;
-    typename pallas::base_field_type::value_type amount = 500;
+    typename pallas::scalar_field_type::value_type balance = 1000;
+    typename pallas::scalar_field_type::value_type amount = 500;
 
     auto generator = requestor.getGenerator();
 
@@ -102,8 +102,8 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionFailInvalidCommitments) {
 
 // Test for transaction with zero amount
 TEST(MPCVerifierCircuitTest, MPCValidateTransactionPassZeroAmount) {
-    typename pallas::base_field_type::value_type balance = 1000;
-    typename pallas::base_field_type::value_type amount = 0;
+    typename pallas::scalar_field_type::value_type balance = 1000;
+    typename pallas::scalar_field_type::value_type amount = 0;
 
     auto generator = requestor.getGenerator();
 
@@ -121,8 +121,8 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionPassZeroAmount) {
 
 // Test for exact balance
 TEST(MPCVerifierCircuitTest, MPCValidateTransactionPassExactBalance) {
-    typename pallas::base_field_type::value_type balance = 1000;
-    typename pallas::base_field_type::value_type amount = 1000;
+    typename pallas::scalar_field_type::value_type balance = 1000;
+    typename pallas::scalar_field_type::value_type amount = 1000;
 
     auto generator = requestor.getGenerator();
 

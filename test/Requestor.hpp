@@ -30,10 +30,10 @@ public:
 private:
     size_t num_nodes;
     size_t num_blocks_per_node;
-    std::vector<typename pallas::base_field_type::value_type> random_numbers;
+    std::vector<typename pallas::scalar_field_type::value_type> random_numbers;
     std::vector<typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type> nonces_a;
     std::vector<typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type> nonces_b;
-    typename pallas::base_field_type::value_type base_nonce;
+    typename pallas::scalar_field_type::value_type base_nonce;
 
     typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type final_aggregate;
     typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type generator; // Generator point
