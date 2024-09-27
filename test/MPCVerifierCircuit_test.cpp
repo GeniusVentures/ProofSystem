@@ -41,13 +41,13 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionSetup) {
     auto expected_new_balance_commitment = generator * (balance - amount);
 
     // Debugging Outputs
-    std::cout << "Total Random Sum: (" << total_random_sum.X << ", " << total_random_sum.Y << ")" << std::endl;
-    std::cout << "Balance: " << balance << std::endl;
-    std::cout << "Amount: " << amount << std::endl;
-    std::cout << "Balance Commitment: (" << balance_commitment.X << ", " << balance_commitment.Y << ")" << std::endl;
-    std::cout << "Amount Commitment: (" << amount_commitment.X << ", " << amount_commitment.Y << ")" << std::endl;
-    std::cout << "Expected New Balance Commitment: (" << expected_new_balance_commitment.X << ", " << expected_new_balance_commitment.Y << ")" << std::endl;
-    std::cout << "Final Aggregate: (" << final_aggregate.X << ", " << final_aggregate.Y << ")" << std::endl;
+  //  std::cout << "Total Random Sum: (" << total_random_sum.X << ", " << total_random_sum.Y << ")" << std::endl;
+  //  std::cout << "Balance: " << balance << std::endl;
+  //  std::cout << "Amount: " << amount << std::endl;
+  //  std::cout << "Balance Commitment: (" << balance_commitment.X << ", " << balance_commitment.Y << ")" << std::endl;
+  //  std::cout << "Amount Commitment: (" << amount_commitment.X << ", " << amount_commitment.Y << ")" << std::endl;
+  //  std::cout << "Expected New Balance Commitment: (" << expected_new_balance_commitment.X << ", " << expected_new_balance_commitment.Y << ")" << std::endl;
+  //  std::cout << "Final Aggregate: (" << final_aggregate.X << ", " << final_aggregate.Y << ")" << std::endl;
 
     // Validate the transaction
     EXPECT_TRUE(MPCValidateTransaction(
@@ -72,7 +72,7 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionFailNegativeBalance) {
     // Prepare the final aggregate from Nonce A and Nonce B
     typename pallas::template g1_type<coordinates::affine>::value_type final_aggregate = requestor.getFinalAggregate();
 
-    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getAggregateBaseNonce(); // Calculate total random sum
+    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getTotalRandomSum(); // Calculate total random sum
 
     auto balance_commitment = generator * balance;
     auto amount_commitment = generator * amount;
@@ -91,7 +91,7 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionFailInvalidCommitments) {
     // Prepare the final aggregate from Nonce A and Nonce B
     typename pallas::template g1_type<coordinates::affine>::value_type final_aggregate = requestor.getFinalAggregate();
 
-    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getAggregateBaseNonce(); // Calculate total random sum
+    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getTotalRandomSum(); // Calculate total random sum
 
     auto balance_commitment = generator * balance;
     auto amount_commitment = generator * amount;
@@ -110,7 +110,7 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionPassZeroAmount) {
     // Prepare the final aggregate from Nonce A and Nonce B
     typename pallas::template g1_type<coordinates::affine>::value_type final_aggregate = requestor.getFinalAggregate();
 
-    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getAggregateBaseNonce(); // Calculate total random sum
+    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getTotalRandomSum(); // Calculate total random sum
 
     auto balance_commitment = generator * balance;
     auto amount_commitment = generator * amount;
@@ -129,7 +129,7 @@ TEST(MPCVerifierCircuitTest, MPCValidateTransactionPassExactBalance) {
     // Prepare the final aggregate from Nonce A and Nonce B
     typename pallas::template g1_type<coordinates::affine>::value_type final_aggregate = requestor.getFinalAggregate();
 
-    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getAggregateBaseNonce(); // Calculate total random sum
+    typename pallas::template g1_type<nil::crypto3::algebra::curves::coordinates::affine>::value_type total_random_sum = requestor.getTotalRandomSum(); // Calculate total random sum
 
     auto balance_commitment = generator * balance;
     auto amount_commitment = generator * amount;
