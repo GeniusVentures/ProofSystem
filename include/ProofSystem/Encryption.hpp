@@ -9,6 +9,7 @@
 #define _ENCRYPTION_HPP_
 
 #include <vector>
+#include <cstdint>
 
 /**
  * @brief       Base class for Encryption scheme
@@ -50,7 +51,7 @@ public:
      * @param[in]   other The instance to be compared
      * @return      true if equal, false otherwise
      */
-    const bool operator==( const Encryption &other ) const
+    bool operator==( const Encryption &other ) const
     {
         return CheckEqual( static_cast<const Encryption &>( *this ), other );
     }

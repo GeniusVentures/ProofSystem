@@ -10,14 +10,10 @@
 #define ETHEREUM_KEY_GENERATOR_HPP
 
 #include <string>
-#include "EthereumKeyPairParams.hpp"
-#include "ext_private_key.hpp"
-#include "util.hpp"
-#include "ECDSAPublicKey.hpp"
 
-using namespace nil::crypto3;
-using namespace nil::crypto3::algebra;
-using namespace nil::crypto3::hashes;
+#include "ProofSystem/EthereumKeyPairParams.hpp"
+#include "ProofSystem/ext_private_key.hpp"
+#include "ProofSystem/ECDSAPublicKey.hpp"
 
 namespace ethereum
 {
