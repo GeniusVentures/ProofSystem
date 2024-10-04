@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "BitcoinKeyGenerator.hpp"
+#include "ProofSystem/BitcoinKeyGenerator.hpp"
 #include <nil/crypto3/algebra/marshalling.hpp>
 #include <nil/crypto3/codec/algorithm/encode.hpp>
 #include <nil/crypto3/codec/algorithm/decode.hpp>

@@ -2,7 +2,7 @@
 // Created by Super Genius on 12/7/23.
 //
 #include <gtest/gtest.h>
-#include "EthereumKeyGenerator.hpp"
+#include "ProofSystem/EthereumKeyGenerator.hpp"
 
 using namespace ethereum;
 

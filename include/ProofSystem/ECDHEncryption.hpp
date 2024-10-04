@@ -6,17 +6,18 @@
  */
 #ifndef _ECDH_ENCRYPTION_HPP_
 #define _ECDH_ENCRYPTION_HPP_
-#include "Encryption.hpp"
+
 #include <nil/crypto3/block/algorithm/encrypt.hpp>
 #include <nil/crypto3/block/algorithm/decrypt.hpp>
 #include <nil/crypto3/pubkey/ecdsa.hpp>
 #include <nil/crypto3/block/aes.hpp>
 #include <nil/crypto3/block/rijndael.hpp>
-#include "ext_private_key.hpp"
-#include "ECDSATypes.hpp"
-#include "util.hpp"
 
-using namespace nil::crypto3::pubkey;
+#include "ProofSystem/Encryption.hpp"
+#include "ProofSystem/ext_private_key.hpp"
+#include "ProofSystem/ECDSATypes.hpp"
+#include "ProofSystem/util.hpp"
+
 /**
  * @brief       Elliptic-curve Diffie-Hellman class using AES 256 Encryption
  */
@@ -67,8 +68,10 @@ public:
      * @param[in]   own_key The owner's private ECDSA key
      * @param[in]   foreign_key The other party's public key
      */
-    ECDHEncryption( const ext_private_key<PolicyType> &own_key, const public_key<PolicyType> &foreign_key )
+    ECDHEncryption( const nil::crypto3::pubkey::ext_private_key<PolicyType> &own_key,
+                    const nil::crypto3::pubkey::public_key<PolicyType>      &foreign_key )
     {
+        using namespace nil::crypto3::hashes;
 
         auto new_point = own_key * foreign_key;
 
@@ -77,7 +80,8 @@ public:
 
         util::AdjustEndianess( session_secret );
 
-        session_secret = static_cast<std::array<std::uint8_t, 32>>( hash<hashes::sha2<256>>( session_secret.rbegin(), session_secret.rend() ) );
+        session_secret = static_cast<std::array<std::uint8_t, 32>>(
+            nil::crypto3::hash<ecdsa_t::hashes::sha2<256>>( session_secret.rbegin(), session_secret.rend() ) );
     }
 };
 

@@ -1,12 +1,12 @@
 //
 // Created by Super Genius on 12/7/23.
 //
-#include "EthereumKeyGenerator.hpp"
+#include "ProofSystem/EthereumKeyGenerator.hpp"
+
 #include <nil/crypto3/hash/algorithm/hash.hpp>
 #include <nil/crypto3/hash/adaptor/hashed.hpp>
 #include <nil/crypto3/algebra/marshalling.hpp>
-#include <vector>
-#include <util.hpp>
+#include <ProofSystem/util.hpp>
 
 using namespace nil::crypto3::algebra;
 using namespace nil::crypto3::hashes;

@@ -10,14 +10,10 @@
 #define PROOFSYSTEM_UTIL_HPP
 
 #include <string>
-#include <sstream>
-#include <iomanip>
 #include <vector>
-#include <type_traits>
 #include <optional>
 #include <algorithm>
-#include <tuple>
-#include <array>
+#include <cstdint>
 
 namespace util
 {

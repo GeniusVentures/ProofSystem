@@ -9,14 +9,9 @@
 #ifndef PROOFSYSTEM_EXT_PRIVATE_KEY_HPP
 #define PROOFSYSTEM_EXT_PRIVATE_KEY_HPP
 
-#include "nil/crypto3/pubkey/ecdsa.hpp"
-#include "nil/crypto3/pkpad/emsa/emsa1.hpp"
-#include "nil/crypto3/algebra/curves/secp_k1.hpp"
+#include <nil/crypto3/pubkey/ecdsa.hpp>
 #include <nil/crypto3/algebra/marshalling.hpp>
 #include <nil/crypto3/codec/algorithm/encode.hpp>
-
-using namespace nil::crypto3;
-using namespace nil::crypto3::pubkey;
 
 namespace nil
 {
@@ -49,8 +44,8 @@ namespace nil
                  * @param[in]   lhs: public key to be multiplied by own private key data
                  * @return      New public key
                  */
-                const public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>> 
-                operator*(const public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>> &lhs ) const 
+                public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>>
+                operator*( const public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>> &lhs ) const
                 {
                     return lhs.pubkey_data() * this->privkey;
                 }
