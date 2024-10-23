@@ -56,7 +56,7 @@ public:
      * @return      New derived key scalar value
      * @warning     If the signature can't be verified or the data decrypted, it throws a runtime exception
      */
-    ecdsa_t::scalar_field_value_type GetNewKeyFromSecret( const std::string &signed_secret, const ECDSAPubKey &signer_pubkey,
+    ecdsa_t::scalar_field_value_type GetNewKeyFromSecret( std::string_view signed_secret, const ECDSAPubKey &signer_pubkey,
                                                           const ECDSAPubKey &verifier_pubkey );
 
     /**
@@ -108,13 +108,13 @@ std::string KDFGenerator<PolicyType>::GenerateSharedSecret( const ecdsa_t::pubke
     return util::to_string( encryptor->EncryptData( signed_vector, key_vector ) );
 }
 template <typename PolicyType>
-ecdsa_t::scalar_field_value_type KDFGenerator<PolicyType>::GetNewKeyFromSecret( const std::string &signed_secret, const ECDSAPubKey &signer_pubkey,
+ecdsa_t::scalar_field_value_type KDFGenerator<PolicyType>::GetNewKeyFromSecret( std::string_view signed_secret, const ECDSAPubKey &signer_pubkey,
                                                                                 const ECDSAPubKey &verifier_pubkey )
 {
-    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( verifier_pubkey.data(), verifier_pubkey.size() );
+    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( verifier_pubkey );
     const auto                signer_key = BuildPublicKeyECDSA( signer_pubkey );
 
-    std::vector<std::uint8_t> signed_vector = util::HexASCII2NumStr<std::uint8_t>( signed_secret.data(), signed_secret.size() );
+    std::vector<std::uint8_t> signed_vector = util::HexASCII2NumStr<std::uint8_t>( signed_secret );
 
     std::vector<std::uint8_t> decoded_vector = encryptor->DecryptData( signed_vector, key_vector );
 

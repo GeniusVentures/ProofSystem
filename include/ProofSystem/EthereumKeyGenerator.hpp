@@ -33,7 +33,7 @@ namespace ethereum
          * @brief       Import a private key and construct a new Ethereum Key Generator
          * @param[in]   private_key: Private key in string form
          */
-        EthereumKeyGenerator( const std::string &private_key );
+        EthereumKeyGenerator( std::string_view private_key );
         /**
          * @brief       Import a private key and construct a new Ethereum Key Generator
          * @param[in]   private_key: Private key in string form

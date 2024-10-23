@@ -32,11 +32,11 @@ namespace bitcoin
         address = DeriveAddress();
     }
 
-    BitcoinKeyGenerator::BitcoinKeyGenerator( const std::string &private_key )
+    BitcoinKeyGenerator::BitcoinKeyGenerator( std::string_view private_key )
     {
         std::vector<std::uint8_t> priv_key_vector;
 
-        priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key.data(), private_key.size() );
+        priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key );
 
         auto my_value =
             field<scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>( priv_key_vector.begin(), priv_key_vector.end() );

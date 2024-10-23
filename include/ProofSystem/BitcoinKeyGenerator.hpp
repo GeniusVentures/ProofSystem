@@ -39,7 +39,7 @@ namespace bitcoin
          * @brief       Import private key string data to construct Bitcoin key and address
          * @param[in]   private_key: Private key in string form
          */
-        BitcoinKeyGenerator( const std::string &private_key );
+        BitcoinKeyGenerator( std::string_view private_key );
         /**
          * @brief       Import a private key scalar value to construct Bitcoin key and address
          * @param[in]   private_key: Private key scalar value

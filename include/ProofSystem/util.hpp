@@ -58,7 +58,7 @@ namespace util
     {
         T sum = 0;
 
-        for ( std::int32_t i = 0; i < num_nibbles_resolution; ++i )
+        for ( std::int32_t i = 0; i < static_cast<int32_t>(num_nibbles_resolution); ++i )
         {
             if ( std::isdigit( p_char[i] ) )
             {
@@ -82,7 +82,7 @@ namespace util
      * @return      The vector of converted numbers
      */
     template <typename T>
-    static std::vector<T> HexASCII2NumStr( const char *p_char, std::size_t char_ptr_size )
+    std::vector<T> HexASCII2NumStr( std::string_view string )
     {
         static_assert( std::is_same_v<T, uint8_t> || std::is_same_v<T, uint16_t> || std::is_same_v<T, uint32_t> || std::is_same_v<T, uint64_t> );
         std::vector<T> out_vect;
@@ -93,16 +93,14 @@ namespace util
             {
                 return out_vect.begin();
             }
-            else
-            {
-                return out_vect.end();
-            }
+            return out_vect.end();
         };
 
-        for ( std::size_t i = 0; i < char_ptr_size; i += num_nibbles_resolution )
+        for ( std::size_t i = 0; i < string.size(); i += num_nibbles_resolution )
         {
-            out_vect.insert( point_of_insertion(), static_cast<T>( HexASCII2Num<T>( &p_char[i] ) ) );
+            out_vect.insert( point_of_insertion(), static_cast<T>( HexASCII2Num<T>( &string[i] ) ) );
         }
+
         return out_vect;
     }
 
