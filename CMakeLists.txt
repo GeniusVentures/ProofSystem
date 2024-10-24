@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.22)
 
 project(ProofSystem LANGUAGES C CXX)
 
+include(cmake/functions.cmake)
+
 add_subdirectory(src)
 
-include(cmake/functions.cmake)
 
 # Install Headers
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" FILES_MATCHING PATTERN "*.h*")
