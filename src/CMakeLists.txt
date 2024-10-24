@@ -10,3 +10,5 @@ target_link_libraries(
 target_compile_definitions(
     KeyGeneration PUBLIC CRYPTO3_CODEC_BASE58
 )
+
+sgnus_install(KeyGeneration)
