@@ -11,7 +11,7 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/" DESTINATION "${CMAKE_INSTALL_IN
 
 
 # Install Targets
-set(GeniusKDF_CONFIG_DESTINATION_DIR "lib/cmake/ProofSystem")
+set(ProofSystem_CONFIG_DESTINATION_DIR "lib/cmake/ProofSystem")
 install(EXPORT ProofSystemTargets
     FILE ProofSystemTargets.cmake
     DESTINATION ${ProofSystem_CONFIG_DESTINATION_DIR}
