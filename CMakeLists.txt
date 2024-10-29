@@ -8,7 +8,7 @@ add_subdirectory(src)
 
 
 # Install Headers
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" FILES_MATCHING PATTERN "*.h*")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/ProofSystem" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ProofSystem" FILES_MATCHING PATTERN "*.h*")
 
 
 # Install Targets
