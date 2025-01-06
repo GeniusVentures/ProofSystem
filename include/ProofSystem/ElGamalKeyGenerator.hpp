@@ -55,45 +55,44 @@ namespace KeyGenerator
         struct PublicKey : public Params
         {
 
-            PublicKey( const Params &new_p_g, cpp_int pubkey_value ) :
-                Params( new_p_g ),               //
-                public_key_value( pubkey_value ) //
-            {
-            }
-            PublicKey( cpp_int pubkey_value ) : PublicKey( Params( SAFE_PRIME, GENERATOR ), pubkey_value )
-            {
-            }
-            const cpp_int public_key_value; ///< The value of the public key
-        };
-        struct PrivateKey : public PublicKey
-        {
-            PrivateKey( const Params &new_p_g, cpp_int prvkey_value ) :
-                PublicKey( new_p_g, GeneratePublicKey( new_p_g, prvkey_value ) ), private_key_scalar( prvkey_value )
+            PublicKey( const Params &new_p_g, cpp_int pubkey_value ) : Params( new_p_g ), public_key_value( std::move( pubkey_value ) )
             {
             }
 
+            PublicKey( cpp_int pubkey_value ) : PublicKey( Params( SAFE_PRIME, GENERATOR ), std::move( pubkey_value ) )
+            {
+            }
+
+            const cpp_int public_key_value; ///< The value of the public key
+        };
+
+        struct PrivateKey : public PublicKey
+        {
             static cpp_int CreatePrivateScalar( const Params &new_p_g )
             {
                 return PrimeNumbers::GetRandomNumber( new_p_g.prime_number );
             }
-            const cpp_int GetPrivateKeyScalar( void ) const
+
+            PrivateKey( const Params &new_p_g, cpp_int prvkey_value ) :
+                PublicKey( new_p_g, powm( new_p_g.generator, prvkey_value, new_p_g.prime_number ) ), private_key_scalar( std::move( prvkey_value ) )
+            {
+            }
+
+            [[nodiscard]] cpp_int GetPrivateKeyScalar() const
             {
                 return private_key_scalar;
             }
 
         private:
             const cpp_int private_key_scalar;
-            cpp_int       GeneratePublicKey( const Params &new_p_g, cpp_int prvkey_value )
-            {
-                return powm( new_p_g.generator, prvkey_value, new_p_g.prime_number );
-            }
         };
+
         cpp_int DecryptDataAdditive( const CypherTextType &encrypted_data );
         /**
      * @brief       Create prime number and generator
      * @return      A new set of prime number and generator @ref GeneratorParamsType 
      */
-        static Params         CreateGeneratorParams( void );
+        static Params         CreateGeneratorParams();
         static CypherTextType EncryptData( PublicKey &pubkey, std::vector<uint8_t> &data_vector );
         static CypherTextType EncryptData( PublicKey &pubkey, const cpp_int &data );
         static CypherTextType EncryptDataAdditive( PublicKey &pubkey, const cpp_int &data );
@@ -101,16 +100,27 @@ namespace KeyGenerator
         static T       DecryptData( const PrivateKey &prvkey, const CypherTextType &encrypted_data );
         static cpp_int DecryptDataAdditive( const PrivateKey &prvkey, const CypherTextType &encrypted_data, PrimeNumbers::BabyStepGiantStep &bsgs );
 
-        ElGamal( const Params &params );
-        ElGamal();
-        ElGamal( const Params &params, const cpp_int &private_key_value );
-        ElGamal( const cpp_int &private_key_value );
+        ElGamal() : ElGamal( Params( SAFE_PRIME, GENERATOR ) )
+        {
+        }
+
+        ElGamal( const Params &params, cpp_int private_key_value );
+
+        ElGamal( const Params &params ) : ElGamal( params, PrivateKey::CreatePrivateScalar( params ) )
+        {
+        }
+
+        ElGamal( cpp_int private_key_value ) : ElGamal( Params( SAFE_PRIME, GENERATOR ), std::move( private_key_value ) )
+        {
+        }
+
         ~ElGamal();
-        PublicKey &GetPublicKey( void ) const
+
+        [[nodiscard]] PublicKey &GetPublicKey() const
         {
             return *public_key;
         }
-        PrivateKey &GetPrivateKey( void ) const
+        [[nodiscard]] PrivateKey &GetPrivateKey() const
         {
             return *private_key;
         }

@@ -10,22 +10,10 @@
 
 using namespace KeyGenerator;
 
-ElGamal::ElGamal( const ElGamal::Params &params )
-{
-    private_key   = std::make_shared<PrivateKey>( params, PrivateKey::CreatePrivateScalar( params ) );
-    public_key    = std::make_shared<PublicKey>( *private_key );
-    bsgs_instance = std::make_shared<PrimeNumbers::BabyStepGiantStep>( params.prime_number, params.generator );
-}
-ElGamal::ElGamal() : ElGamal( ElGamal::Params( SAFE_PRIME, GENERATOR ) )
-{
-}
-ElGamal::ElGamal( const ElGamal::Params &params, const cpp_int &private_key_value )
-{
-    private_key   = std::make_shared<PrivateKey>( params, private_key_value );
-    public_key    = std::make_shared<PublicKey>( *private_key );
-    bsgs_instance = std::make_shared<PrimeNumbers::BabyStepGiantStep>( params.prime_number, params.generator );
-}
-ElGamal::ElGamal( const cpp_int &private_key_value ) : ElGamal( ElGamal::Params( SAFE_PRIME, GENERATOR ), private_key_value )
+ElGamal::ElGamal( const Params &params, cpp_int private_key_value ) :
+    private_key( std::make_shared<PrivateKey>( params, std::move( private_key_value ) ) ), //
+    public_key( std::make_shared<PublicKey>( *private_key ) ),
+    bsgs_instance( std::make_shared<PrimeNumbers::BabyStepGiantStep>( params.prime_number, params.generator ) )
 {
 }
 
@@ -37,6 +25,7 @@ ElGamal::CypherTextType ElGamal::EncryptData( PublicKey &pubkey, std::vector<uin
 
     return EncryptData( pubkey, message );
 }
+
 ElGamal::CypherTextType ElGamal::EncryptData( PublicKey &pubkey, const cpp_int &data )
 {
     cpp_int random_value = PrimeNumbers::GetRandomNumber( pubkey.prime_number );
@@ -49,11 +38,13 @@ ElGamal::CypherTextType ElGamal::EncryptData( PublicKey &pubkey, const cpp_int &
 
     return std::make_pair( a, b );
 }
+
 ElGamal::CypherTextType ElGamal::EncryptDataAdditive( PublicKey &pubkey, const cpp_int &data )
 {
     cpp_int data_to_encrypt = powm( pubkey.generator, data, pubkey.prime_number );
     return EncryptData( pubkey, data_to_encrypt );
 }
+
 template <>
 cpp_int ElGamal::DecryptData( const PrivateKey &prvkey, const CypherTextType &encrypted_data )
 {
@@ -67,6 +58,7 @@ cpp_int ElGamal::DecryptData( const PrivateKey &prvkey, const CypherTextType &en
 
     return m;
 }
+
 template <>
 std::vector<uint8_t> ElGamal::DecryptData( const PrivateKey &prvkey, const CypherTextType &encrypted_data )
 {
@@ -75,17 +67,19 @@ std::vector<uint8_t> ElGamal::DecryptData( const PrivateKey &prvkey, const Cyphe
 
     return retval;
 }
+
 cpp_int ElGamal::DecryptDataAdditive( const CypherTextType &encrypted_data )
 {
     return DecryptDataAdditive( *this->private_key, encrypted_data, *this->bsgs_instance );
 }
+
 cpp_int ElGamal::DecryptDataAdditive( const PrivateKey &prvkey, const CypherTextType &encrypted_data, PrimeNumbers::BabyStepGiantStep &bsgs )
 {
     auto m = DecryptData<cpp_int>( prvkey, encrypted_data );
     return bsgs.SolveECDLP( m );
 }
 
-ElGamal::Params ElGamal::CreateGeneratorParams( void )
+ElGamal::Params ElGamal::CreateGeneratorParams()
 {
     cpp_int prime_number = 0;
 
