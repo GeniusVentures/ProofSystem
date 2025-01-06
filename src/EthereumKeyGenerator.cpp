@@ -1,12 +1,12 @@
 //
 // Created by Super Genius on 12/7/23.
 //
-#include "EthereumKeyGenerator.hpp"
+#include "ProofSystem/EthereumKeyGenerator.hpp"
+
 #include <nil/crypto3/hash/algorithm/hash.hpp>
 #include <nil/crypto3/hash/adaptor/hashed.hpp>
 #include <nil/crypto3/algebra/marshalling.hpp>
-#include <vector>
-#include <util.hpp>
+#include <ProofSystem/util.hpp>
 
 using namespace nil::crypto3::algebra;
 using namespace nil::crypto3::hashes;
@@ -25,11 +25,11 @@ namespace ethereum
         address = DeriveAddress();
     }
 
-    EthereumKeyGenerator::EthereumKeyGenerator( const std::string &private_key )
+    EthereumKeyGenerator::EthereumKeyGenerator( std::string_view private_key )
     {
         std::vector<std::uint8_t> priv_key_vector;
 
-        priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key.data(), private_key.size() );
+        priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key );
 
         auto my_value =
             field<scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>( priv_key_vector.begin(), priv_key_vector.end() );

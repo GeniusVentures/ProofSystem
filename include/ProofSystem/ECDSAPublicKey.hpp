@@ -6,8 +6,7 @@
  */
 #include <string>
 #include <vector>
-#include "util.hpp"
-
+#include "ProofSystem/util.hpp"
 
 #ifndef _ECDSA_PUBLIC_KEY_HPP_
 #define _ECDSA_PUBLIC_KEY_HPP_
@@ -23,10 +22,10 @@ public:
      * @param[in]   Y_data vector representing the Y coordinate of the public key.
      */
     explicit ECDSAPublicKey( const std::vector<std::uint8_t> &X_data, const std::vector<std::uint8_t> &Y_data ) :
-        X_vect( X_data ),               //
-        Y_vect( Y_data ),               //
         X( util::to_string( X_data ) ), //
-        Y( util::to_string( Y_data ) )  //
+        Y( util::to_string( Y_data ) ), //
+        X_vect( X_data ),               //
+        Y_vect( Y_data )                //
     {
     }
     /**

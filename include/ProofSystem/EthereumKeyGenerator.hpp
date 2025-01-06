@@ -10,14 +10,10 @@
 #define ETHEREUM_KEY_GENERATOR_HPP
 
 #include <string>
-#include "EthereumKeyPairParams.hpp"
-#include "ext_private_key.hpp"
-#include "util.hpp"
-#include "ECDSAPublicKey.hpp"
 
-using namespace nil::crypto3;
-using namespace nil::crypto3::algebra;
-using namespace nil::crypto3::hashes;
+#include "ProofSystem/EthereumKeyPairParams.hpp"
+#include "ProofSystem/ext_private_key.hpp"
+#include "ProofSystem/ECDSAPublicKey.hpp"
 
 namespace ethereum
 {
@@ -37,7 +33,7 @@ namespace ethereum
          * @brief       Import a private key and construct a new Ethereum Key Generator
          * @param[in]   private_key: Private key in string form
          */
-        EthereumKeyGenerator( const std::string &private_key );
+        EthereumKeyGenerator( std::string_view private_key );
         /**
          * @brief       Import a private key and construct a new Ethereum Key Generator
          * @param[in]   private_key: Private key in string form

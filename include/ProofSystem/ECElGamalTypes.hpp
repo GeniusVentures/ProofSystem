@@ -10,22 +10,23 @@
 
 #include <utility>
 
-#include <nil/crypto3/random/rfc6979.hpp>
-
 #include <nil/crypto3/pkpad/algorithms/encode.hpp>
-
 #include <nil/crypto3/pubkey/keys/private_key.hpp>
-
-#include <nil/crypto3/hash/algorithm/hash.hpp>
-
 #include <nil/crypto3/algebra/marshalling.hpp>
-#include "util.hpp"
-#include "PrimeNumbers.hpp"
 
-using namespace nil::crypto3::algebra;
+#include "ProofSystem/util.hpp"
+#include "ProofSystem/PrimeNumbers.hpp"
+
 template <typename CurveType>
 struct ECElGamalPoint
 {
+
+#ifdef _USE_CRYPTO3_
+    using cpp_int = nil::crypto3::multiprecision::cpp_int;
+#else
+    using cpp_int = boost::multiprecision::cpp_int;
+#endif
+
     typedef typename CurveType::template g1_type<>::value_type curve_point_type;
     typedef typename CurveType::base_field_type::integral_type coeff_type;
 
@@ -125,11 +126,11 @@ struct PublicKey
     {
         //std::cout << "pub key " << std::hex << pubkey.to_affine().X.data << std::endl;
     }
-    PublicKey( const std::string &key_string )
+    PublicKey( std::string_view key_string )
     {
         auto z_data_one = g1_value_type::field_type::value_type::one();
 
-        std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( key_string.data(), key_string.size() );
+        std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( key_string );
 
         auto y_data = nil::marshalling::bincode::field<typename curve_type::base_field_type>::template field_element_from_bytes<
             std::vector<std::uint8_t>::iterator>( key_vector.begin(), key_vector.begin() + key_vector.size() / 2 );

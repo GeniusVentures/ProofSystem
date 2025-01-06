@@ -12,6 +12,13 @@
 
 class ECElGamalKeyGenerator
 {
+
+#ifdef _USE_CRYPTO3_
+    using cpp_int = nil::crypto3::multiprecision::cpp_int;
+#else
+    using cpp_int = boost::multiprecision::cpp_int;
+#endif
+
 public:
     ECElGamalKeyGenerator( const cpp_int &key_scalar )
     {

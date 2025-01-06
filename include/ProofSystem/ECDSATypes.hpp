@@ -1,13 +1,12 @@
 /**
- * @file       ElGamalTypes.hpp
- * @brief      Header file of El Gamal types
- * @date       2024-01-17
+ * @file       ECDSATypes.hpp
+ * @brief      Common types and definitions of ECDSA 
+ * @date       2024-01-04
  * @author     Henrique A. Klein (henryaklein@gmail.com)
  */
 
-#ifndef _ELGAMAL_TYPES_HPP_
-#define _ELGAMAL_TYPES_HPP_
-
+#ifndef _ECDSA_TYPES_HPP_
+#define _ECDSA_TYPES_HPP_
 
 #include <nil/crypto3/pubkey/ecdsa.hpp>
 #include <nil/crypto3/algebra/curves/secp_k1.hpp>
@@ -16,9 +15,10 @@
 #include <nil/crypto3/pkpad/emsa/emsa1.hpp>
 #include <nil/crypto3/random/rfc6979.hpp>
 
-using namespace nil::crypto3;
-namespace elgamal
+namespace ecdsa_t
 {
+    using namespace nil::crypto3;
+
     using CurveType               = algebra::curves::secp256k1;                         ///< ECDSA uses secp256k curve
     using base_field_type         = typename CurveType::base_field_type;                ///< The base field type is dependant on the curve
     using scalar_field_type       = typename CurveType::scalar_field_type;              ///< The scalar field type is dependant on the curve
@@ -29,7 +29,6 @@ namespace elgamal
     using padding_policy          = pubkey::padding::emsa1<scalar_field_value_type, hash_type>; ///< Ethereum passing policy
     using policy_type             = pubkey::ecdsa<CurveType, padding_policy, generator_type>;              ///< Ethereum policy type
     using signature_type          = typename pubkey::public_key<policy_type>::signature_type;
-
 }
 
 #endif //_ECDSA_TYPES_HPP_

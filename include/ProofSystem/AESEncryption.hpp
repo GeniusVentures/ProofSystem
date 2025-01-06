@@ -6,7 +6,9 @@
  */
 #ifndef _AES_ENCRYPTION_HPP_
 #define _AES_ENCRYPTION_HPP_
-#include "Encryption.hpp"
+
+#include "ProofSystem/Encryption.hpp"
+
 #include <nil/crypto3/block/algorithm/encrypt.hpp>
 #include <nil/crypto3/block/algorithm/decrypt.hpp>
 #include <nil/crypto3/block/aes.hpp>
@@ -49,5 +51,6 @@ public:
     {
         return true;
     }
+}
 
 #endif

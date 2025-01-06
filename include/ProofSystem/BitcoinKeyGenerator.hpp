@@ -5,6 +5,7 @@
  * @author     Super Genius (ken@gnus.ai)
  * @author     Henrique A. Klein (henryaklein@gmail.com)
  */
+
 #ifndef BITCOIN_KEY_GENERATOR_HPP
 #define BITCOIN_KEY_GENERATOR_HPP
 
@@ -13,15 +14,14 @@
 #include <memory>
 #include <cstdint>
 #include <utility>
-#include "BitcoinKeyPairParams.hpp"
-#include "ext_private_key.hpp"
-#include "util.hpp"
-#include "ECDSAPublicKey.hpp"
 
-using namespace nil::crypto3;
+#include "ProofSystem/BitcoinKeyPairParams.hpp"
+#include "ProofSystem/ext_private_key.hpp"
+#include "ProofSystem/ECDSAPublicKey.hpp"
 
 namespace bitcoin
 {
+    using namespace nil::crypto3;
 
     /**
      * @brief       Creates a pair of ECDSA keys and a Bitcoin address from a compressed key
@@ -39,7 +39,7 @@ namespace bitcoin
          * @brief       Import private key string data to construct Bitcoin key and address
          * @param[in]   private_key: Private key in string form
          */
-        BitcoinKeyGenerator( const std::string &private_key );
+        BitcoinKeyGenerator( std::string_view private_key );
         /**
          * @brief       Import a private key scalar value to construct Bitcoin key and address
          * @param[in]   private_key: Private key scalar value

@@ -9,25 +9,27 @@
 
 #define _USE_CRYPTO3_
 
-#include <time.h>
+#include <ctime>
+#include <unordered_map>
+
 #ifdef _USE_CRYPTO3_
 #include <nil/crypto3/multiprecision/cpp_int.hpp>
 #include <nil/crypto3/multiprecision/miller_rabin.hpp>
-using namespace nil::crypto3::multiprecision;
 #else
 #include <boost/multiprecision/miller_rabin.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
-using namespace boost::multiprecision;
 #endif
-
-using namespace boost::random;
-
-typedef cpp_int mp_int;
 
 class PrimeNumbers
 {
-
 public:
+
+#ifdef _USE_CRYPTO3_
+    using cpp_int = nil::crypto3::multiprecision::cpp_int;
+#else
+    using cpp_int = boost::multiprecision::cpp_int;
+#endif
+
     template <std::size_t bit_size>
     static bool GenerateSafePrime( std::size_t max_attempts, cpp_int &out_val )
     {
@@ -38,7 +40,7 @@ public:
 
         boost::mt11213b base_gen( clock() );
 
-        independent_bits_engine<boost::mt11213b, bit_size, cpp_int> engine( base_gen );
+        boost::random::independent_bits_engine<boost::mt11213b, bit_size, cpp_int> engine( base_gen );
 
         boost::mt19937 ref_engine( clock() );
         do

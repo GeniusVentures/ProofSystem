@@ -6,13 +6,14 @@
  * @author     Henrique A. Klein (henryaklein@gmail.com)
  */
 
+#include "ProofSystem/BitcoinKeyGenerator.hpp"
+
 #include <nil/crypto3/hash/algorithm/hash.hpp>
 #include <nil/crypto3/hash/adaptor/hashed.hpp>
 #include <nil/crypto3/hash/ripemd.hpp>
 #include <nil/crypto3/algebra/marshalling.hpp>
 #include <nil/crypto3/codec/algorithm/encode.hpp>
 #include <nil/crypto3/codec/base.hpp>
-#include "BitcoinKeyGenerator.hpp"
 
 using namespace nil::crypto3::algebra;
 using namespace nil::crypto3::hashes;
@@ -31,11 +32,11 @@ namespace bitcoin
         address = DeriveAddress();
     }
 
-    BitcoinKeyGenerator::BitcoinKeyGenerator( const std::string &private_key )
+    BitcoinKeyGenerator::BitcoinKeyGenerator( std::string_view private_key )
     {
         std::vector<std::uint8_t> priv_key_vector;
 
-        priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key.data(), private_key.size() );
+        priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key );
 
         auto my_value =
             field<scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>( priv_key_vector.begin(), priv_key_vector.end() );
