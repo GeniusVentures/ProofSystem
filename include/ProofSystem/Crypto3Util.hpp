@@ -6,14 +6,14 @@
  */
 #ifndef _CRYPTO3_UTIL_HPP_
 #define _CRYPTO3_UTIL_HPP_
-#include <nil/crypto3/multiprecision/cpp_int.hpp>
+#include <nil/crypto3/multiprecision/cpp_int_modular.hpp>
 
 struct Crypto3Util
 {
 
-    static nil::crypto3::multiprecision::cpp_int BytesToCppInt( std::vector<std::uint8_t> &bytes )
+    static boost::multiprecision::cpp_int BytesToCppInt( std::vector<std::uint8_t> &bytes )
     {
-        nil::crypto3::multiprecision::cpp_int retval;
+        boost::multiprecision::cpp_int retval;
         for ( uint8_t byte : bytes )
         {
             retval = ( retval << 8 ) | byte;
@@ -21,10 +21,10 @@ struct Crypto3Util
 
         return retval;
     }
-    static std::vector<std::uint8_t> CppIntToBytes( nil::crypto3::multiprecision::cpp_int &big_num )
+    static std::vector<std::uint8_t> CppIntToBytes( boost::multiprecision::cpp_int &big_num )
     {
         std::vector<uint8_t> bytes;
-        nil::crypto3::multiprecision::cpp_int remaining = big_num;
+        boost::multiprecision::cpp_int remaining = big_num;
         while ( remaining != 0 )
         {
             bytes.insert(bytes.begin(), static_cast<uint8_t>( remaining & 0xFF ) );

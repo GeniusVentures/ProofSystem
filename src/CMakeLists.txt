@@ -11,5 +11,7 @@ target_link_libraries(
 target_compile_definitions(
     KeyGeneration PUBLIC CRYPTO3_CODEC_BASE58
 )
-
+if (MSVC)
+    target_compile_options(KeyGeneration PRIVATE /constexpr:steps10000000)
+endif()
 sgnus_install(KeyGeneration)

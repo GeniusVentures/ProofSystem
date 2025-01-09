@@ -7,7 +7,7 @@
 #ifndef _PRIME_NUMBERS_HPP_
 #define _PRIME_NUMBERS_HPP_
 
-#define _USE_CRYPTO3_
+//#define _USE_CRYPTO3_
 
 #include <ctime>
 #include <unordered_map>
@@ -18,6 +18,7 @@
 #else
 #include <boost/multiprecision/miller_rabin.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
+#include <boost/random.hpp>
 #endif
 
 class PrimeNumbers
@@ -68,7 +69,7 @@ public:
 
     static cpp_int GetRandomNumber( cpp_int prime_number )
     {
-        boost::mt19937 ref_engine( clock() );
+        boost::random::mt19937 ref_engine( clock() );
 
         boost::random::uniform_int_distribution<cpp_int> dist( 2, prime_number - 1 );
         return dist( ref_engine );

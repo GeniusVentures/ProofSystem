@@ -12,8 +12,8 @@
 #include <utility>
 
 #include "ProofSystem/PrimeNumbers.hpp"
-#include "nil/crypto3/multiprecision/cpp_int.hpp"
-#include <nil/crypto3/multiprecision/cpp_int/literals.hpp>
+#include "nil/crypto3/multiprecision/cpp_int_modular.hpp"
+#include <nil/crypto3/multiprecision/cpp_int_modular/literals.hpp>
 
 namespace KeyGenerator
 {
@@ -22,7 +22,7 @@ namespace KeyGenerator
     using uint256_t = nil::crypto3::multiprecision::uint256_t;
     using nil::crypto3::multiprecision::literals::operator""_cppui256;
 #else
-    using cpp_int   = nil::crypto3::multiprecision::cpp_int;
+    using cpp_int   = boost::multiprecision::cpp_int;
     using uint256_t = boost::multiprecision::uint256_t;
     using boost::multiprecision::literals::operator""_cppui256;
 #endif

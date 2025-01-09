@@ -98,9 +98,16 @@ namespace bitcoin
     {
         std::vector<std::uint8_t> work_vect( pub_key_vect );
         work_vect.push_back( ( pub_key_vect.front() % 2 ) ? PARITY_ODD_ID : PARITY_EVEN_ID );
+        auto hash_result = hash<derivation_hash_type>(work_vect.rbegin(), work_vect.rend());
+        std::array<uint8_t, 32> hash_array = hash_result;
+        work_vect = std::vector<std::uint8_t>(hash_array.begin(), hash_array.end());
+        //work_vect = static_cast<std::vector<std::uint8_t>>( hash<derivation_hash_type>( work_vect.rbegin(), work_vect.rend() ) );
 
-        work_vect = static_cast<std::vector<std::uint8_t>>( hash<derivation_hash_type>( work_vect.rbegin(), work_vect.rend() ) );
-        work_vect = static_cast<std::vector<std::uint8_t>>( hash<hashes::ripemd160>( work_vect ) );
+        auto hash_result2 = hash<hashes::ripemd160>(work_vect);
+        std::array<uint8_t, 32> hash_array2 = hash_result2;
+        //work_vect = static_cast<std::vector<std::uint8_t>>( hash<hashes::ripemd160>( work_vect ) );
+        work_vect = std::vector<std::uint8_t>(hash_array2.begin(), hash_array2.end());
+
 
         work_vect.insert( work_vect.begin(), MAIN_NETWORK_ID );
 
