@@ -39,7 +39,7 @@ namespace ethereum
         //cppui160_type my_value;
         //import_bits(my_value, priv_key_vector.begin(), priv_key_vector.end());
 
-        privkey = std::make_shared<pubkey::ext_private_key<policy_type>>( my_value );
+        privkey = std::make_shared<pubkey::ext_private_key<policy_type>>( my_value.second );
         pubkey  = std::make_shared<pubkey::public_key<policy_type>>( *privkey );
 
         address = DeriveAddress();
