@@ -48,14 +48,13 @@ namespace KeyGenerator
             Params( cpp_int prime, cpp_int gen ) : prime_number( std::move( prime ) ), generator( std::move( gen ) )
             {
             }
-            const cpp_int prime_number; ///< The safe prime number used by El Gamal
-            const cpp_int generator;    ///< The generator used by El Gamal
+            cpp_int prime_number; ///< The safe prime number used by El Gamal
+            cpp_int generator;    ///< The generator used by El Gamal
         };
 
-        struct PublicKey : public Params
+        struct PublicKey
         {
-
-            PublicKey( const Params &new_p_g, cpp_int pubkey_value ) : Params( new_p_g ), public_key_value( std::move( pubkey_value ) )
+            PublicKey( Params params, cpp_int pubkey_value ) : params( std::move( params ) ), public_key_value( std::move( pubkey_value ) )
             {
             }
 
@@ -63,7 +62,8 @@ namespace KeyGenerator
             {
             }
 
-            const cpp_int public_key_value; ///< The value of the public key
+            Params  params;
+            cpp_int public_key_value; ///< The value of the public key
         };
 
         struct PrivateKey : public PublicKey
