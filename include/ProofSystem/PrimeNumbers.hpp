@@ -7,7 +7,7 @@
 #ifndef _PRIME_NUMBERS_HPP_
 #define _PRIME_NUMBERS_HPP_
 
-//#define _USE_CRYPTO3_
+#define _USE_CRYPTO3_
 
 #include <ctime>
 #include <unordered_map>
