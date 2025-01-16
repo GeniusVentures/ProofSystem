@@ -14,4 +14,8 @@ target_compile_definitions(
 if (MSVC)
     target_compile_options(KeyGeneration PRIVATE /constexpr:steps10000000)
 endif()
+if(ANDROID_ABI STREQUAL "armeabi-v7a")
+    target_compile_options(KeyGeneration PRIVATE -fconstexpr-steps=1000000000 -fconstexpr-depth=1000000000)
+endif()
+
 sgnus_install(KeyGeneration)
