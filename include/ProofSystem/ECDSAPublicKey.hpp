@@ -10,6 +10,7 @@
 
 #ifndef _ECDSA_PUBLIC_KEY_HPP_
 #define _ECDSA_PUBLIC_KEY_HPP_
+
 /**
  * @brief       Base class to organize public key values of ECDSA
  */
@@ -21,11 +22,11 @@ public:
      * @param[in]   X_data vector representing the X coordinate of the public key. 
      * @param[in]   Y_data vector representing the Y coordinate of the public key.
      */
-    explicit ECDSAPublicKey( const std::vector<std::uint8_t> &X_data, const std::vector<std::uint8_t> &Y_data ) :
+    ECDSAPublicKey( std::vector<std::uint8_t> X_data, std::vector<std::uint8_t> Y_data ) :
         X( util::to_string( X_data ) ), //
         Y( util::to_string( Y_data ) ), //
-        X_vect( X_data ),               //
-        Y_vect( Y_data )                //
+        X_vect( std::move( X_data ) ),  //
+        Y_vect( std::move( Y_data ) )
     {
     }
     /**
@@ -53,19 +54,19 @@ public:
         return pubkey_used_value;
     }
 
-    std::string GetEntireKey()
+    [[nodiscard]] std::string GetEntireKey() const
     {
-        return (X + Y);
+        return ( X + Y );
     }
 
 private:
-    std::string pubkey_used_value = ""; ///< Used value of the public key (compressed, uncompressed..)
+    std::string pubkey_used_value; ///< Used value of the public key (compressed, uncompressed..)
 
     /**
      * @brief       Calculates the single data used key value
      * @return      Public key mashed value
      */
-    virtual std::string CalcPubkeyUsedValue() const = 0;
+    [[nodiscard]] virtual std::string CalcPubkeyUsedValue() const = 0;
 };
 
 #endif
