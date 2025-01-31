@@ -61,36 +61,80 @@ option(BUILD_EXAMPLES "Enable demonstration targets." FALSE)
 option(BUILD_DOCS "Enable documentation targets." FALSE)
 set(DOXYGEN_OUTPUT_DIR "${CMAKE_CURRENT_LIST_DIR}/docs" CACHE STRING "Specify doxygen output directory")
 
+include_directories(
+        "${CMAKE_CURRENT_LIST_DIR}/../include"
+)
+# --------------------------------------------------------
+# Set config of crypto3
+add_library(crypto3::algebra INTERFACE IMPORTED)
+add_library(crypto3::block INTERFACE IMPORTED)
+add_library(crypto3::blueprint INTERFACE IMPORTED)
+add_library(crypto3::codec INTERFACE IMPORTED)
+add_library(crypto3::math INTERFACE IMPORTED)
+add_library(crypto3::multiprecision INTERFACE IMPORTED)
+add_library(crypto3::pkpad INTERFACE IMPORTED)
+add_library(crypto3::pubkey INTERFACE IMPORTED)
+add_library(crypto3::random INTERFACE IMPORTED)
+add_library(crypto3::zk INTERFACE IMPORTED)
+add_library(marshalling::core INTERFACE IMPORTED)
+add_library(marshalling::crypto3_algebra INTERFACE IMPORTED)
+add_library(marshalling::crypto3_multiprecision INTERFACE IMPORTED)
+add_library(marshalling::crypto3_zk INTERFACE IMPORTED)
+
+set_target_properties(crypto3::algebra PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(crypto3::block PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(crypto3::blueprint PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(crypto3::codec PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(crypto3::math PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(crypto3::multiprecision PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(crypto3::pkpad PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(crypto3::pubkey PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(crypto3::random PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(crypto3::zk PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(marshalling::core PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(marshalling::crypto3_algebra PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(marshalling::crypto3_multiprecision PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+set_target_properties(marshalling::crypto3_zk PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+)
+
+# zkLLVM
+set(zkLLVM_INCLUDE_DIR "${ZKLLVM_DIR}/zkLLVM/include")
+include_directories(${zkLLVM_INCLUDE_DIR})
+
+# circifier
+set(LLVM_DIR "${ZKLLVM_DIR}/zkLLVM/lib/cmake/llvm")
+find_package(LLVM CONFIG REQUIRED)
+
 add_subdirectory(${PROJECT_ROOT}/SGProofCircuits ${CMAKE_BINARY_DIR}/SGProofCircuits)
 include_directories(
         ${PROJECT_ROOT}/SGProofCircuits
-)
-
-include_directories(
-        "${CMAKE_CURRENT_LIST_DIR}/../include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/algebra/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/block/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/codec/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/containers/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/hash/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/kdf/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/mac/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/math/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/marshalling/algebra/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/marshalling/core/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/marshalling/multiprecision/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/marshalling/zk/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/modes/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/multiprecision/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/passhash/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/pbkdf/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/pkpad/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/pubkey/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/random/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/stream/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/threshold/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/vdf/include"
-        "${ZKLLVM_DIR}/zkLLVM/libs/crypto3/libs/zk/include"
 )
 
 add_library(${PROJECT_NAME}

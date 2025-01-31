@@ -15,23 +15,17 @@ using namespace nil::marshalling::bincode;
 
 namespace ethereum
 {
-
     random_generator_type EthereumKeyGenerator::key_gen;
 
 
-    EthereumKeyGenerator::EthereumKeyGenerator()
+    EthereumKeyGenerator::EthereumKeyGenerator() :
+        privkey( CreateKeys() ), pubkey( std::make_shared<pubkey::public_key<policy_type>>( *privkey ) ), address( DeriveAddress() )
     {
-        privkey = EthereumKeyGenerator::CreateKeys();
-        pubkey  = std::make_shared<pubkey::public_key<policy_type>>( *privkey );
-
-        address = DeriveAddress();
     }
 
     EthereumKeyGenerator::EthereumKeyGenerator( std::string_view private_key )
     {
-        std::vector<std::uint8_t> priv_key_vector;
-
-        priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key );
+        std::vector<std::uint8_t> priv_key_vector = util::HexASCII2NumStr<std::uint8_t>( private_key );
 
         auto my_value =
             field<scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>( priv_key_vector.begin(), priv_key_vector.end() );
@@ -44,13 +38,10 @@ namespace ethereum
 
         address = DeriveAddress();
     }
-    EthereumKeyGenerator::EthereumKeyGenerator( const scalar_field_value_type &private_key )
+    EthereumKeyGenerator::EthereumKeyGenerator( const scalar_field_value_type &private_key ) :
+        privkey( std::make_shared<pubkey::ext_private_key<policy_type>>( private_key ) ),
+        pubkey( std::make_shared<pubkey::public_key<policy_type>>( *privkey ) ), address( DeriveAddress() )
     {
-
-        privkey = std::make_shared<pubkey::ext_private_key<policy_type>>( private_key );
-        pubkey  = std::make_shared<pubkey::public_key<policy_type>>( *privkey );
-
-        address = DeriveAddress();
     }
 
     std::shared_ptr<pubkey::ext_private_key<policy_type>> EthereumKeyGenerator::CreateKeys()
@@ -99,11 +90,10 @@ namespace ethereum
         std::string keccak_hash = hash<derivation_hash_type>( pub_key_vect.rbegin(), pub_key_vect.rend() );
         std::string checksum    = hash<derivation_hash_type>( keccak_hash.begin() + KECCAK_RES_VALID_POS, keccak_hash.end() );
 
-        std::string address_w_checksum;
         for ( std::size_t i = 0; i < keccak_hash.size() - KECCAK_RES_VALID_POS; ++i )
         {
             auto *p_char = &keccak_hash[i + KECCAK_RES_VALID_POS];
-            if ( std::isalpha( *p_char ) )
+            if ( std::isalpha( *p_char ) != 0 )
             {
                 if ( util::HexASCII2Num<std::uint8_t>( &checksum[i], 1 ) > 7 )
                 {
@@ -120,7 +110,7 @@ namespace ethereum
         return keccak_hash.substr( ADDRESS_VALID_POS, ADDRESS_SIZE_CHARS );
     }
 
-    std::string EthereumKeyGenerator::DeriveAddress( void )
+    std::string EthereumKeyGenerator::DeriveAddress()
     {
         std::vector<std::uint8_t> pubkey_data = ExtractPubKeyFromField<std::vector<std::uint8_t>>( *pubkey );
         pubkey_info                           = std::make_shared<EthereumECDSAPublicKey>(

@@ -11,9 +11,9 @@
 
 #include <string>
 
-#include "ProofSystem/EthereumKeyPairParams.hpp"
-#include "ProofSystem/ext_private_key.hpp"
-#include "ProofSystem/ECDSAPublicKey.hpp"
+#include <ProofSystem/EthereumKeyPairParams.hpp>
+#include <ProofSystem/ext_private_key.hpp>
+#include <ProofSystem/ECDSAPublicKey.hpp>
 
 namespace ethereum
 {
@@ -43,7 +43,7 @@ namespace ethereum
          * @brief       Getter for private key (be careful with security implications)
          * @return      Reference to the private key
          */
-        const pubkey::ext_private_key<ethereum::policy_type> get_private_key() const
+        [[nodiscard]] pubkey::ext_private_key<ethereum::policy_type> get_private_key() const
         {
             return *privkey;
         }
@@ -51,7 +51,7 @@ namespace ethereum
          * @brief       Getter for public key
          * @return      Reference to the public key
          */
-        const pubkey::public_key<ethereum::policy_type> get_public_key() const
+        [[nodiscard]] pubkey::public_key<ethereum::policy_type> get_public_key() const
         {
             return *pubkey;
         }
@@ -59,7 +59,7 @@ namespace ethereum
          * @brief       Getter for the Ethereum address
          * @return      Ethereum address
          */
-        const std::string &get_address() const
+        [[nodiscard]] const std::string &get_address() const
         {
             return address;
         }
@@ -67,7 +67,7 @@ namespace ethereum
          * @brief       Get the single public key value used by ethereum addressing
          * @return      The concatenated X and Y coordinates in string form
          */
-        const std::string GetUsedPubKeyValue() const
+        [[nodiscard]] const std::string &GetUsedPubKeyValue() const
         {
             return *pubkey_info;
         }
@@ -75,7 +75,7 @@ namespace ethereum
          * @brief       Get all key value of the public key
          * @return      The concatenated X+Y key
          */
-        const std::string GetEntirePubValue() const
+        [[nodiscard]] std::string GetEntirePubValue() const
         {
             return pubkey_info->GetEntireKey();
         }
@@ -101,6 +101,7 @@ namespace ethereum
 
     private:
         static ethereum::random_generator_type                          key_gen; ///< Ethereum random key generator
+
         std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> privkey; ///< Private key pointer
         std::shared_ptr<pubkey::public_key<ethereum::policy_type>>      pubkey;  ///< Public key pointer
         std::string                                                     address; ///< Ethereum address
@@ -113,7 +114,7 @@ namespace ethereum
          * @brief       Derive the Ethereum address from own key
          * @return      Ethereum address in string form
          */
-        std::string DeriveAddress( void );
+        std::string DeriveAddress();
 
         /**
          * @brief       Ethereum ECDSA public key derived class
@@ -126,7 +127,7 @@ namespace ethereum
              * @brief       Implements the calculation for the public key value used for ethereum
              * @return      The concatenated X and Y key data in string form
              */
-            std::string CalcPubkeyUsedValue() const override
+            [[nodiscard]] std::string CalcPubkeyUsedValue() const override
             {
                 return ( X + Y );
             }
