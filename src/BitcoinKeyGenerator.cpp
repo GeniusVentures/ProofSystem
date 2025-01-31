@@ -97,11 +97,12 @@ namespace bitcoin
     std::string BitcoinKeyGenerator::DeriveAddress( const std::vector<std::uint8_t> &pub_key_vect )
     {
         std::vector<std::uint8_t> work_vect( pub_key_vect );
-        work_vect.push_back( ( pub_key_vect.front() % 2 ) ? PARITY_ODD_ID : PARITY_EVEN_ID );
+        work_vect.push_back(  ( pub_key_vect.front() % 2 ) == 0 ? PARITY_EVEN_ID : PARITY_ODD_ID );
 
-        work_vect = static_cast<std::vector<std::uint8_t>>( hash<derivation_hash_type>( work_vect.rbegin(), work_vect.rend() ) );
-        work_vect = static_cast<std::vector<std::uint8_t>>( hash<hashes::ripemd160>( work_vect ) );
+        std::array<uint8_t, 32> derivation_hash = hash<derivation_hash_type>( work_vect.rbegin(), work_vect.rend() );
+        std::array<uint8_t, 20> ripemd_hash     = hash<hashes::ripemd160>( derivation_hash );
 
+        work_vect = std::vector( ripemd_hash.cbegin(), ripemd_hash.cend() );
         work_vect.insert( work_vect.begin(), MAIN_NETWORK_ID );
 
         std::array<std::uint8_t, 32> checksum = hash<derivation_hash_type>( work_vect );
