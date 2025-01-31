@@ -6,10 +6,8 @@ include(cmake/functions.cmake)
 
 add_subdirectory(src)
 
-
 # Install Headers
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/ProofSystem" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ProofSystem" FILES_MATCHING PATTERN "*.h*")
-
 
 # Install Targets
 set(ProofSystem_CONFIG_DESTINATION_DIR "lib/cmake/ProofSystem")
@@ -17,7 +15,6 @@ install(EXPORT ProofSystemTargets
     FILE ProofSystemTargets.cmake
     DESTINATION ${ProofSystem_CONFIG_DESTINATION_DIR}
 )
-
 
 include(CMakePackageConfigHelpers)
 
@@ -35,9 +32,9 @@ write_basic_package_version_file(
     VERSION "${VERSION_STRING}.${SUBVERSION_STRING}"
     COMPATIBILITY AnyNewerVersion
 )
+
 # install the configuration file
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/ProofSystemConfig.cmake
     DESTINATION ${ProofSystem_CONFIG_DESTINATION_DIR}
 )
-

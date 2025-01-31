@@ -10,8 +10,6 @@
 #define PROOFSYSTEM_EXT_PRIVATE_KEY_HPP
 
 #include <nil/crypto3/pubkey/ecdsa.hpp>
-#include <nil/crypto3/algebra/marshalling.hpp>
-#include <nil/crypto3/codec/algorithm/encode.hpp>
 
 namespace nil
 {
