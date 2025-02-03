@@ -21,7 +21,7 @@ struct Crypto3Util
 
         return retval;
     }
-    static std::vector<std::uint8_t> CppIntToBytes( nil::crypto3::multiprecision::cpp_int &big_num )
+    static std::vector<std::uint8_t> CppIntToBytes(nil::crypto3::multiprecision::cpp_int &big_num )
     {
         std::vector<uint8_t> bytes;
         nil::crypto3::multiprecision::cpp_int remaining = big_num;

@@ -8,6 +8,7 @@
 #include <nil/crypto3/algebra/marshalling.hpp>
 #include <ProofSystem/util.hpp>
 
+
 using namespace nil::crypto3::algebra;
 using namespace nil::crypto3::hashes;
 using namespace nil::marshalling::bincode;
@@ -15,6 +16,7 @@ using namespace nil::marshalling::bincode;
 namespace ethereum
 {
     random_generator_type EthereumKeyGenerator::key_gen;
+
 
     EthereumKeyGenerator::EthereumKeyGenerator() :
         privkey( CreateKeys() ), pubkey( std::make_shared<pubkey::public_key<policy_type>>( *privkey ) ), address( DeriveAddress() )
@@ -27,6 +29,9 @@ namespace ethereum
 
         auto my_value =
             field<scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>( priv_key_vector.begin(), priv_key_vector.end() );
+        //cppui160_type my_value = BytesToCppui160(priv_key_vector);
+        //cppui160_type my_value;
+        //import_bits(my_value, priv_key_vector.begin(), priv_key_vector.end());
 
         privkey = std::make_shared<pubkey::ext_private_key<policy_type>>( my_value.second );
         pubkey  = std::make_shared<pubkey::public_key<policy_type>>( *privkey );

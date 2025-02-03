@@ -18,6 +18,7 @@
 #else
 #include <boost/multiprecision/cpp_int.hpp>
 #include <boost/multiprecision/miller_rabin.hpp>
+#include <boost/random.hpp>
 #endif
 
 class PrimeNumbers
