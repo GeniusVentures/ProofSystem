@@ -110,19 +110,7 @@ namespace bitcoin
         static random_generator_type                          key_gen; ///< Bitcoin random key generator
         std::shared_ptr<pubkey::ext_private_key<policy_type>> privkey; ///< The ECDSA private key
         std::shared_ptr<pubkey::public_key<policy_type>>      pubkey;  ///< The ECDSA public key
-        std::string                                           address; ///< The Bitcoin Address in string form
-
-        static constexpr std::uint8_t MAIN_NETWORK_ID     = 0; ///< ID of the Main Bitcoin network
-        static constexpr std::uint8_t PARITY_EVEN_ID      = 2; ///< If even, the compressed address is prepend this
-        static constexpr std::uint8_t PARITY_ODD_ID       = 3; ///< If odd, the compressed address is prepend this
-        static constexpr std::uint8_t CHECKSUM_SIZE_BYTES = 4; ///< Number of used checksum bytes
-
-        /**
-         * @brief       Derive the bitcoin address from own key
-         * @return      the Bitcoin base58 address
-         */
-        std::string DeriveAddress( void );
-
+        
         /**
          * @brief       Bitcoin ECDSA public key derived class
          */
@@ -142,6 +130,18 @@ namespace bitcoin
         };
 
         std::shared_ptr<BitcoinECDSAPublicKey> pubkey_info; ///< Instance of public key information class
+        std::string                                           address; ///< The Bitcoin Address in string form
+
+        static constexpr std::uint8_t MAIN_NETWORK_ID     = 0; ///< ID of the Main Bitcoin network
+        static constexpr std::uint8_t PARITY_EVEN_ID      = 2; ///< If even, the compressed address is prepend this
+        static constexpr std::uint8_t PARITY_ODD_ID       = 3; ///< If odd, the compressed address is prepend this
+        static constexpr std::uint8_t CHECKSUM_SIZE_BYTES = 4; ///< Number of used checksum bytes
+
+        /**
+         * @brief       Derive the bitcoin address from own key
+         * @return      the Bitcoin base58 address
+         */
+        std::string DeriveAddress( void );
     };
 }
 #endif // BITCOIN_KEY_GENERATOR_HPP
