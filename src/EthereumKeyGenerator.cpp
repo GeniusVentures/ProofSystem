@@ -118,4 +118,19 @@ namespace ethereum
             std::vector<std::uint8_t>( pubkey_data.data(), pubkey_data.data() + pubkey_data.size() / 2 ) );
         return DeriveAddress( pubkey_data );
     }
+
+    pubkey::public_key<ethereum::policy_type> EthereumKeyGenerator::BuildPublicKey( const std::string &pubkey_data )
+    {
+
+        auto z_data_one = pubkey::public_key<ethereum::policy_type>::g1_value_type::field_type::value_type::one();
+    
+        std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( pubkey_data.data() );
+    
+        auto y_data = field<base_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
+            key_vector.begin(), key_vector.begin() + key_vector.size() / 2 );
+        auto x_data = field<base_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
+            key_vector.begin() + key_vector.size() / 2, key_vector.end() );
+    
+        return typename pubkey::public_key<ethereum::policy_type>::public_key_type( x_data.second, y_data.second, z_data_one );
+    }
 }

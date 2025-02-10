@@ -99,6 +99,8 @@ namespace ethereum
          */
         static std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> CreateKeys();
 
+        static pubkey::public_key<ethereum::policy_type> BuildPublicKey( const std::string &pubkey_data );
+
     private:
         static ethereum::random_generator_type key_gen; ///< Ethereum random key generator
 
