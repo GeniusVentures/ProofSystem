@@ -69,15 +69,15 @@ public:
         return ( *( this->encryptor ) == *( other.encryptor ) );
     }
 
-private:
-    std::shared_ptr<Encryption> encryptor; ///< The encryptor used by KDF to hide the shared secret
-
     /**
      * @brief       Builds the public key data type from the data
      * @param[in]   pubkey_data String representation of X+Y coordinates
      * @return      The ECDSA public key object 
      */
     static ecdsa_t::pubkey::public_key<PolicyType> BuildPublicKeyECDSA( const ECDSAPubKey &pubkey_data );
+
+private:
+    std::shared_ptr<Encryption> encryptor; ///< The encryptor used by KDF to hide the shared secret
 };
 
 template <typename PolicyType>
@@ -125,8 +125,8 @@ ecdsa_t::scalar_field_value_type KDFGenerator<PolicyType>::GetNewKeyFromSecret( 
         nil::marshalling::bincode::field<ecdsa_t::scalar_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
             decoded_vector.begin() + 32, decoded_vector.begin() + 64 );
 
-    bool valid =
-        static_cast<bool>( nil::crypto3::verify<PolicyType>( verifier_pubkey, SignatureType( sign_first_part.second, sign_second_part.second ), signer_key ) );
+    bool valid = static_cast<bool>(
+        nil::crypto3::verify<PolicyType>( verifier_pubkey, SignatureType( sign_first_part.second, sign_second_part.second ), signer_key ) );
 
     if ( !valid )
     {

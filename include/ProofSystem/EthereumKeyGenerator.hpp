@@ -24,7 +24,7 @@ namespace ethereum
     class EthereumKeyGenerator
     {
     public:
-        using PubKeyPair_t = std::pair<std::vector<std::uint8_t>,std::vector<std::uint8_t>>;
+        using PubKeyPair_t = std::pair<std::vector<std::uint8_t>, std::vector<std::uint8_t>>;
         /**
          * @brief       Construct a new Ethereum Key Generator
          */
@@ -100,21 +100,10 @@ namespace ethereum
         static std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> CreateKeys();
 
     private:
-        static ethereum::random_generator_type                          key_gen; ///< Ethereum random key generator
+        static ethereum::random_generator_type key_gen; ///< Ethereum random key generator
 
         std::shared_ptr<pubkey::ext_private_key<ethereum::policy_type>> privkey; ///< Private key pointer
         std::shared_ptr<pubkey::public_key<ethereum::policy_type>>      pubkey;  ///< Public key pointer
-        std::string                                                     address; ///< Ethereum address
-
-        static constexpr std::string_view ADDRESS_HEADER       = "0x";                ///< Ethereum address header
-        static constexpr std::size_t KECCAK_RES_VALID_POS = 24;                       ///< Start position for address derivation
-        static constexpr std::size_t ADDRESS_VALID_POS    = KECCAK_RES_VALID_POS - 2; ///< Start position of the address
-        static constexpr std::size_t ADDRESS_SIZE_CHARS   = 42;                       ///< Size of the address in characters
-        /**
-         * @brief       Derive the Ethereum address from own key
-         * @return      Ethereum address in string form
-         */
-        std::string DeriveAddress();
 
         /**
          * @brief       Ethereum ECDSA public key derived class
@@ -134,6 +123,17 @@ namespace ethereum
         };
 
         std::shared_ptr<EthereumECDSAPublicKey> pubkey_info; ///< Instance of public key information class
+        std::string                             address;     ///< Ethereum address
+
+        static constexpr std::string_view ADDRESS_HEADER       = "0x";                     ///< Ethereum address header
+        static constexpr std::size_t      KECCAK_RES_VALID_POS = 24;                       ///< Start position for address derivation
+        static constexpr std::size_t      ADDRESS_VALID_POS    = KECCAK_RES_VALID_POS - 2; ///< Start position of the address
+        static constexpr std::size_t      ADDRESS_SIZE_CHARS   = 42;                       ///< Size of the address in characters
+        /**
+         * @brief       Derive the Ethereum address from own key
+         * @return      Ethereum address in string form
+         */
+        std::string DeriveAddress();
     };
 
 } // namespace ethereum
