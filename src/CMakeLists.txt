@@ -1,6 +1,8 @@
 add_library(KeyGeneration STATIC BitcoinKeyGenerator.cpp ElGamalKeyGenerator.cpp EthereumKeyGenerator.cpp PrimeNumbers.cpp)
 
-if (MSVC)
+set_target_properties(KeyGeneration PROPERTIES UNITY_BUILD ON)
+
+if(MSVC)
     target_compile_options(KeyGeneration PRIVATE /constexpr:steps1500000)
 endif()
 
@@ -17,9 +19,11 @@ target_link_libraries(
 target_compile_definitions(
     KeyGeneration PUBLIC CRYPTO3_CODEC_BASE58
 )
-if (MSVC)
+
+if(MSVC)
     target_compile_options(KeyGeneration PRIVATE /constexpr:steps10000000)
 endif()
+
 if(ANDROID_ABI STREQUAL "armeabi-v7a")
     target_compile_options(KeyGeneration PRIVATE -fconstexpr-steps=1000000000 -fconstexpr-depth=1000000000)
 endif()
