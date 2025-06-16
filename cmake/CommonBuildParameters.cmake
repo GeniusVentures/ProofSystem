@@ -26,7 +26,7 @@ add_compile_definitions(CRYPTO3_CODEC_BASE58)
 # Boost should be loaded before libp2p v0.1.2
 # --------------------------------------------------------
 # Set config of Boost project
-set(_BOOST_ROOT "${_THIRDPARTY_BUILD_DIR}/boost/build/${CMAKE_SYSTEM_NAME}${ABI_SUBFOLDER_NAME}")
+set(_BOOST_ROOT "${_THIRDPARTY_BUILD_DIR}/boost/build")
 set(Boost_LIB_DIR "${_BOOST_ROOT}/lib")
 set(Boost_INCLUDE_DIR "${_BOOST_ROOT}/include${BOOST_INCLUDE_POSTFIX}")
 set(Boost_DIR "${Boost_LIB_DIR}/cmake/Boost-${BOOST_VERSION}")
@@ -82,54 +82,54 @@ add_library(marshalling::crypto3_multiprecision INTERFACE IMPORTED)
 add_library(marshalling::crypto3_zk INTERFACE IMPORTED)
 
 set_target_properties(crypto3::algebra PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(crypto3::block PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(crypto3::blueprint PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(crypto3::codec PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(crypto3::math PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(crypto3::multiprecision PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(crypto3::pkpad PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(crypto3::pubkey PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(crypto3::random PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(crypto3::zk PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(marshalling::core PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(marshalling::crypto3_algebra PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(marshalling::crypto3_multiprecision PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 set_target_properties(marshalling::crypto3_zk PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_DIR}/zkLLVM/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZKLLVM_BUILD_DIR}/zkLLVM/include"
 )
 
 # zkLLVM
-set(zkLLVM_INCLUDE_DIR "${ZKLLVM_DIR}/zkLLVM/include")
+set(zkLLVM_INCLUDE_DIR "${ZKLLVM_BUILD_DIR}/zkLLVM/include")
 include_directories(${zkLLVM_INCLUDE_DIR})
 
 # circifier
-set(LLVM_DIR "${ZKLLVM_DIR}/zkLLVM/lib/cmake/llvm")
+set(LLVM_DIR "${ZKLLVM_BUILD_DIR}/zkLLVM/lib/cmake/llvm")
 find_package(LLVM CONFIG REQUIRED)
 
 add_subdirectory(${PROJECT_ROOT}/SGProofCircuits ${CMAKE_BINARY_DIR}/SGProofCircuits)
