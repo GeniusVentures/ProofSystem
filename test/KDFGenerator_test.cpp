@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "ProofSystem/BitcoinKeyGenerator.hpp"
 #include "ProofSystem/EthereumKeyGenerator.hpp"
+#include "ProofSystem/util.hpp"
 #include "ProofSystem/KDFGenerator.hpp"
 
 using namespace bitcoin;

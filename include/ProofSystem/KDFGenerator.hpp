@@ -103,7 +103,7 @@ std::string KDFGenerator<PolicyType>::GenerateSharedSecret( const ecdsa_t::pubke
     auto derived_key_vector = static_cast<std::vector<std::uint8_t>>( hash<hashes::sha2<256>>( signed_vector.begin(), signed_vector.end() ) );
     signed_vector.insert( signed_vector.end(), derived_key_vector.begin(), derived_key_vector.end() );
 
-    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( other_party_key.data(), other_party_key.size() );
+    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( other_party_key );
 
     return util::to_string( encryptor->EncryptData( signed_vector, key_vector ) );
 }
@@ -146,7 +146,7 @@ ecdsa_t::pubkey::public_key<PolicyType> KDFGenerator<PolicyType>::BuildPublicKey
 
     auto z_data_one = pubkey::public_key<PolicyType>::g1_value_type::field_type::value_type::one();
 
-    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( pubkey_data.data(), pubkey_data.size() );
+    std::vector<std::uint8_t> key_vector = util::HexASCII2NumStr<std::uint8_t>( pubkey_data );
 
     auto y_data = nil::marshalling::bincode::field<ecdsa_t::base_field_type>::field_element_from_bytes<std::vector<std::uint8_t>::iterator>(
         key_vector.begin(), key_vector.begin() + key_vector.size() / 2 );

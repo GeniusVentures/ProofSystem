@@ -137,25 +137,18 @@ include_directories(
         ${PROJECT_ROOT}/SGProofCircuits
 )
 
-add_library(${PROJECT_NAME}
-        STATIC
-        "${CMAKE_CURRENT_LIST_DIR}/../src/BitcoinKeyGenerator.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../src/EthereumKeyGenerator.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../src/ElGamalKeyGenerator.cpp"
-)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../src/ ${CMAKE_BINARY_DIR}/src)
+#add_library(${PROJECT_NAME}
+#        STATIC
+#        "${CMAKE_CURRENT_LIST_DIR}/../src/BitcoinKeyGenerator.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}/../src/EthereumKeyGenerator.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}/../src/ElGamalKeyGenerator.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}/../src/PrimeNumbers.cpp"
+#)
 
 if(BUILD_TESTS)
-        add_executable(${PROJECT_NAME}_test
-                "${CMAKE_CURRENT_LIST_DIR}/../test/main_test.cpp"
-                "${CMAKE_CURRENT_LIST_DIR}/../test/BitcoinKeyGenerator_test.cpp"
-                "${CMAKE_CURRENT_LIST_DIR}/../test/EthereumKeyGenerator_test.cpp"
-                "${CMAKE_CURRENT_LIST_DIR}/../test/ElGamalKeyGenerator_test.cpp"
-                "${CMAKE_CURRENT_LIST_DIR}/../test/ECElGamalKeyGenerator_test.cpp"
-                "${CMAKE_CURRENT_LIST_DIR}/../test/TransactionVerifierCircuit_test.cpp"
-                "${CMAKE_CURRENT_LIST_DIR}/../test/MPCVerifierCircuit_test.cpp"
-                "${CMAKE_CURRENT_LIST_DIR}/../test/Requestor.cpp"
-        )
-        target_link_libraries(${PROJECT_NAME}_test PUBLIC ${PROJECT_NAME} SGProofCircuits GTest::gtest Boost::random)
+    enable_testing()
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../test ${CMAKE_BINARY_DIR}/test)
 endif()
 
 # Install Headers

@@ -96,15 +96,15 @@ TEST( ElGamalKeyGeneratorTest, AdditiveHomomorphism )
 
     auto result_decoded = key_generator.DecryptDataAdditive( cypher_total );
 
-    EXPECT_EQ( powm( key_generator.GetPublicKey().generator, original_balance + two, key_generator.GetPublicKey().prime_number ), result );
+    EXPECT_EQ( powm( key_generator.GetPublicKey().params.generator, original_balance + two, key_generator.GetPublicKey().params.prime_number ), result );
     EXPECT_EQ( original_balance + two, result_decoded );
 
     auto cypher_half_mil   = ElGamal::EncryptDataAdditive( key_generator.GetPublicKey(), 1500000 );
     auto cypher_300k       = ElGamal::EncryptDataAdditive( key_generator.GetPublicKey(), 300000 );
     auto cypher_1_800_calc = ElGamal::EncryptDataAdditive( key_generator.GetPublicKey(), 1800000 );
     auto cypher_1_800_add =
-        std::make_pair<cpp_int, cpp_int>( ( cypher_half_mil.first * cypher_300k.first ) % key_generator.GetPublicKey().prime_number,
-                                          ( cypher_half_mil.second * cypher_300k.second ) % key_generator.GetPublicKey().prime_number );
+        std::make_pair<cpp_int, cpp_int>( ( cypher_half_mil.first * cypher_300k.first ) % key_generator.GetPublicKey().params.prime_number,
+                                          ( cypher_half_mil.second * cypher_300k.second ) % key_generator.GetPublicKey().params.prime_number );
 
     auto result_1_800      = key_generator.DecryptDataAdditive( cypher_1_800_add );
     auto result_1_800_calc = key_generator.DecryptDataAdditive( cypher_1_800_calc );
