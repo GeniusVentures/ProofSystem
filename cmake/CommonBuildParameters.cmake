@@ -53,8 +53,8 @@ find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex system 
 include_directories(${Boost_INCLUDE_DIRS})
 
 # --------------------------------------------------------
-# set config for crypto3
-option(BUILD_TESTS "Build tests" ON)
+# set config for this project
+option(BUILD_TESTING "Build tests" OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(BUILD_APPS "Enable application targets." FALSE)
 option(BUILD_EXAMPLES "Enable demonstration targets." FALSE)
@@ -138,21 +138,14 @@ include_directories(
 )
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../src/ ${CMAKE_BINARY_DIR}/src)
-#add_library(${PROJECT_NAME}
-#        STATIC
-#        "${CMAKE_CURRENT_LIST_DIR}/../src/BitcoinKeyGenerator.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/../src/EthereumKeyGenerator.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/../src/ElGamalKeyGenerator.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/../src/PrimeNumbers.cpp"
-#)
 
-if(BUILD_TESTS)
+if(BUILD_TESTING)
     enable_testing()
     add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../test ${CMAKE_BINARY_DIR}/test)
 endif()
 
 # Install Headers
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/ProofSystem/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ProofSystem" FILES_MATCHING PATTERN "*.h*")
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" FILES_MATCHING PATTERN "*.h*")
 
 install(TARGETS ${PROJECT_NAME} EXPORT ProofSystemTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -167,7 +160,7 @@ install(TARGETS ${PROJECT_NAME} EXPORT ProofSystemTargets
 install(
         EXPORT ProofSystemTargets
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ProofSystem
-        NAMESPACE sgns::
+        NAMESPACE ProofSystem::
 )
 
 include(CMakePackageConfigHelpers)
@@ -189,11 +182,7 @@ write_basic_package_version_file(
 
 # install the configuration file
 install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/ProofSystemConfigVersion.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SuperGenius
-)
-
-install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/ProofSystemConfig.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SuperGenius
+        ${CMAKE_CURRENT_BINARY_DIR}/ProofSystemConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ProofSystem
 )
