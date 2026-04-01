@@ -19,8 +19,6 @@ if(BUILD_TESTING)
     find_package(GTest CONFIG REQUIRED)
 endif()
 
-set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/ProofSystem")
-
 add_subdirectory(src)
 
 # Install Targets
