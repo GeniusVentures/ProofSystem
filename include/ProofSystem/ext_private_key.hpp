@@ -36,6 +36,10 @@ namespace nil
             {
                 using private_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>>::private_key;
 
+                [[nodiscard]] const typename ext_private_key::private_key_type &private_key_data() const
+                {
+                    return this->privkey;
+                }
 
                 /**
                  * @brief       Multiplication overload to derive public key from private key multiplication
